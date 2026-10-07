@@ -549,6 +549,52 @@
                 </div>
             </div>
 
+            <!-- Edit FAQ Modal (Admin) -->
+            <div id="edit-faq-modal" onclick="if(event.target===this) closeEditFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[115] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-warning/30 w-full max-w-lg overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+                    <div class="bg-warning/10 px-6 py-4 border-b border-warning/20 flex justify-between items-center shrink-0">
+                        <h3 class="font-bold text-white text-lg"><i class="fas fa-edit text-warning mr-2"></i> แก้ไขคำถามที่พบบ่อย (FAQ)</h3>
+                        <button type="button" onclick="closeEditFAQModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <form id="edit-faq-form" onsubmit="handleEditFAQ(event)" class="p-6 space-y-4 overflow-y-auto grow">
+                        <input type="hidden" id="edit-faq-index">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1.5">คำถาม</label>
+                            <input type="text" id="edit-faq-question" required placeholder="คำถาม..." class="w-full rounded-xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm bg-[#141214] text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1.5">คำตอบและวิธีแก้ไขเบื้องต้น</label>
+                            <textarea id="edit-faq-answer" required rows="4" placeholder="คำตอบ..." class="w-full rounded-xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm resize-none bg-[#141214] text-white"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1.5">รูปภาพตัวอย่างประกอบคำแนะนำ (ไม่บังคับ)</label>
+                            <div class="flex items-center gap-3">
+                                <label class="cursor-pointer bg-[#141214] text-warning border border-warning/30 hover:bg-warning/10 px-4 py-2 rounded-full transition-colors text-xs font-medium shadow-sm flex items-center">
+                                    <i class="fas fa-image mr-1.5"></i> เลือกรูปภาพใหม่
+                                    <input type="file" id="edit-faq-file-upload" accept="image/*" class="hidden" onchange="handleEditFaqImageUpload(event)">
+                                </label>
+                                <span class="text-[11px] text-gray-400">(ขนาดไม่เกิน 5MB)</span>
+                            </div>
+                            <input type="hidden" id="edit-faq-image">
+                            <div id="edit-faq-image-preview-container" class="hide mt-3 relative inline-block">
+                                <img id="edit-faq-image-preview" src="" alt="FAQ Preview" class="max-h-36 rounded-xl border border-warning/30 shadow-sm">
+                                <button type="button" onclick="removeEditFaqImage()" class="absolute -top-2.5 -right-2.5 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-500 shadow-md">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeEditFAQModal()" class="px-5 py-2.5 bg-[#141214] border border-pink-500/20 rounded-full text-gray-300 hover:bg-white/5 transition-colors font-medium text-sm">ยกเลิก</button>
+                            <button type="submit" id="btn-save-edit-faq" class="bg-warning text-gray-900 px-6 py-2.5 rounded-full hover:bg-amber-400 shadow-sm transition-transform transform hover:scale-105 text-sm font-semibold flex items-center">
+                                <i class="fas fa-save mr-2"></i> <span id="btn-save-edit-faq-text">บันทึกการแก้ไข</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Telegram Settings Modal (Admin) -->
             <div id="telegram-settings-modal" onclick="if(event.target===this) closeTelegramModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
                 <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-xl overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
@@ -1321,7 +1367,7 @@
 
             faqs.forEach((faq, index) => {
                 const item = document.createElement('div');
-                item.className = "bg-[#141214] border border-pink-500/20 rounded-2xl p-5 shadow-sm relative pr-14 transition-all hover:border-warning";
+                item.className = "bg-[#141214] border border-pink-500/20 rounded-2xl p-5 shadow-sm relative pr-24 transition-all hover:border-warning";
                 
                 const qHeader = document.createElement('h4');
                 qHeader.className = "font-bold text-white text-sm mb-2 leading-relaxed";
@@ -1344,15 +1390,139 @@
                     item.appendChild(imgThumbContainer);
                 }
 
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = "absolute top-4 right-4 flex items-center gap-1.5";
+
+                const editBtn = document.createElement('button');
+                editBtn.type = "button";
+                editBtn.className = "text-warning hover:text-gray-900 hover:bg-warning w-8 h-8 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-warning/30";
+                editBtn.title = "แก้ไข";
+                editBtn.innerHTML = '<i class="fas fa-edit text-xs"></i>';
+                editBtn.onclick = () => openEditFAQModal(index);
+
                 const delBtn = document.createElement('button');
                 delBtn.type = "button";
-                delBtn.className = "absolute top-5 right-4 text-danger hover:text-white hover:bg-danger w-9 h-9 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20";
-                delBtn.innerHTML = '<i class="fas fa-trash-alt text-sm"></i>';
+                delBtn.className = "text-danger hover:text-white hover:bg-danger w-8 h-8 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20";
+                delBtn.title = "ลบ";
+                delBtn.innerHTML = '<i class="fas fa-trash-alt text-xs"></i>';
                 delBtn.onclick = () => deleteFAQ(index);
 
-                item.appendChild(delBtn);
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(delBtn);
+                item.appendChild(actionsDiv);
                 list.appendChild(item);
             });
+        }
+
+        let editingFaqIndex = null;
+
+        function openEditFAQModal(index) {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
+            const faq = faqs[index];
+            if (!faq) return;
+
+            editingFaqIndex = index;
+            document.getElementById('edit-faq-index').value = index;
+            document.getElementById('edit-faq-question').value = faq.question;
+            document.getElementById('edit-faq-answer').value = faq.answer;
+            
+            const previewContainer = document.getElementById('edit-faq-image-preview-container');
+            const previewImg = document.getElementById('edit-faq-image-preview');
+            const imgInput = document.getElementById('edit-faq-image');
+
+            if (faq.image_url) {
+                imgInput.value = faq.image_url;
+                previewImg.src = sanitizeMediaUrl(faq.image_url);
+                previewContainer.classList.remove('hide');
+            } else {
+                imgInput.value = '';
+                previewImg.src = '';
+                previewContainer.classList.add('hide');
+            }
+
+            document.getElementById('edit-faq-modal').classList.remove('hide');
+        }
+
+        function closeEditFAQModal() {
+            document.getElementById('edit-faq-modal').classList.add('hide');
+            editingFaqIndex = null;
+        }
+
+        function handleEditFaqImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressAndProcessImage(file, 900, 900, 0.75, function(compressedBase64) {
+                document.getElementById('edit-faq-image-preview').src = compressedBase64;
+                document.getElementById('edit-faq-image-preview-container').classList.remove('hide');
+                document.getElementById('edit-faq-image').value = compressedBase64;
+            });
+        }
+
+        function removeEditFaqImage() {
+            const fileInput = document.getElementById('edit-faq-file-upload');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('edit-faq-image-preview').src = '';
+            document.getElementById('edit-faq-image').value = '';
+            document.getElementById('edit-faq-image-preview-container').classList.add('hide');
+        }
+
+        async function handleEditFAQ(event) {
+            event.preventDefault();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
+            if (editingFaqIndex === null || !faqs[editingFaqIndex]) return;
+
+            const faq = faqs[editingFaqIndex];
+            const btn = document.getElementById('btn-save-edit-faq');
+            const textEl = document.getElementById('btn-save-edit-faq-text');
+
+            const question = document.getElementById('edit-faq-question').value.trim();
+            const answer = document.getElementById('edit-faq-answer').value.trim();
+            const imageUrl = document.getElementById('edit-faq-image').value.trim() || null;
+
+            if (!question || !answer) return;
+
+            setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'บันทึกการแก้ไข');
+
+            try {
+                const updatePayload = {
+                    question: question,
+                    answer: answer,
+                    image_url: imageUrl,
+                    updated_at: new Date().toISOString()
+                };
+
+                if (supabaseClient) {
+                    let query = supabaseClient.from('faqs').update(updatePayload);
+                    if (faq.id) {
+                        query = query.eq('id', faq.id);
+                    } else {
+                        query = query.eq('question', faq.question);
+                    }
+                    const { error } = await query;
+                    if (error) throw error;
+                }
+
+                faq.question = question;
+                faq.answer = answer;
+                faq.image_url = imageUrl;
+
+                closeEditFAQModal();
+                renderAdminFAQList();
+                renderAgentFAQs();
+                customAlert('บันทึกการแก้ไข FAQ เรียบร้อยแล้วค่ะ 🌸');
+            } catch (err) {
+                console.error('Edit FAQ error:', err);
+                customAlert('เกิดข้อผิดพลาดในการแก้ไข FAQ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'บันทึกการแก้ไข');
+            }
         }
 
         async function addFAQ(event) {
