@@ -20,10 +20,10 @@
                         sans: ['Prompt', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#ff758c', /* ชมพูสดใส */
+                        primary: '#ff758c',
                         'primary-hover': '#ff526d',
                         secondary: '#d4a373',
-                        'dark-bg': '#141214', /* พื้นหลังสีดำนุ่มๆ */
+                        'dark-bg': '#141214',
                         'card-dark': '#1e1b1e',
                         'dark-brown': '#2d2320', 
                         'light-brown': '#8a6552',
@@ -98,7 +98,6 @@
             text-align: left;
         }
 
-        /* iOS Date Picker Color-Scheme fix */
         #create-ticket-form input[type="date"] {
             color-scheme: light;
         }
@@ -129,7 +128,6 @@
             <nav class="bg-white shadow-lg border border-pink-500/20 rounded-full px-5 sm:px-6 pointer-events-auto transition-all">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center">
-                        <!-- โลโก้พร้อมปุ่มเปลี่ยนรูปสำหรับ Admin -->
                         <div class="relative group w-10 h-10 mr-3">
                             <img id="nav-logo-img" src="https://placehold.co/100x100/ff758c/ffffff?text=Logo" alt="Shop Logo" class="w-10 h-10 rounded-xl object-cover border-2 border-pink-500/50 shadow-sm">
                             <label class="admin-upload-trigger absolute inset-0 bg-black/60 rounded-xl items-center justify-center cursor-pointer text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
@@ -156,7 +154,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 w-full">
             <div class="relative rounded-3xl overflow-hidden shadow-md border border-pink-500/20 bg-[#1e1b1e] h-32 sm:h-44 md:h-56 group">
                 <img id="cover-banner-img" src="https://placehold.co/1200x400/ff758c/ffffff?text=MONALI+Cover+Banner" alt="Cover Banner" class="w-full h-full object-cover">
-                <!-- ปุ่มเปลี่ยนรูปปกสำหรับ Admin เท่านั้น -->
                 <label class="admin-upload-trigger absolute inset-0 bg-black/40 backdrop-blur-[2px] items-center justify-center cursor-pointer text-white font-medium gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <i class="fas fa-camera text-xl"></i> เปลี่ยนรูปปกแบนเนอร์
                     <input type="file" accept="image/*" class="hidden" onchange="handleCoverUpload(event)">
@@ -178,7 +175,6 @@
                     </button>
                 </div>
 
-                <!-- รายการแจ้งปัญหาของฉัน (วางไว้ด้านบน FAQ) -->
                 <div class="space-y-3 mb-8" id="agent-ticket-container">
                     <!-- Cards injected here -->
                 </div>
@@ -190,7 +186,6 @@
                     <p class="text-xs text-gray-400 mt-1">คุณสามารถกดปุ่ม "แจ้งปัญหาใหม่" ด้านบนเพื่อส่งเรื่องได้เลยนะคะ</p>
                 </div>
 
-                <!-- FAQ Section for Agent -->
                 <div class="mb-8">
                     <h3 class="text-lg font-bold text-white mb-4 flex items-center"><i class="fas fa-lightbulb text-warning mr-2"></i> ศูนย์ช่วยเหลือเบื้องต้น (FAQ)</h3>
                     <div id="agent-faq-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -211,7 +206,6 @@
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-1.5">1. แอพพรีเมี่ยมที่มีปัญหา <span class="text-danger">*</span></label>
                             <select id="app-select" required class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-white text-gray-800">
-                                <!-- Options -->
                             </select>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full min-w-0">
@@ -237,7 +231,7 @@
                             <textarea id="ticket-desc" required rows="4" placeholder="เล่ารายละเอียดให้เราฟังหน่อยนะคะ..." class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none resize-none text-gray-800"></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">6. แนบรูปหลักฐานการซื้อและรูปปัญหา <span class="text-danger">* (จำเป็นต้องแนบ)</span></label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">6. แนบรูปหลักฐานการซื้อและรูปปัญหา <span class="text-danger">* (จำเป็นต้องแนบ ไม่เกิน 5MB)</span></label>
                             <div class="mt-1 flex items-center gap-4">
                                 <label class="cursor-pointer bg-pink-50 text-primary border border-pink-200 hover:bg-pink-100 px-4 py-2.5 rounded-full transition-colors text-sm font-medium shadow-sm flex items-center">
                                     <i class="fas fa-image mr-2"></i> เลือกรูปภาพ
@@ -286,7 +280,6 @@
                     </div>
                 </div>
 
-                <!-- Stats summary: 3 columns side-by-side -->
                 <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
                     <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-pink-100 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left">
                         <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-pink-50 text-primary flex items-center justify-center text-sm sm:text-lg mb-1 sm:mb-0 shrink-0"><i class="fas fa-ticket-alt"></i></div>
@@ -311,7 +304,6 @@
                     </div>
                 </div>
 
-                <!-- รายการแอดมินในรูปแบบ Card สีขาว -->
                 <div class="space-y-3" id="admin-ticket-container">
                     <!-- Cards injected here -->
                 </div>
@@ -329,7 +321,6 @@
                     <i class="fas fa-arrow-left mr-2"></i> ย้อนกลับ
                 </button>
 
-                <!-- Ticket Header Info -->
                 <div class="bg-[#1e1b1e] rounded-t-3xl shadow-lg border border-pink-500/20 border-b-0 p-5 md:p-6 mb-0 relative overflow-hidden flex-shrink-0">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
                         <div>
@@ -357,12 +348,10 @@
                     </div>
                 </div>
 
-                <!-- Chat Area -->
                 <div class="flex-grow bg-[#171517] border-x border-pink-500/20 chat-container overflow-y-auto p-4 md:p-6 shadow-inner" id="chat-messages-container">
                     <!-- Chat bubbles injected here -->
                 </div>
 
-                <!-- Chat Input Area -->
                 <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0" id="chat-input-area">
                     <form onsubmit="handleSendMessage(event)" class="flex gap-3 items-end">
                         <div class="flex-grow relative">
@@ -373,7 +362,6 @@
                         </button>
                     </form>
                 </div>
-                <!-- Closed Ticket Message -->
                 <div id="chat-closed-alert" class="hide bg-[#1e1b1e] border border-pink-500/20 rounded-b-3xl p-5 text-center text-gray-400 shadow-lg">
                     <div class="w-12 h-12 bg-[#141214] rounded-full flex items-center justify-center mx-auto mb-2 text-primary border border-pink-500/20">
                         <i class="fas fa-lock"></i>
@@ -452,7 +440,6 @@
                         <div>
                             <label for="edit-app-select" class="block text-sm font-semibold text-gray-300 mb-1.5">แอพพรีเมี่ยมที่มีปัญหา</label>
                             <select id="edit-app-select" required class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
-                                <!-- Options -->
                             </select>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full min-w-0">
@@ -498,7 +485,6 @@
                     <div class="p-6 overflow-y-auto grow">
                         <p class="text-sm text-gray-400 mb-4">ตัวเลือกเหล่านี้จะไปแสดงในแบบฟอร์มแจ้งปัญหาของตัวแทน</p>
                         <div id="manage-apps-list" class="space-y-2 mb-6">
-                            <!-- App list -->
                         </div>
                         <form onsubmit="addApp(event)" class="flex gap-2">
                             <input type="text" id="new-app-input" required placeholder="พิมพ์ชื่อแอปใหม่..." class="flex-grow rounded-full border border-pink-500/30 px-4 py-2 focus:border-primary focus:ring-primary outline-none text-sm bg-[#141214] text-white">
@@ -521,7 +507,6 @@
                     </div>
                     <div class="p-6 overflow-y-auto grow space-y-4">
                         <div id="admin-faq-list" class="space-y-4 mb-6">
-                            <!-- FAQ list -->
                         </div>
                         <div class="bg-[#141214] p-5 rounded-2xl border border-pink-500/20 shadow-sm">
                             <h4 class="font-bold text-white mb-3 text-sm">เพิ่มคำถาม-ตอบใหม่</h4>
@@ -558,19 +543,17 @@
 
                     <div class="p-5 sm:p-6 overflow-y-auto grow space-y-5">
                         <form id="telegram-settings-form" onsubmit="handleSaveTelegramSettings(event)" class="space-y-4">
-                            <!-- Token & Chat ID -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#141214] p-4 rounded-2xl border border-pink-500/20">
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-300 mb-1">Telegram Bot Token <span class="text-danger">*</span></label>
-                                    <input type="text" id="telegram-bot-token" required class="w-full rounded-xl border border-pink-500/30 px-3 py-2 text-xs focus:border-sky-400 focus:ring-sky-400 outline-none bg-[#1e1b1e] text-white">
+                                    <input type="password" id="telegram-bot-token" placeholder="ใส่ Bot Token ของคุณที่นี่" required class="w-full rounded-xl border border-pink-500/30 px-3 py-2 text-xs focus:border-sky-400 focus:ring-sky-400 outline-none bg-[#1e1b1e] text-white">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-300 mb-1">Telegram Chat ID <span class="text-danger">*</span></label>
-                                    <input type="text" id="telegram-chat-id" required class="w-full rounded-xl border border-pink-500/30 px-3 py-2 text-xs focus:border-sky-400 focus:ring-sky-400 outline-none bg-[#1e1b1e] text-white">
+                                    <input type="text" id="telegram-chat-id" placeholder="-100xxxxxxxxxx" required class="w-full rounded-xl border border-pink-500/30 px-3 py-2 text-xs focus:border-sky-400 focus:ring-sky-400 outline-none bg-[#1e1b1e] text-white">
                                 </div>
                             </div>
 
-                            <!-- Variables Quick Insert Guide -->
                             <div class="bg-pink-500/10 p-3.5 rounded-2xl border border-pink-500/20 text-xs">
                                 <p class="font-bold text-pink-300 mb-1.5 flex items-center"><i class="fas fa-code mr-1.5"></i> แท็กตัวแปรที่นำไปวางในข้อความได้:</p>
                                 <div class="flex flex-wrap gap-1.5 text-[11px]">
@@ -586,7 +569,6 @@
                                 </div>
                             </div>
 
-                            <!-- 1. Ticket Template -->
                             <div>
                                 <div class="flex justify-between items-center mb-1">
                                     <label class="block text-xs font-semibold text-gray-200">1. รูปแบบข้อความเมื่อมีเคสใหม่ (New Ticket)</label>
@@ -596,7 +578,6 @@
                                 <p class="text-[10px] text-gray-400 mt-1">สามารถใส่โค้ด <code>&lt;b&gt;ตัวหนา&lt;/b&gt;</code> หรือ <code>&lt;code&gt;ตัวอักษรกล่อง&lt;/code&gt;</code> ได้ค่ะ</p>
                             </div>
 
-                            <!-- 2. Chat Message Template -->
                             <div>
                                 <div class="flex justify-between items-center mb-1">
                                     <label class="block text-xs font-semibold text-gray-200">2. รูปแบบข้อความเมื่อลูกค้าส่งแชทใหม่ (New Message)</label>
@@ -605,7 +586,6 @@
                                 <textarea id="telegram-chat-template" required rows="5" class="w-full rounded-2xl border border-pink-500/30 px-3.5 py-2.5 focus:border-sky-400 focus:ring-sky-400 outline-none text-xs leading-relaxed font-mono resize-y bg-[#141214] text-white"></textarea>
                             </div>
 
-                            <!-- Action Buttons -->
                             <div class="pt-2 flex flex-col sm:flex-row gap-3">
                                 <button type="button" id="btn-test-telegram" onclick="testTelegramNotification()" class="w-full bg-[#141214] border border-sky-400/40 hover:bg-sky-500/20 text-sky-300 py-3 rounded-full font-semibold transition-all text-sm flex items-center justify-center">
                                     <i class="fas fa-paper-plane mr-2"></i> <span id="btn-test-telegram-text">ทดสอบส่งแจ้งเตือน</span>
@@ -619,7 +599,7 @@
                 </div>
             </div>
 
-            <!-- View FAQ Modal (Agent) - Pink & White Theme -->
+            <!-- View FAQ Modal (Agent) -->
             <div id="view-faq-modal" onclick="if(event.target===this) closeViewFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
                 <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-lg overflow-hidden transform transition-all relative">
                     <div class="bg-pink-50 px-6 py-5 border-b border-pink-100 flex justify-between items-center">
@@ -682,10 +662,7 @@
         const SUPABASE_PROJECT_URL = "https://odkuhnxzskccpmlpimau.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ka3Vobnh6c2tjY3BtbHBpbWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg3NzcsImV4cCI6MjEwNjg5NDc3N30.MxuWQk1jk1Rfg-Sw1gXgvI4kQZHD2eR2RVEiTtVXoAc";
 
-        // --- Telegram Defaults ---
-        const DEFAULT_TELEGRAM_TOKEN = "8817681944:AAGk1wSyvzaXjwlxj6-XYKPXqM1dOCcv4fw";
-        const DEFAULT_TELEGRAM_CHAT_ID = "-5469928489";
-
+        // --- Telegram Config (ดึงจาก localStorage เท่านั้น ป้องกัน Secret Token รั่วไหล) ---
         const DEFAULT_TELEGRAM_TICKET_TEMPLATE = `🌸 <b>[MONALI] มีการแจ้งปัญหาใหม่!</b> 🚨
 ━━━━━━━━━━━━━━━━━
 🎫 <b>รหัสเคส:</b> <code>{id}</code>
@@ -719,12 +696,22 @@
                 .replace(/'/g, '&#39;');
         }
 
+        // Sanitizer สำหรับ URL รูปภาพ ป้องกัน Stored XSS ใน src attribute
+        function sanitizeMediaUrl(url) {
+            if (!url || typeof url !== 'string') return '';
+            const trimmed = url.trim();
+            if (trimmed.startsWith('data:image/') || trimmed.startsWith('https://') || trimmed.startsWith('http://')) {
+                return escapeHtml(trimmed);
+            }
+            return '';
+        }
+
         function getTelegramToken() {
-            return localStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
+            return localStorage.getItem('helpCenterTelegramToken') || '';
         }
 
         function getTelegramChatId() {
-            return localStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
+            return localStorage.getItem('helpCenterTelegramChatId') || '';
         }
 
         function getTelegramTicketTemplate() {
@@ -736,7 +723,7 @@
         }
 
         // --- Application State ---
-        let currentRole = 'agent'; // 'agent' or 'admin'
+        let currentRole = 'agent';
         
         let deviceId = localStorage.getItem('helpCenterDeviceId');
         if (!deviceId) {
@@ -753,7 +740,6 @@
         let tickets = [];
         let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
 
-        // Button double-click and loading helper
         function setButtonLoading(btnEl, textEl, isLoading, loadingText, defaultText) {
             if (!btnEl) return;
             btnEl.disabled = isLoading;
@@ -796,7 +782,21 @@
         }
         renderAnnouncement();
 
+        // ตรวจสอบขนาดและประเภทไฟล์ก่อนบีบอัด (File Validation)
         function compressAndProcessImage(file, maxWidth, maxHeight, quality, callback) {
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                customAlert('กรุณาเลือกไฟล์ที่เป็นรูปภาพเท่านั้นค่ะ 🖼️');
+                return;
+            }
+
+            const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
+            if (file.size > maxSizeBytes) {
+                customAlert('ขนาดรูปภาพต้องไม่เกิน 5 MB นะคะ ⚠️');
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
@@ -825,6 +825,10 @@
         }
 
         async function handleCoverUpload(e) {
+            if (currentRole !== 'admin') {
+                customAlert('คุณไม่มีสิทธิ์เปลี่ยนรูปภาพปกค่ะ 🔒');
+                return;
+            }
             const file = e.target.files[0];
             if (!file) return;
             compressAndProcessImage(file, 1200, 500, 0.75, async function(base64) {
@@ -835,14 +839,18 @@
                         if (error) throw error;
                         customAlert('อัปเดตภาพปกแบนเนอร์เรียบร้อยแล้วค่ะ 🌸');
                     } catch (err) {
-                        console.error(err);
-                        customAlert('เกิดข้อผิดพลาดในการบันทึกรูปปก: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+                        console.error('Update cover error:', err);
+                        customAlert('ไม่สามารถบันทึกรูปปกได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                     }
                 }
             });
         }
 
         async function handleLogoUpload(e) {
+            if (currentRole !== 'admin') {
+                customAlert('คุณไม่มีสิทธิ์เปลี่ยนโลโก้ค่ะ 🔒');
+                return;
+            }
             const file = e.target.files[0];
             if (!file) return;
             compressAndProcessImage(file, 250, 250, 0.85, async function(base64) {
@@ -853,8 +861,8 @@
                         if (error) throw error;
                         customAlert('อัปเดตโลโก้เรียบร้อยแล้วค่ะ 🌸');
                     } catch (err) {
-                        console.error(err);
-                        customAlert('เกิดข้อผิดพลาดในการบันทึกโลโก้: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+                        console.error('Update logo error:', err);
+                        customAlert('ไม่สามารถบันทึกโลโก้ได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                     }
                 }
             });
@@ -882,10 +890,10 @@
                         renderAnnouncement();
                     }
                     if (shopData.cover_image_url) {
-                        document.getElementById('cover-banner-img').src = shopData.cover_image_url;
+                        document.getElementById('cover-banner-img').src = sanitizeMediaUrl(shopData.cover_image_url);
                     }
                     if (shopData.logo_image_url) {
-                        document.getElementById('nav-logo-img').src = shopData.logo_image_url;
+                        document.getElementById('nav-logo-img').src = sanitizeMediaUrl(shopData.logo_image_url);
                     }
                 }
 
@@ -914,7 +922,6 @@
 
                 // 4. Fetch Tickets
                 let query = supabaseClient.from('tickets').select('*');
-                // หากเป็น Guest จะเห็นเฉพาะเครื่องของตัวเองผ่าน RLS อัตโนมัติ (และกรองเพิ่มเติมเพื่อความแน่นอน)
                 if (currentRole !== 'admin') {
                     query = query.eq('device_id', deviceId);
                 }
@@ -941,17 +948,15 @@
                     if (currentRole === 'admin') renderAdminDashboard();
                     else renderAgentDashboard();
 
-                    // If currently viewing a ticket detail, refresh its messages
                     if (viewingTicketId) {
                         await loadTicketMessages(viewingTicketId);
                     }
                 }
             } catch (err) {
-                console.warn('Sync from Supabase status:', err);
+                console.warn('Sync status:', err);
             }
         }
 
-        // Load Messages for a specific Ticket
         async function loadTicketMessages(ticketId) {
             if (!supabaseClient || !ticketId) return;
             try {
@@ -993,7 +998,6 @@
         function initRealtime() {
             if (!supabaseClient) return;
 
-            // ตรวจสอบ Sandbox ใน Canvas Preview เพื่อป้องกัน WebSocket SecurityError
             const isRestrictedSandbox = (function() {
                 try {
                     if (window.self !== window.top) return true;
@@ -1105,6 +1109,10 @@
 
         async function addApp(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             const input = document.getElementById('new-app-input');
             const btn = document.getElementById('btn-add-app');
             const textEl = document.getElementById('btn-add-app-text');
@@ -1128,14 +1136,18 @@
                 renderManageAppsList();
                 renderAppDropdowns();
             } catch (err) {
-                console.error(err);
-                customAlert('เกิดข้อผิดพลาดในการเพิ่มแอป: ' + (err.message || 'สิทธิ์ไม่ถูกต้อง'));
+                console.error('Add app error:', err);
+                customAlert('ไม่สามารถเพิ่มแอปพลิเคชันได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'เพิ่ม');
             }
         }
 
         function deleteApp(index) {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             customConfirm('คุณต้องการลบแอปพลิเคชันนี้ออกจากตัวเลือกใช่หรือไม่? 🗑️', async function() {
                 const appToDelete = applications[index];
                 try {
@@ -1147,8 +1159,8 @@
                     renderManageAppsList();
                     renderAppDropdowns();
                 } catch (err) {
-                    console.error(err);
-                    customAlert('เกิดข้อผิดพลาดในการลบแอป: ' + (err.message || 'สิทธิ์ไม่ถูกต้อง'));
+                    console.error('Delete app error:', err);
+                    customAlert('ไม่สามารถลบแอปพลิเคชันได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                 }
             });
         }
@@ -1243,6 +1255,10 @@
 
         async function addFAQ(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             const questionInput = document.getElementById('new-faq-question');
             const answerInput = document.getElementById('new-faq-answer');
             const btn = document.getElementById('btn-add-faq');
@@ -1268,14 +1284,18 @@
                 renderAgentFAQs();
                 customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
             } catch (err) {
-                console.error(err);
-                customAlert('เกิดข้อผิดพลาดในการเพิ่ม FAQ: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                console.error('Add FAQ error:', err);
+                customAlert('ไม่สามารถเพิ่ม FAQ ได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ');
             }
         }
 
         function deleteFAQ(index) {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             customConfirm('ต้องการลบข้อมูล FAQ ข้อนี้ใช่หรือไม่คะ? 🗑️', async function() {
                 const item = faqs[index];
                 try {
@@ -1290,14 +1310,13 @@
                     renderAdminFAQList();
                     renderAgentFAQs();
                 } catch (err) {
-                    console.error(err);
-                    customAlert('เกิดข้อผิดพลาดในการลบ FAQ: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                    console.error('Delete FAQ error:', err);
+                    customAlert('ไม่สามารถลบ FAQ ได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                 }
             });
         }
 
         function switchView(viewId) {
-            // Guard: non-admin users must not open the admin dashboard
             if (viewId === 'view-admin-dashboard' && currentRole !== 'admin') {
                 customAlert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้ กรุณาเข้าสู่ระบบแอดมินก่อนค่ะ 🔒');
                 switchView('view-agent-dashboard');
@@ -1320,7 +1339,6 @@
                 document.getElementById('admin-login-password').value = '';
                 document.getElementById('admin-login-modal').classList.remove('hide');
             } else {
-                // Logout from Admin mode
                 if (supabaseClient) {
                     try { await supabaseClient.auth.signOut(); } catch(e){}
                 }
@@ -1356,29 +1374,25 @@
 
             try {
                 if (!supabaseClient) {
-                    throw new Error('ระบบไม่สามารถเชื่อมต่อฐานข้อมูลได้ในขณะนี้');
+                    throw new Error('ไม่สามารถเชื่อมต่อฐานข้อมูลได้ในขณะนี้');
                 }
 
-                // 1. Sign in via Supabase Auth
                 const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (authError || !authData?.user) {
-                    throw new Error(authError?.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้องค่ะ ❌');
+                    throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้องค่ะ ❌');
                 }
 
-                // 2. Authorization Verification via is_admin() RPC function
                 const { data: isAdmin, error: rpcError } = await supabaseClient.rpc('is_admin');
                 if (rpcError) {
                     console.warn('is_admin RPC notice:', rpcError);
                 }
 
-                // If not verified as admin, sign out immediately
                 if (!isAdmin) {
                     await supabaseClient.auth.signOut();
                     customAlert('บัญชีนี้ไม่มีสิทธิ์ผู้ดูแลระบบ (Admin) ค่ะ ❌\nหากเป็นแอดมิน กรุณาติดต่อตรวจสอบสิทธิ์ในฐานข้อมูลนะคะ');
                     return;
                 }
 
-                // Success
                 closeAdminLoginModal();
                 currentRole = 'admin';
                 document.body.classList.add('is-admin');
@@ -1396,14 +1410,13 @@
                 customAlert('เข้าสู่ระบบแอดมินสำเร็จค่ะ ยินดีต้อนรับคุณแอดมิน 🌟');
 
             } catch (loginErr) {
-                console.error(loginErr);
+                console.error('Login error:', loginErr);
                 customAlert(loginErr.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ ❌');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'เข้าสู่ระบบแอดมิน');
             }
         }
 
-        // Check if an existing admin session is already active on startup
         async function checkInitialAdminSession() {
             if (!supabaseClient) return;
             try {
@@ -1477,7 +1490,6 @@
                         let queueNumber = '-';
                         let aheadCount = 0;
 
-                        // Calculation via server RPC or client-side fallback
                         const queueIndex = allOpenTickets.findIndex(t => t.id === ticket.id);
                         if (queueIndex >= 0) {
                             queueNumber = queueIndex + 1;
@@ -1497,6 +1509,8 @@
 
                     const card = document.createElement('div');
                     card.className = "bg-white border border-pink-100 hover:border-primary rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800";
+                    
+                    const safeId = escapeHtml(ticket.id);
                     card.innerHTML = `
                         <div class="flex items-start gap-3">
                             <div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100">
@@ -1504,7 +1518,7 @@
                             </div>
                             <div class="min-w-0 flex-grow">
                                 <div class="flex items-center gap-2 mb-0.5">
-                                    <span class="font-bold text-primary text-sm">${escapeHtml(ticket.id)}</span>
+                                    <span class="font-bold text-primary text-sm">${safeId}</span>
                                     <span class="text-xs text-gray-300">•</span>
                                     <span class="text-xs text-pink-600 font-medium truncate">${escapeHtml(ticket.appName)}</span>
                                 </div>
@@ -1515,11 +1529,12 @@
                         ${queueInfoHtml}
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
                             <div>${getStatusBadge(ticket.status)}</div>
-                            <button onclick="openTicketDetail('${escapeHtml(ticket.id)}')" class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5">
+                            <button class="btn-open-ticket bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
                                 <i class="fas fa-comments"></i> แตะเพื่อต่อแอดมิน
                             </button>
                         </div>
                     `;
+                    card.querySelector('.btn-open-ticket').onclick = () => openTicketDetail(ticket.id);
                     containerEl.appendChild(card);
                 }
             }
@@ -1588,7 +1603,7 @@
 
             try {
                 if (supabaseClient) {
-                    // 1. Insert into tickets table
+                    // 1. Insert ticket
                     const { error: ticketError } = await supabaseClient.from('tickets').insert({
                         id: newId,
                         device_id: deviceId,
@@ -1616,7 +1631,7 @@
                         created_at: now
                     });
 
-                    // 3. Auto-reply rule check
+                    // 3. Auto-reply rule check (ได้รับการอนุญาตจาก RLS ผ่าน sender_role = 'system' แล้ว)
                     const autoReplyMsg = checkAutoReply(subject + ' ' + description);
                     if (autoReplyMsg) {
                         await supabaseClient.from('messages').insert({
@@ -1630,11 +1645,8 @@
                 }
 
                 tickets.unshift(newTicket);
-
-                // Send Telegram Notification in background
                 sendTelegramNewTicket(newTicket);
 
-                // Reset Form
                 document.getElementById('create-ticket-form').reset();
                 removeImage();
 
@@ -1644,14 +1656,13 @@
                 switchView('view-agent-dashboard');
 
             } catch (err) {
-                console.error(err);
-                customAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+                console.error('Create ticket error:', err);
+                customAlert('เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้งค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'ส่งข้อมูล');
             }
         }
 
-        // Auto reply keyword matcher
         function checkAutoReply(text) {
             const lowerText = text.toLowerCase();
             for (let rule of autoReplyRules) {
@@ -1713,6 +1724,8 @@
                 filteredTickets.forEach(ticket => {
                     const card = document.createElement('div');
                     card.className = `bg-white border ${ticket.status==='Open' ? 'border-amber-300 ring-2 ring-amber-100 shadow-sm' : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-gray-800`;
+                    
+                    const safeId = escapeHtml(ticket.id);
                     card.innerHTML = `
                         <div class="flex items-start gap-3 sm:gap-4">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${ticket.status==='Open' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'} flex items-center justify-center font-bold text-base sm:text-lg shrink-0 border">
@@ -1720,7 +1733,7 @@
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    <span class="font-bold text-primary text-sm sm:text-base">${escapeHtml(ticket.id)}</span>
+                                    <span class="font-bold text-primary text-sm sm:text-base">${safeId}</span>
                                     <span class="text-xs text-gray-300">•</span>
                                     <span class="text-xs text-gray-600"><i class="fas fa-user text-primary mr-1"></i>${escapeHtml(ticket.agentName)}</span>
                                 </div>
@@ -1730,11 +1743,12 @@
                         </div>
                         <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
                             <div>${getStatusBadge(ticket.status)}</div>
-                            <button onclick="openTicketDetail('${escapeHtml(ticket.id)}')" class="bg-gray-100 hover:bg-primary text-gray-700 hover:text-white border border-gray-200 hover:border-primary px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5">
+                            <button class="btn-manage-ticket bg-gray-100 hover:bg-primary text-gray-700 hover:text-white border border-gray-200 hover:border-primary px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
                                 <i class="fas fa-sliders-h"></i> จัดการปัญหา
                             </button>
                         </div>
                     `;
+                    card.querySelector('.btn-manage-ticket').onclick = () => openTicketDetail(ticket.id);
                     containerEl.appendChild(card);
                 });
             }
@@ -1781,7 +1795,6 @@
                 closedAlert.classList.add('hide');
             }
 
-            // Show loading placeholder in chat while fetching messages
             const container = document.getElementById('chat-messages-container');
             container.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs"><i class="fas fa-spinner fa-spin mr-2"></i> กำลังโหลดข้อความแชท...</div>';
 
@@ -1810,6 +1823,8 @@
                 if (currentRole === 'agent' && msg.sender === 'agent') isMe = true;
                 if (currentRole === 'admin' && msg.sender === 'admin') isMe = true;
 
+                const safeImgUrl = sanitizeMediaUrl(msg.image);
+
                 if (msg.sender === 'system') {
                     msgWrapper.className += " justify-center";
                     msgWrapper.innerHTML = `
@@ -1823,7 +1838,7 @@
                     `;
                 } else if (isMe) {
                     msgWrapper.className += " justify-end";
-                    let imageHtml = msg.image ? `<img src="${msg.image}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
+                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
                     msgWrapper.innerHTML = `
                         <div class="max-w-[80%] flex flex-col items-end">
                             <span class="text-xs text-pink-300 mb-1.5 mr-2 font-medium">คุณ</span>
@@ -1837,8 +1852,8 @@
                 } else {
                     msgWrapper.className += " justify-start";
                     let senderName = msg.sender === 'agent' ? ticket.agentName : 'Admin Support 🌸';
-                    let currentLogoSrc = (document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
-                    let imageHtml = msg.image ? `<img src="${msg.image}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm">` : '';
+                    let currentLogoSrc = sanitizeMediaUrl(document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
+                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm">` : '';
                     msgWrapper.innerHTML = `
                         <div class="max-w-[80%] flex items-end gap-3">
                             <div class="w-10 h-10 rounded-full bg-[#1e1b1e] text-primary flex items-center justify-center flex-shrink-0 mb-6 shadow-sm border border-pink-500/20 overflow-hidden">
@@ -1863,7 +1878,6 @@
             }, 50);
         }
 
-        // Enter key to send chat message
         function handleChatKeydown(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1898,8 +1912,7 @@
                         created_at: now
                     });
                     if (msgErr) throw msgErr;
-
-                    await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
+                    // ไม่ต้องส่ง ticket update จากฝั่งหน้าเว็บ เนื่องจากมี Trigger ทาง SQL คอยจัดการอัปเดต updated_at ให้เสมอ
                 }
 
                 ticket.messages = ticket.messages || [];
@@ -1914,13 +1927,12 @@
                 input.value = '';
                 renderChatMessages();
 
-                // Send Telegram Notification if customer sent a message
                 if (currentRole === 'agent') {
                     sendTelegramNewMessage(ticket, text);
                 }
             } catch (err) {
-                console.error(err);
-                customAlert('ไม่สามารถส่งข้อความได้: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+                console.error('Send message error:', err);
+                customAlert('ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
             } finally {
                 btn.disabled = false;
                 btn.classList.remove('opacity-60', 'cursor-not-allowed');
@@ -1928,6 +1940,10 @@
         }
 
         function markTicketResolved() {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             customConfirm('คุณต้องการปิดงาน (Mark as Resolved) ปัญหานี้ใช่หรือไม่คะ? 🎀', async function() {
                 const ticket = tickets.find(t => t.id === viewingTicketId);
                 if (!ticket) return;
@@ -1966,8 +1982,8 @@
                     await syncFromSupabase();
                     openTicketDetail(viewingTicketId);
                 } catch (err) {
-                    console.error(err);
-                    customAlert('เกิดข้อผิดพลาดในการปิดงาน: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                    console.error('Mark resolved error:', err);
+                    customAlert('เกิดข้อผิดพลาดในการปิดงาน กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                 } finally {
                     if (btn) btn.disabled = false;
                 }
@@ -1975,6 +1991,10 @@
         }
 
         function openEditModal() {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
             
@@ -2004,6 +2024,10 @@
 
         async function handleEditTicket(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
 
@@ -2048,14 +2072,18 @@
                 customAlert('บันทึกการแก้ไขข้อมูลเรียบร้อยแล้วค่ะ 🌸');
                 await syncFromSupabase();
             } catch (err) {
-                console.error(err);
-                customAlert('เกิดข้อผิดพลาดในการแก้ไขข้อมูล: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                console.error('Edit ticket error:', err);
+                customAlert('เกิดข้อผิดพลาดในการแก้ไขข้อมูล กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'บันทึกการแก้ไข');
             }
         }
 
         function openEditAnnouncementModal() {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             document.getElementById('announcement-input').value = announcementText;
             document.getElementById('edit-announcement-modal').classList.remove('hide');
         }
@@ -2066,6 +2094,10 @@
 
         async function handleSaveAnnouncement(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             const btn = document.getElementById('btn-save-announcement');
             const textEl = document.getElementById('btn-save-announcement-text');
             const text = document.getElementById('announcement-input').value.trim();
@@ -2083,14 +2115,18 @@
                 closeEditAnnouncementModal();
                 customAlert('อัปเดตข้อความประกาศเรียบร้อยแล้วค่ะ 🌸');
             } catch (err) {
-                console.error(err);
-                customAlert('เกิดข้อผิดพลาดในการบันทึกประกาศ: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                console.error('Save announcement error:', err);
+                customAlert('เกิดข้อผิดพลาดในการบันทึกประกาศ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'บันทึกข้อความประกาศ');
             }
         }
 
         function openTelegramModal() {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             document.getElementById('telegram-bot-token').value = getTelegramToken();
             document.getElementById('telegram-chat-id').value = getTelegramChatId();
             document.getElementById('telegram-ticket-template').value = getTelegramTicketTemplate();
@@ -2112,6 +2148,10 @@
 
         function handleSaveTelegramSettings(event) {
             event.preventDefault();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
             const token = document.getElementById('telegram-bot-token').value.trim();
             const chatId = document.getElementById('telegram-chat-id').value.trim();
             const ticketTemplate = document.getElementById('telegram-ticket-template').value.trim();
@@ -2123,7 +2163,7 @@
                 localStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate);
                 localStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate);
             } catch(e) {
-                console.warn(e);
+                console.warn('Storage save notice:', e);
             }
             
             closeTelegramModal();
@@ -2151,7 +2191,7 @@
             if (success) {
                 customAlert('ส่งข้อความทดสอบเข้า Telegram เรียบร้อยแล้วค่ะ! กรุณาเช็คในแอป Telegram ดูนะคะ 💌');
             } else {
-                customAlert('ไม่สามารถส่งข้อความได้ กรุณาตรวจสอบว่าบอทถูกเชิญเข้ากลุ่มหรือยัง และอย่าลืมกด /start บอทใน Telegram ก่อนนะคะ ❌');
+                customAlert('ไม่สามารถส่งข้อความได้ กรุณาตรวจสอบว่าบอทถูกเชิญเข้ากลุ่มหรือยัง และกด /start บอทก่อนนะคะ ❌');
             }
         }
 
