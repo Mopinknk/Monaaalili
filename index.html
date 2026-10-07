@@ -196,7 +196,7 @@
 
             <!-- 2. View: Agent Create Ticket -->
             <div id="view-agent-create" class="hide w-full max-w-2xl mx-auto">
-                <button onclick="switchView('view-agent-dashboard')" class="text-pink-300 hover:text-white mb-4 flex items-center transition-colors w-fit bg-[#1e1b1e] px-4 py-2 rounded-full shadow-sm border border-pink-500/20">
+                <button onclick="goBackFromAgentCreate()" class="text-pink-300 hover:text-white mb-4 flex items-center transition-colors w-fit bg-[#1e1b1e] px-4 py-2 rounded-full shadow-sm border border-pink-500/20">
                     <i class="fas fa-arrow-left mr-2"></i> ย้อนกลับ
                 </button>
                 <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 text-gray-800">
@@ -1418,28 +1418,51 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function goBackFromAgentCreate() {
+            if (currentRole === 'admin') {
+                renderAdminDashboard();
+                switchView('view-admin-dashboard');
+            } else {
+                renderAgentDashboard();
+                switchView('view-agent-dashboard');
+            }
+        }
+
         async function handleRoleToggleClick() {
             if (currentRole === 'agent') {
                 document.getElementById('admin-login-email').value = '';
                 document.getElementById('admin-login-password').value = '';
                 document.getElementById('admin-login-modal').classList.remove('hide');
             } else {
-                if (supabaseClient) {
-                    try { await supabaseClient.auth.signOut(); } catch(e){}
+                // หากอยู่ในโหมด Admin แล้วไม่ได้อยู่ที่หน้า Admin Dashboard ให้สลับกลับหน้า Dashboard ทันที
+                const adminDashboardView = document.getElementById('view-admin-dashboard');
+                const isNotOnAdminDashboard = adminDashboardView && adminDashboardView.classList.contains('hide');
+
+                if (isNotOnAdminDashboard) {
+                    switchView('view-admin-dashboard');
+                    renderAdminDashboard();
+                    return;
                 }
-                currentRole = 'agent';
-                document.body.classList.remove('is-admin');
-                const toggleBtn = document.getElementById('btn-role-toggle');
-                const toggleIcon = document.getElementById('role-toggle-icon');
-                const toggleText = document.getElementById('role-toggle-text');
-                toggleBtn.className = 'flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-pink-50 text-primary border border-pink-200 shadow-sm hover:shadow-md transition-all group';
-                toggleIcon.className = 'fas fa-user mr-2 group-hover:scale-110 transition-transform';
-                toggleText.textContent = 'Guest';
-                
-                await syncFromSupabase();
-                renderAgentDashboard();
-                switchView('view-agent-dashboard');
-                customAlert('ออกจากระบบแอดมินเรียบร้อยแล้วค่ะ 🌸');
+
+                // หากอยู่ที่หน้า Admin Dashboard อยู่แล้ว ให้ถามยืนยันก่อนออกจากระบบ ป้องกันการเผลอกดหลุด
+                customConfirm('คุณต้องการออกจากระบบแอดมินใช่หรือไม่คะ? 🌸', async function() {
+                    if (supabaseClient) {
+                        try { await supabaseClient.auth.signOut(); } catch(e){}
+                    }
+                    currentRole = 'agent';
+                    document.body.classList.remove('is-admin');
+                    const toggleBtn = document.getElementById('btn-role-toggle');
+                    const toggleIcon = document.getElementById('role-toggle-icon');
+                    const toggleText = document.getElementById('role-toggle-text');
+                    toggleBtn.className = 'flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-pink-50 text-primary border border-pink-200 shadow-sm hover:shadow-md transition-all group';
+                    toggleIcon.className = 'fas fa-user mr-2 group-hover:scale-110 transition-transform';
+                    toggleText.textContent = 'Guest';
+                    
+                    await syncFromSupabase();
+                    renderAgentDashboard();
+                    switchView('view-agent-dashboard');
+                    customAlert('ออกจากระบบแอดมินเรียบร้อยแล้วค่ะ 🌸');
+                });
             }
         }
 
@@ -1517,6 +1540,12 @@
                         toggleBtn.className = 'flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:shadow-md transition-all group';
                         toggleIcon.className = 'fas fa-user-shield mr-2 group-hover:scale-110 transition-transform';
                         toggleText.textContent = 'Admin';
+
+                        // เปิดหน้า Admin Dashboard อัตโนมัติเมื่อตรวจพบสิทธิ์แอดมิน
+                        if (!viewingTicketId) {
+                            switchView('view-admin-dashboard');
+                            renderAdminDashboard();
+                        }
                     } else {
                         await supabaseClient.auth.signOut();
                     }
@@ -2449,10 +2478,47 @@
             closeCustomConfirm();
         }
 
+        // ตรวจสอบและดึงข้อมูลใหม่ทันทีเมื่อสลับแท็บกลับมา หรือเปิดจอมือถือกลับมา
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible') {
+                if (supabaseClient) {
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    if (session && session.user) {
+                        const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+                        if (isAdmin) {
+                            currentRole = 'admin';
+                            document.body.classList.add('is-admin');
+                            if (!viewingTicketId) {
+                                switchView('view-admin-dashboard');
+                            }
+                            await syncFromSupabase();
+                        }
+                    }
+                }
+            }
+        });
+
         window.addEventListener('DOMContentLoaded', async () => {
             await checkInitialAdminSession();
             await syncFromSupabase();
             initRealtime();
+
+            // ตรวจจับการเปลี่ยนแปลงของ Auth Session อัตโนมัติ
+            if (supabaseClient && supabaseClient.auth) {
+                supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                        if (session?.user && currentRole !== 'admin') {
+                            await checkInitialAdminSession();
+                        }
+                    } else if (event === 'SIGNED_OUT') {
+                        if (currentRole === 'admin') {
+                            currentRole = 'agent';
+                            document.body.classList.remove('is-admin');
+                            switchView('view-agent-dashboard');
+                        }
+                    }
+                });
+            }
         });
     </script>
 </body>
