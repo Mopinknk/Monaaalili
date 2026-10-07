@@ -210,18 +210,18 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full min-w-0">
                             <div class="w-full min-w-0">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">2. วันที่ซื้อสินค้า <span class="text-danger">*</span></label>
-                                <input type="date" id="purchase-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-gray-800 bg-white">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">2. วันที่ซื้อสินค้า</label>
+                                <input type="date" id="purchase-date" class="w-full max-w-full min-w-0 block rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-gray-800 bg-white">
                             </div>
                             <div class="w-full min-w-0">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">3. วันที่ครบกำหนด <span class="text-danger">*</span></label>
-                                <input type="date" id="expiry-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-gray-800 bg-white">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">3. วันที่ครบกำหนด</label>
+                                <input type="date" id="expiry-date" class="w-full max-w-full min-w-0 block rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-gray-800 bg-white">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">4. ซื้อแบบเคลมหรือไม่เคลม <span class="text-danger">*</span></label>
-                            <select id="claim-type" required class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-white text-gray-800">
-                                <option value="" disabled selected>เลือกรูปแบบการซื้อ...</option>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">4. ซื้อแบบเคลมหรือไม่เคลม</label>
+                            <select id="claim-type" class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-white text-gray-800">
+                                <option value="" selected>เลือกรูปแบบการซื้อ (ไม่ระบุ)...</option>
                                 <option value="เคลม (มีประกัน)">เคลม (มีประกัน)</option>
                                 <option value="ไม่เคลม (ไม่มีประกัน)">ไม่เคลม (ไม่มีประกัน)</option>
                             </select>
@@ -448,16 +448,17 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full min-w-0">
                             <div class="w-full min-w-0">
                                 <label for="edit-purchase-date" class="block text-sm font-semibold text-gray-300 mb-1.5">วันที่ซื้อ</label>
-                                <input type="date" id="edit-purchase-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                                <input type="date" id="edit-purchase-date" class="w-full max-w-full min-w-0 block rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
                             </div>
                             <div class="w-full min-w-0">
                                 <label for="edit-expiry-date" class="block text-sm font-semibold text-gray-300 mb-1.5">วันที่ครบกำหนด</label>
-                                <input type="date" id="edit-expiry-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                                <input type="date" id="edit-expiry-date" class="w-full max-w-full min-w-0 block rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
                             </div>
                         </div>
                         <div>
                             <label for="edit-claim-type" class="block text-sm font-semibold text-gray-300 mb-1.5">รูปแบบการซื้อ</label>
-                            <select id="edit-claim-type" required class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                            <select id="edit-claim-type" class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                                <option value="ไม่ระบุ">ไม่ระบุ</option>
                                 <option value="เคลม (มีประกัน)">เคลม (มีประกัน)</option>
                                 <option value="ไม่เคลม (ไม่มีประกัน)">ไม่เคลม (ไม่มีประกัน)</option>
                             </select>
@@ -901,6 +902,23 @@
             { keywords: ['เข้าไม่ได้', 'login ไม่ได้', 'เข้าระบบไม่ได้'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากเข้าสู่ระบบไม่ได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต และยืนยันว่าใช้ Username/Password ที่ถูกต้องค่ะ' }
         ];
 
+        // ฟังก์ชันดึงลำดับคิวและจำนวนคิวก่อนหน้าจากฐานข้อมูลส่วนกลาง (Security Definer RPC)
+        async function fetchTicketQueue(ticketId) {
+            if (!supabaseClient || !ticketId) return null;
+            try {
+                const { data, error } = await supabaseClient.rpc('get_ticket_queue', { p_ticket_id: ticketId });
+                if (!error && data && data.found) {
+                    return data;
+                }
+                if (error) {
+                    console.warn('Queue RPC error:', error);
+                }
+            } catch (err) {
+                console.warn('Queue calculation fetch notice:', err);
+            }
+            return null;
+        }
+
         async function syncFromSupabase() {
             if (!supabaseClient) return;
             try {
@@ -969,8 +987,24 @@
                         image: t.image_url,
                         createdAt: t.created_at,
                         updatedAt: t.updated_at,
+                        queueNumber: null,
+                        aheadCount: null,
                         messages: []
                     }));
+
+                    // ดึงลำดับคิวและจำนวนคิวก่อนหน้าจริงของเคสทั้งหมดในระบบสำหรับเคสที่ยังรอดำเนินการ
+                    if (currentRole !== 'admin') {
+                        const openTickets = tickets.filter(t => t.status === 'Open');
+                        if (openTickets.length > 0) {
+                            await Promise.all(openTickets.map(async (t) => {
+                                const qData = await fetchTicketQueue(t.id);
+                                if (qData && qData.found && qData.queue_number !== null) {
+                                    t.queueNumber = qData.queue_number;
+                                    t.aheadCount = qData.ahead_count;
+                                }
+                            }));
+                        }
+                    }
 
                     if (currentRole === 'admin') renderAdminDashboard();
                     else renderAgentDashboard();
@@ -1595,28 +1629,21 @@
             } else {
                 emptyEl.classList.add('hide');
                 containerEl.classList.remove('hide');
-                
-                const allOpenTickets = tickets.filter(t => t.status === 'Open').sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
 
                 for (const ticket of agentTickets) {
+                    const safeId = escapeHtml(ticket.id);
                     let queueInfoHtml = '';
                     if (ticket.status === 'Open') {
-                        let queueNumber = '-';
-                        let aheadCount = 0;
-
-                        const queueIndex = allOpenTickets.findIndex(t => t.id === ticket.id);
-                        if (queueIndex >= 0) {
-                            queueNumber = queueIndex + 1;
-                            aheadCount = queueIndex;
-                        }
+                        const qNumberText = (ticket.queueNumber !== null && ticket.queueNumber !== undefined) ? ticket.queueNumber : '...';
+                        const aheadCountText = (ticket.aheadCount !== null && ticket.aheadCount !== undefined) ? ticket.aheadCount : '...';
 
                         queueInfoHtml = `
                             <div class="bg-pink-50 border border-pink-100 rounded-2xl p-3 flex items-center justify-between text-xs font-medium text-gray-700">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">${queueNumber}</span>
+                                    <span id="queue-num-${safeId}" class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">${qNumberText}</span>
                                     <span>คิวของคุณในระบบ</span>
                                 </div>
-                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span class="text-gray-900 font-bold">${aheadCount}</span> คิว</span>
+                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-${safeId}" class="text-gray-900 font-bold">${aheadCountText}</span> คิว</span>
                             </div>
                         `;
                     }
@@ -1624,7 +1651,6 @@
                     const card = document.createElement('div');
                     card.className = "bg-white border border-pink-100 hover:border-primary rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800";
                     
-                    const safeId = escapeHtml(ticket.id);
                     card.innerHTML = `
                         <div class="flex items-start gap-3">
                             <div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100">
@@ -1650,6 +1676,20 @@
                     `;
                     card.querySelector('.btn-open-ticket').onclick = () => openTicketDetail(ticket.id);
                     containerEl.appendChild(card);
+
+                    // อัปเดตคิวแบบเรียลไทม์เฉพาะกรณีที่ยังไม่มีค่าคิวบันทึกไว้
+                    if (ticket.status === 'Open' && (ticket.queueNumber === null || ticket.queueNumber === undefined)) {
+                        fetchTicketQueue(ticket.id).then(qData => {
+                            if (qData && qData.found && qData.queue_number !== null) {
+                                ticket.queueNumber = qData.queue_number;
+                                ticket.aheadCount = qData.ahead_count;
+                                const numEl = document.getElementById(`queue-num-${ticket.id}`);
+                                const aheadEl = document.getElementById(`queue-ahead-${ticket.id}`);
+                                if (numEl) numEl.textContent = qData.queue_number;
+                                if (aheadEl) aheadEl.textContent = qData.ahead_count;
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -1679,9 +1719,9 @@
             const textEl = document.getElementById('btn-submit-ticket-text');
 
             const appName = document.getElementById('app-select').value;
-            const purchaseDate = document.getElementById('purchase-date').value;
-            const expiryDate = document.getElementById('expiry-date').value;
-            const claimType = document.getElementById('claim-type').value;
+            const purchaseDate = document.getElementById('purchase-date').value || null;
+            const expiryDate = document.getElementById('expiry-date').value || null;
+            const claimType = document.getElementById('claim-type').value || 'ไม่ระบุ';
             const description = document.getElementById('ticket-desc').value.trim();
             const imageData = document.getElementById('compressed-image-data').value;
             
@@ -2193,9 +2233,9 @@
             const textEl = document.getElementById('btn-save-edit-ticket-text');
 
             const newApp = document.getElementById('edit-app-select').value;
-            const newPurchaseDate = document.getElementById('edit-purchase-date').value;
-            const newExpiryDate = document.getElementById('edit-expiry-date').value;
-            const newClaimType = document.getElementById('edit-claim-type').value;
+            const newPurchaseDate = document.getElementById('edit-purchase-date').value || null;
+            const newExpiryDate = document.getElementById('edit-expiry-date').value || null;
+            const newClaimType = document.getElementById('edit-claim-type').value || 'ไม่ระบุ';
             const newDesc = document.getElementById('edit-ticket-desc').value.trim();
 
             setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'บันทึกการแก้ไข');
