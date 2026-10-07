@@ -1341,10 +1341,24 @@
             setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'เพิ่มข้อมูล FAQ');
 
             try {
-                let newRecord = { question: q, answer: a, image_url: imgData, sort_order: faqs.length + 1 };
+                let newRecord = { question: q, answer: a, sort_order: faqs.length + 1 };
+                // หากมีการเลือกรูปภาพ ค่อยแนบฟิลด์ image_url เพื่อให้กรณีไม่มีรูปยังคงบันทึกได้ปกติ
+                if (imgData) {
+                    newRecord.image_url = imgData;
+                }
+
                 if (supabaseClient) {
                     const { data, error } = await supabaseClient.from('faqs').insert(newRecord).select().single();
-                    if (error) throw error;
+                    if (error) {
+                        // แยกแยะข้อผิดพลาดที่เกิดขึ้นจริงเพื่อแจ้งเตือนได้อย่างถูกต้อง
+                        if (error.message?.includes('image_url') || error.code === 'PGRST204' || error.message?.includes('column')) {
+                            throw new Error('ตาราง faqs ใน Supabase ยังไม่มีคอลัมน์ image_url ค่ะ กรุณารันคำสั่ง SQL เพิ่มคอลัมน์ก่อนนะคะ 🖼️');
+                        }
+                        if (error.message?.includes('row-level security') || error.code === '42501') {
+                            throw new Error('บัญชีของคุณยังไม่มีสิทธิ์ในตาราง admins บน Supabase ค่ะ 🔒');
+                        }
+                        throw error;
+                    }
                     if (data) newRecord = data;
                 }
                 faqs.push(newRecord);
@@ -1353,10 +1367,10 @@
                 removeFaqImage();
                 renderAdminFAQList();
                 renderAgentFAQs();
-                customAlert('เพิ่มข้อมูล FAQ พร้อมรูปภาพสำเร็จแล้วค่ะ 🌸');
+                customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
             } catch (err) {
                 console.error('Add FAQ error:', err);
-                customAlert('ไม่สามารถเพิ่ม FAQ ได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
+                customAlert(err.message || 'ไม่สามารถเพิ่ม FAQ ได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ');
             }
