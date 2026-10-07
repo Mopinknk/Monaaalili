@@ -337,6 +337,9 @@
                             <button id="btn-mark-resolved" onclick="markTicketResolved()" class="bg-success hover:bg-emerald-600 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm transition-transform transform hover:scale-105 flex items-center">
                                 <i class="fas fa-check-circle mr-2"></i> ปิดงาน (Mark Resolved)
                             </button>
+                            <button onclick="deleteTicket(viewingTicketId)" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm transition-transform transform hover:scale-105 flex items-center">
+                                <i class="fas fa-trash-alt mr-2"></i> ลบเคสนี้
+                            </button>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-300 mt-3 bg-[#141214]/60 p-4 rounded-2xl border border-pink-500/10">
@@ -1805,18 +1808,18 @@
                                     <span class="text-xs text-gray-300">•</span>
                                     <span class="text-xs text-gray-600"><i class="fas fa-user text-primary mr-1"></i>${escapeHtml(ticket.agentName)}</span>
                                 </div>
-                                <h4 class="font-bold text-gray-900 text-sm sm:text-base mb-1">${escapeHtml(ticket.subject)} <span class="text-xs font-normal text-pink-600">(${escapeHtml(ticket.appName)})</span></h4>
-                                <p class="text-xs text-gray-500 flex items-center gap-1.5"><i class="far fa-clock"></i> อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
                             <div>${getStatusBadge(ticket.status)}</div>
                             <button class="btn-manage-ticket bg-gray-100 hover:bg-primary text-gray-700 hover:text-white border border-gray-200 hover:border-primary px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
                                 <i class="fas fa-sliders-h"></i> จัดการปัญหา
                             </button>
+                            <button class="btn-delete-ticket bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1" title="ลบรายการนี้" data-ticket-id="${safeId}">
+                                <i class="fas fa-trash-alt"></i> ลบ
+                            </button>
                         </div>
                     `;
                     card.querySelector('.btn-manage-ticket').onclick = () => openTicketDetail(ticket.id);
+                    card.querySelector('.btn-delete-ticket').onclick = (e) => deleteTicket(ticket.id, e);
                     containerEl.appendChild(card);
                 });
             }
@@ -1847,8 +1850,16 @@
             document.getElementById('detail-agent-name').textContent = ticket.agentName;
 
             const adminActions = document.getElementById('admin-actions');
-            if (currentRole === 'admin' && ticket.status === 'Open') {
+            const markResolvedBtn = document.getElementById('btn-mark-resolved');
+            if (currentRole === 'admin') {
                 adminActions.classList.remove('hide');
+                if (markResolvedBtn) {
+                    if (ticket.status === 'Open') {
+                        markResolvedBtn.classList.remove('hide');
+                    } else {
+                        markResolvedBtn.classList.add('hide');
+                    }
+                }
             } else {
                 adminActions.classList.add('hide');
             }
@@ -2054,6 +2065,42 @@
                     customAlert('เกิดข้อผิดพลาดในการปิดงาน กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                 } finally {
                     if (btn) btn.disabled = false;
+                }
+            });
+        }
+
+        function deleteTicket(ticketId, event) {
+            if (event) event.stopPropagation();
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
+            if (!ticketId) return;
+
+            customConfirm(`คุณต้องการลบรายการแจ้งปัญหา ${ticketId} นี้ใช่หรือไม่คะ?\n(ข้อมูลข้อความแชทและประวัติทั้งหมดจะถูกลบถาวร) 🗑️`, async function() {
+                try {
+                    if (supabaseClient) {
+                        const { error } = await supabaseClient.from('tickets').delete().eq('id', ticketId);
+                        if (error) throw error;
+                    }
+
+                    const index = tickets.findIndex(t => t.id === ticketId);
+                    if (index !== -1) {
+                        tickets.splice(index, 1);
+                    }
+
+                    if (viewingTicketId === ticketId) {
+                        viewingTicketId = null;
+                        renderAdminDashboard();
+                        switchView('view-admin-dashboard');
+                    } else {
+                        renderAdminDashboard();
+                    }
+
+                    customAlert(`ลบรายการ ${ticketId} เรียบร้อยแล้วค่ะ 🌸`);
+                } catch (err) {
+                    console.error('Delete ticket error:', err);
+                    customAlert('เกิดข้อผิดพลาดในการลบรายการ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                 }
             });
         }
