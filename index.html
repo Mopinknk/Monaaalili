@@ -1,0 +1,2290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONALI Help Center</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#ff758c', /* ชมพูสดใส */
+                        'primary-hover': '#ff526d',
+                        secondary: '#d4a373',
+                        'dark-bg': '#141214', /* พื้นหลังสีดำนุ่มๆ */
+                        'card-dark': '#1e1b1e',
+                        'dark-brown': '#2d2320', 
+                        'light-brown': '#8a6552',
+                        success: '#84cc86',
+                        warning: '#f4c553',
+                        danger: '#ff9b9b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #141214; color: #f3e8eb; }
+        .hide { display: none !important; }
+        .chat-container { height: calc(100vh - 280px); min-height: 400px; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #141214; }
+        ::-webkit-scrollbar-thumb { background: #ff758c; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff526d; }
+
+        /* Admin image upload overlay styling */
+        .admin-upload-trigger {
+            display: none;
+        }
+        body.is-admin .admin-upload-trigger {
+            display: flex;
+        }
+
+        /* Sparkle Star Background Effect */
+        body {
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #ff758c, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #f4c553, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 230px 180px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 300px 90px, #ff758c, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 380px 240px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 400px 300px;
+            animation: twinkle 15s linear infinite;
+        }
+        @keyframes twinkle {
+            0% { background-position: 0 0; }
+            100% { background-position: 400px 300px; }
+        }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+
+        /* Fix iOS date input overflow and alignment */
+        input[type="date"] {
+            max-width: 100% !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            min-height: 48px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        input[type="date"]::-webkit-date-and-time-value {
+            text-align: left;
+        }
+
+        /* iOS Date Picker Color-Scheme fix */
+        #create-ticket-form input[type="date"] {
+            color-scheme: light;
+        }
+        #edit-ticket-form input[type="date"] {
+            color-scheme: dark;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col selection:bg-pink-500 selection:text-white">
+
+    <main class="flex-grow overflow-y-auto w-full relative">
+        <!-- Scrolling Announcement Marquee Bar -->
+        <div class="w-full bg-primary/20 border-b border-pink-500/30 overflow-hidden py-1.5 mb-2 relative group">
+            <div class="whitespace-nowrap overflow-hidden">
+                <div id="marquee-text-display" class="animate-marquee text-xs sm:text-sm text-pink-200 font-medium flex items-center gap-8">
+                    <span>🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖</span>
+                    <span>✨ กำลังเชื่อมต่อระบบฐานข้อมูลแบบเรียลไทม์... 🌟</span>
+                </div>
+            </div>
+            <!-- Admin edit announcement trigger -->
+            <button onclick="openEditAnnouncementModal()" class="admin-upload-trigger absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white text-[10px] px-2.5 py-1 rounded-full shadow hover:bg-primary-hover items-center gap-1 z-20">
+                <i class="fas fa-edit"></i> แก้ไขประกาศ
+            </button>
+        </div>
+
+        <!-- Floating Solid White Navbar -->
+        <div class="sticky top-4 z-30 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full pointer-events-none mb-6">
+            <nav class="bg-white shadow-lg border border-pink-500/20 rounded-full px-5 sm:px-6 pointer-events-auto transition-all">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <!-- โลโก้พร้อมปุ่มเปลี่ยนรูปสำหรับ Admin -->
+                        <div class="relative group w-10 h-10 mr-3">
+                            <img id="nav-logo-img" src="https://placehold.co/100x100/ff758c/ffffff?text=Logo" alt="Shop Logo" class="w-10 h-10 rounded-xl object-cover border-2 border-pink-500/50 shadow-sm">
+                            <label class="admin-upload-trigger absolute inset-0 bg-black/60 rounded-xl items-center justify-center cursor-pointer text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+                            </label>
+                        </div>
+                        <div class="flex flex-col justify-center mt-0.5">
+                            <span class="font-bold text-xl tracking-tight text-gray-900 leading-none">MONALI <span class="text-primary ml-0.5">✿</span></span>
+                            <span class="text-[11px] text-pink-600 mt-1 font-medium tracking-wide">- ระบบแจ้งปัญหา -</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <button id="btn-role-toggle" onclick="handleRoleToggleClick()" class="flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-pink-50 text-primary border border-pink-200 shadow-sm hover:shadow-md transition-all group">
+                            <i id="role-toggle-icon" class="fas fa-user mr-2 group-hover:scale-110 transition-transform"></i>
+                            <span id="role-toggle-text">Guest</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Cover Banner Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 w-full">
+            <div class="relative rounded-3xl overflow-hidden shadow-md border border-pink-500/20 bg-[#1e1b1e] h-32 sm:h-44 md:h-56 group">
+                <img id="cover-banner-img" src="https://placehold.co/1200x400/ff758c/ffffff?text=MONALI+Cover+Banner" alt="Cover Banner" class="w-full h-full object-cover">
+                <!-- ปุ่มเปลี่ยนรูปปกสำหรับ Admin เท่านั้น -->
+                <label class="admin-upload-trigger absolute inset-0 bg-black/40 backdrop-blur-[2px] items-center justify-center cursor-pointer text-white font-medium gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i class="fas fa-camera text-xl"></i> เปลี่ยนรูปปกแบนเนอร์
+                    <input type="file" accept="image/*" class="hidden" onchange="handleCoverUpload(event)">
+                </label>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 w-full h-full relative">
+
+            <!-- 1. View: Agent Dashboard -->
+            <div id="view-agent-dashboard" class="w-full">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center"><i class="fas fa-seedling text-primary mr-2"></i> รายการแจ้งปัญหา</h2>
+                        <p class="text-pink-200/70 text-sm mt-1">ลูกค้าสามารถดูวิธีแก้ไขเบื้องต้นได้ที่ ศูนย์ช่วยเหลือ FAQ ได้เลยนะคะ หากรอแอดมินต้องรอตอบตามคิวนะคะ</p>
+                    </div>
+                    <button onclick="switchView('view-agent-create')" class="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-medium shadow-md shadow-pink-500/20 transition-all transform hover:scale-105 flex items-center shrink-0">
+                        <i class="fas fa-plus mr-2"></i> แจ้งปัญหาใหม่
+                    </button>
+                </div>
+
+                <!-- รายการแจ้งปัญหาของฉัน (วางไว้ด้านบน FAQ) -->
+                <div class="space-y-3 mb-8" id="agent-ticket-container">
+                    <!-- Cards injected here -->
+                </div>
+                <div id="agent-empty-state" class="hide bg-white border border-pink-200 rounded-3xl p-12 text-center text-gray-500 shadow-lg mb-8">
+                    <div class="w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary border border-pink-100">
+                        <i class="fas fa-seedling text-3xl"></i>
+                    </div>
+                    <p class="font-medium text-lg text-gray-800">ยังไม่มีรายการแจ้งปัญหาของคุณค่ะ 🌸</p>
+                    <p class="text-xs text-gray-400 mt-1">คุณสามารถกดปุ่ม "แจ้งปัญหาใหม่" ด้านบนเพื่อส่งเรื่องได้เลยนะคะ</p>
+                </div>
+
+                <!-- FAQ Section for Agent -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center"><i class="fas fa-lightbulb text-warning mr-2"></i> ศูนย์ช่วยเหลือเบื้องต้น (FAQ)</h3>
+                    <div id="agent-faq-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- FAQs -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. View: Agent Create Ticket -->
+            <div id="view-agent-create" class="hide w-full max-w-2xl mx-auto">
+                <button onclick="switchView('view-agent-dashboard')" class="text-pink-300 hover:text-white mb-4 flex items-center transition-colors w-fit bg-[#1e1b1e] px-4 py-2 rounded-full shadow-sm border border-pink-500/20">
+                    <i class="fas fa-arrow-left mr-2"></i> ย้อนกลับ
+                </button>
+                <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8 text-gray-800">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2 flex items-center"><i class="fas fa-paper-plane text-primary mr-2"></i> แจ้งปัญหาใหม่</h2>
+                    <p class="text-gray-500 mb-6 text-sm">กรุณากรอกรายละเอียดเพื่อให้เราช่วยเหลือคุณได้รวดเร็วขึ้นค่ะ 💖</p>
+                    <form id="create-ticket-form" onsubmit="handleCreateTicket(event)" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">1. แอพพรีเมี่ยมที่มีปัญหา <span class="text-danger">*</span></label>
+                            <select id="app-select" required class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-white text-gray-800">
+                                <!-- Options -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 w-full min-w-0">
+                            <div class="w-full min-w-0">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">2. วันที่ซื้อสินค้า <span class="text-danger">*</span></label>
+                                <input type="date" id="purchase-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-gray-800 bg-white">
+                            </div>
+                            <div class="w-full min-w-0">
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">3. วันที่ครบกำหนด <span class="text-danger">*</span></label>
+                                <input type="date" id="expiry-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-gray-800 bg-white">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">4. ซื้อแบบเคลมหรือไม่เคลม <span class="text-danger">*</span></label>
+                            <select id="claim-type" required class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-white text-gray-800">
+                                <option value="" disabled selected>เลือกรูปแบบการซื้อ...</option>
+                                <option value="เคลม (มีประกัน)">เคลม (มีประกัน)</option>
+                                <option value="ไม่เคลม (ไม่มีประกัน)">ไม่เคลม (ไม่มีประกัน)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">5. ปัญหาที่เกิดขึ้น (อธิบายรายละเอียดให้ครบถ้วน) <span class="text-danger">*</span></label>
+                            <textarea id="ticket-desc" required rows="4" placeholder="เล่ารายละเอียดให้เราฟังหน่อยนะคะ..." class="w-full rounded-2xl border border-gray-300 px-4 py-3 focus:border-primary focus:ring-primary outline-none resize-none text-gray-800"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">6. แนบรูปหลักฐานการซื้อและรูปปัญหา <span class="text-danger">* (จำเป็นต้องแนบ)</span></label>
+                            <div class="mt-1 flex items-center gap-4">
+                                <label class="cursor-pointer bg-pink-50 text-primary border border-pink-200 hover:bg-pink-100 px-4 py-2.5 rounded-full transition-colors text-sm font-medium shadow-sm flex items-center">
+                                    <i class="fas fa-image mr-2"></i> เลือกรูปภาพ
+                                    <input type="file" id="file-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                                </label>
+                            </div>
+                            <input type="hidden" id="compressed-image-data">
+                            <div id="image-preview-container" class="hide mt-4 relative inline-block">
+                                <img id="image-preview" src="" alt="Preview" class="max-h-48 rounded-2xl border border-gray-300 shadow-sm">
+                                <button type="button" onclick="removeImage()" class="absolute -top-3 -right-3 bg-danger text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-500 shadow-md">
+                                    <i class="fas fa-times text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-end">
+                            <button type="submit" id="btn-submit-ticket" class="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105 font-medium flex items-center">
+                                <i class="fas fa-paper-plane mr-2"></i> <span id="btn-submit-ticket-text">ส่งข้อมูล</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 3. View: Admin Dashboard -->
+            <div id="view-admin-dashboard" class="hide w-full">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center"><i class="fas fa-magic text-primary mr-2"></i> Dashboard</h2>
+                        <p class="text-pink-200/70 text-sm mt-1">จัดการและช่วยเหลือปัญหาของตัวแทนทั้งหมด 🌟</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <button onclick="openManageFAQModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-warning hover:text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <i class="fas fa-question-circle text-warning mr-2"></i> จัดการ FAQ
+                        </button>
+                        <button onclick="openManageAppsModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <i class="fas fa-list-ul text-primary mr-2"></i> จัดการรายการแอป
+                        </button>
+                        <button onclick="openTelegramModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-sky-500 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <i class="fab fa-telegram-plane text-sky-500 mr-2"></i> ตั้งค่า Telegram
+                        </button>
+                        <div class="flex space-x-1 bg-white p-1 rounded-full border border-gray-200 shadow-sm overflow-x-auto">
+                            <button onclick="filterAdminTickets('All')" id="filter-all" class="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition-colors whitespace-nowrap">ทั้งหมด</button>
+                            <button onclick="filterAdminTickets('Open')" id="filter-open" class="px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center"><span class="w-2 h-2 rounded-full bg-warning mr-2"></span> รอดำเนินการ</button>
+                            <button onclick="filterAdminTickets('Resolved')" id="filter-resolved" class="px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center"><span class="w-2 h-2 rounded-full bg-success mr-2"></span> แก้ไขแล้ว</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats summary: 3 columns side-by-side -->
+                <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
+                    <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-pink-100 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left">
+                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-pink-50 text-primary flex items-center justify-center text-sm sm:text-lg mb-1 sm:mb-0 shrink-0"><i class="fas fa-ticket-alt"></i></div>
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-medium text-gray-500">ปัญหาทั้งหมด</p>
+                            <p class="text-sm sm:text-xl font-bold text-gray-900" id="stat-total">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-amber-100 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left">
+                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center text-sm sm:text-lg mb-1 sm:mb-0 shrink-0"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-medium text-gray-500">รอดำเนินการ</p>
+                            <p class="text-sm sm:text-xl font-bold text-amber-600" id="stat-open">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-emerald-100 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left">
+                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-sm sm:text-lg mb-1 sm:mb-0 shrink-0"><i class="fas fa-check-circle"></i></div>
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-medium text-gray-500">แก้ไขแล้ว</p>
+                            <p class="text-sm sm:text-xl font-bold text-emerald-600" id="stat-resolved">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- รายการแอดมินในรูปแบบ Card สีขาว -->
+                <div class="space-y-3" id="admin-ticket-container">
+                    <!-- Cards injected here -->
+                </div>
+                <div id="admin-empty-state" class="hide bg-white border border-pink-200 rounded-3xl p-12 text-center text-gray-500 shadow-lg">
+                    <div class="w-20 h-20 bg-pink-50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary border border-pink-100">
+                        <i class="fas fa-check-double text-3xl"></i>
+                    </div>
+                    <p class="font-medium text-lg text-gray-800">เย้! ไม่มีรายการที่ต้องจัดการตอนนี้ 🎊</p>
+                </div>
+            </div>
+
+            <!-- 4. View: Ticket Detail / Chat -->
+            <div id="view-ticket-detail" class="hide w-full max-w-4xl mx-auto flex flex-col h-full pb-4">
+                <button onclick="goBackFromDetail()" class="text-pink-300 hover:text-white mb-4 flex items-center transition-colors w-fit bg-[#1e1b1e] px-4 py-2 rounded-full shadow-sm border border-pink-500/20">
+                    <i class="fas fa-arrow-left mr-2"></i> ย้อนกลับ
+                </button>
+
+                <!-- Ticket Header Info -->
+                <div class="bg-[#1e1b1e] rounded-t-3xl shadow-lg border border-pink-500/20 border-b-0 p-5 md:p-6 mb-0 relative overflow-hidden flex-shrink-0">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                        <div>
+                            <div class="flex items-center gap-3 mb-1">
+                                <span class="font-bold text-primary text-lg" id="detail-ticket-id">TCK-1001</span>
+                                <span id="detail-ticket-status"></span>
+                            </div>
+                            <h2 class="text-xl font-bold text-white" id="detail-ticket-subject">หัวข้อปัญหา</h2>
+                        </div>
+                        <div id="admin-actions" class="hide flex flex-wrap gap-2 w-full md:w-auto mt-2 md:mt-0">
+                            <button onclick="openEditModal()" class="bg-[#141214] hover:bg-white/10 text-pink-300 border border-pink-500/30 px-4 py-2.5 rounded-full text-sm font-medium shadow-sm transition-transform transform hover:scale-105 flex items-center">
+                                <i class="fas fa-edit mr-2"></i> แก้ไขข้อมูล
+                            </button>
+                            <button id="btn-mark-resolved" onclick="markTicketResolved()" class="bg-success hover:bg-emerald-600 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-sm transition-transform transform hover:scale-105 flex items-center">
+                                <i class="fas fa-check-circle mr-2"></i> ปิดงาน (Mark Resolved)
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-300 mt-3 bg-[#141214]/60 p-4 rounded-2xl border border-pink-500/10">
+                        <div class="flex items-center w-full md:w-auto"><i class="fas fa-box text-primary mr-2 w-4 text-center"></i> <span class="font-medium text-white mr-1">แอพ:</span> <span id="detail-ticket-app"></span></div>
+                        <div class="flex items-center w-full md:w-auto"><i class="fas fa-shield-alt text-primary mr-2 w-4 text-center"></i> <span class="font-medium text-white mr-1">รูปแบบ:</span> <span id="detail-claim-type"></span></div>
+                        <div class="flex items-center w-full md:w-auto"><i class="fas fa-calendar-alt text-primary mr-2 w-4 text-center"></i> <span class="font-medium text-white mr-1">วันที่ซื้อ:</span> <span id="detail-purchase-date"></span></div>
+                        <div class="flex items-center w-full md:w-auto"><i class="fas fa-calendar-times text-primary mr-2 w-4 text-center"></i> <span class="font-medium text-white mr-1">ครบกำหนด:</span> <span id="detail-expiry-date"></span></div>
+                        <div class="flex items-center w-full md:w-auto"><i class="fas fa-user text-primary mr-2 w-4 text-center"></i> <span class="font-medium text-white mr-1">ผู้แจ้ง:</span> <span id="detail-agent-name"></span></div>
+                    </div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="flex-grow bg-[#171517] border-x border-pink-500/20 chat-container overflow-y-auto p-4 md:p-6 shadow-inner" id="chat-messages-container">
+                    <!-- Chat bubbles injected here -->
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0" id="chat-input-area">
+                    <form onsubmit="handleSendMessage(event)" class="flex gap-3 items-end">
+                        <div class="flex-grow relative">
+                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white"></textarea>
+                        </div>
+                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-14 h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
+                            <i class="fas fa-paper-plane text-lg"></i>
+                        </button>
+                    </form>
+                </div>
+                <!-- Closed Ticket Message -->
+                <div id="chat-closed-alert" class="hide bg-[#1e1b1e] border border-pink-500/20 rounded-b-3xl p-5 text-center text-gray-400 shadow-lg">
+                    <div class="w-12 h-12 bg-[#141214] rounded-full flex items-center justify-center mx-auto mb-2 text-primary border border-pink-500/20">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <p class="font-medium text-white">ปัญหานี้ถูกแก้ไขและปิดรายการแล้วค่ะ 💖<br><span class="text-sm font-normal text-gray-400">ไม่สามารถส่งข้อความเพิ่มเติมได้</span></p>
+                </div>
+            </div>
+
+            <!-- Admin Login Modal -->
+            <div id="admin-login-modal" onclick="if(event.target===this) closeAdminLoginModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-md overflow-hidden transform transition-all p-6 md:p-8 relative">
+                    <button type="button" onclick="closeAdminLoginModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5 absolute top-5 right-5">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-amber-500/10 text-warning rounded-full flex items-center justify-center text-2xl mx-auto mb-3 border border-warning/20">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-xl">เข้าสู่ระบบแอดมิน</h3>
+                        <p class="text-xs text-gray-400 mt-1">ยืนยันตัวตนผ่าน Supabase เพื่อจัดการระบบ 🌸</p>
+                    </div>
+                    <form onsubmit="handleAdminLoginSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">อีเมลแอดมิน (Admin Email)</label>
+                            <input type="email" id="admin-login-email" required placeholder="admin@monali.com" class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm bg-[#141214] text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">รหัสผ่าน (Password)</label>
+                            <input type="password" id="admin-login-password" required placeholder="••••••••" class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm bg-[#141214] text-white">
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" id="btn-admin-login-submit" class="w-full bg-warning hover:bg-amber-400 text-gray-900 py-3 rounded-full shadow-md font-semibold transition-transform transform hover:scale-105 text-sm flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt mr-2"></i> <span id="btn-admin-login-text">เข้าสู่ระบบแอดมิน</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Announcement Modal -->
+            <div id="edit-announcement-modal" onclick="if(event.target===this) closeEditAnnouncementModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-lg overflow-hidden transform transition-all p-6 md:p-8 relative">
+                    <button type="button" onclick="closeEditAnnouncementModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5 absolute top-5 right-5">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center text-2xl mx-auto mb-3 border border-primary/20">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-xl">แก้ไขข้อความประกาศวิ่ง</h3>
+                        <p class="text-xs text-gray-400 mt-1">กรอกข้อความประกาศที่ต้องการให้แสดงด้านบนเว็บไซต์ 🌸</p>
+                    </div>
+                    <form onsubmit="handleSaveAnnouncement(event)" class="space-y-4">
+                        <div>
+                            <textarea id="announcement-input" required rows="4" placeholder="พิมพ์ข้อความประกาศ..." class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none text-sm resize-none bg-[#141214] text-white"></textarea>
+                        </div>
+                        <div class="pt-2">
+                            <button type="submit" id="btn-save-announcement" class="w-full bg-primary hover:bg-primary-hover text-white py-3 rounded-full shadow-md font-semibold transition-transform transform hover:scale-105 text-sm flex items-center justify-center">
+                                <i class="fas fa-save mr-2"></i> <span id="btn-save-announcement-text">บันทึกข้อความประกาศ</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Ticket Modal -->
+            <div id="edit-ticket-modal" onclick="if(event.target===this) closeEditModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-lg overflow-hidden transform transition-all">
+                    <div class="bg-pink-500/10 px-6 py-4 border-b border-pink-500/20 flex justify-between items-center">
+                        <h3 class="font-bold text-white text-lg"><i class="fas fa-edit text-primary mr-2"></i> แก้ไขข้อมูลปัญหา (Admin)</h3>
+                        <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <form id="edit-ticket-form" onsubmit="handleEditTicket(event)" class="p-6 space-y-4">
+                        <div>
+                            <label for="edit-app-select" class="block text-sm font-semibold text-gray-300 mb-1.5">แอพพรีเมี่ยมที่มีปัญหา</label>
+                            <select id="edit-app-select" required class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                                <!-- Options -->
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full min-w-0">
+                            <div class="w-full min-w-0">
+                                <label for="edit-purchase-date" class="block text-sm font-semibold text-gray-300 mb-1.5">วันที่ซื้อ</label>
+                                <input type="date" id="edit-purchase-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                            </div>
+                            <div class="w-full min-w-0">
+                                <label for="edit-expiry-date" class="block text-sm font-semibold text-gray-300 mb-1.5">วันที่ครบกำหนด</label>
+                                <input type="date" id="edit-expiry-date" required class="w-full max-w-full min-w-0 block rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="edit-claim-type" class="block text-sm font-semibold text-gray-300 mb-1.5">รูปแบบการซื้อ</label>
+                            <select id="edit-claim-type" required class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none bg-[#141214] text-white">
+                                <option value="เคลม (มีประกัน)">เคลม (มีประกัน)</option>
+                                <option value="ไม่เคลม (ไม่มีประกัน)">ไม่เคลม (ไม่มีประกัน)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="edit-ticket-desc" class="block text-sm font-semibold text-gray-300 mb-1.5">รายละเอียดปัญหา</label>
+                            <textarea id="edit-ticket-desc" required rows="4" class="w-full rounded-2xl border border-pink-500/30 px-4 py-3 focus:border-primary focus:ring-primary outline-none resize-none bg-[#141214] text-white"></textarea>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3 mt-4">
+                            <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 bg-[#141214] border border-pink-500/20 rounded-full text-gray-300 hover:bg-white/5 transition-colors font-medium">ยกเลิก</button>
+                            <button type="submit" id="btn-save-edit-ticket" class="px-5 py-2.5 bg-primary text-white rounded-full hover:bg-primary-hover shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105 font-medium flex items-center">
+                                <i class="fas fa-save mr-2"></i> <span id="btn-save-edit-ticket-text">บันทึกการแก้ไข</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Apps Modal -->
+            <div id="manage-apps-modal" onclick="if(event.target===this) closeManageAppsModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-md overflow-hidden transform transition-all flex flex-col max-h-[80vh]">
+                    <div class="bg-pink-500/10 px-6 py-4 border-b border-pink-500/20 flex justify-between items-center shrink-0">
+                        <h3 class="font-bold text-white text-lg"><i class="fas fa-list-ul text-primary mr-2"></i> จัดการรายการแอปพลิเคชัน</h3>
+                        <button type="button" onclick="closeManageAppsModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 overflow-y-auto grow">
+                        <p class="text-sm text-gray-400 mb-4">ตัวเลือกเหล่านี้จะไปแสดงในแบบฟอร์มแจ้งปัญหาของตัวแทน</p>
+                        <div id="manage-apps-list" class="space-y-2 mb-6">
+                            <!-- App list -->
+                        </div>
+                        <form onsubmit="addApp(event)" class="flex gap-2">
+                            <input type="text" id="new-app-input" required placeholder="พิมพ์ชื่อแอปใหม่..." class="flex-grow rounded-full border border-pink-500/30 px-4 py-2 focus:border-primary focus:ring-primary outline-none text-sm bg-[#141214] text-white">
+                            <button type="submit" id="btn-add-app" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-hover shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105 text-sm font-medium flex items-center gap-1">
+                                <i class="fas fa-plus"></i> <span id="btn-add-app-text">เพิ่ม</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage FAQ Modal (Admin) -->
+            <div id="manage-faq-modal" onclick="if(event.target===this) closeManageFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+                    <div class="bg-warning/10 px-6 py-4 border-b border-warning/20 flex justify-between items-center shrink-0">
+                        <h3 class="font-bold text-white text-lg"><i class="fas fa-question-circle text-warning mr-2"></i> จัดการคำถามที่พบบ่อย (FAQ)</h3>
+                        <button type="button" onclick="closeManageFAQModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 overflow-y-auto grow space-y-4">
+                        <div id="admin-faq-list" class="space-y-4 mb-6">
+                            <!-- FAQ list -->
+                        </div>
+                        <div class="bg-[#141214] p-5 rounded-2xl border border-pink-500/20 shadow-sm">
+                            <h4 class="font-bold text-white mb-3 text-sm">เพิ่มคำถาม-ตอบใหม่</h4>
+                            <form onsubmit="addFAQ(event)" class="space-y-3">
+                                <div>
+                                    <input type="text" id="new-faq-question" required placeholder="คำถาม เช่น ทำไมเข้าระบบไม่ได้?" class="w-full rounded-xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm bg-[#1e1b1e] text-white">
+                                </div>
+                                <div>
+                                    <textarea id="new-faq-answer" required rows="3" placeholder="คำตอบและวิธีแก้ไขเบื้องต้น..." class="w-full rounded-xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm resize-none bg-[#1e1b1e] text-white"></textarea>
+                                </div>
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" id="btn-add-faq" class="bg-warning text-gray-900 px-6 py-2.5 rounded-full hover:bg-amber-400 shadow-sm transition-transform transform hover:scale-105 text-sm font-medium flex items-center">
+                                        <i class="fas fa-plus mr-2"></i> <span id="btn-add-faq-text">เพิ่มข้อมูล FAQ</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telegram Settings Modal (Admin) -->
+            <div id="telegram-settings-modal" onclick="if(event.target===this) closeTelegramModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-xl overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
+                    <div class="bg-sky-500/10 px-6 py-4 border-b border-sky-500/20 flex justify-between items-center shrink-0">
+                        <div class="flex items-center gap-2">
+                            <i class="fab fa-telegram-plane text-sky-400 text-xl"></i>
+                            <h3 class="font-bold text-white text-lg">ตั้งค่าและแก้ไขข้อความแจ้งเตือน Telegram</h3>
+                        </div>
+                        <button type="button" onclick="closeTelegramModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-5 sm:p-6 overflow-y-auto grow space-y-5">
+                        <form id="telegram-settings-form" onsubmit="handleSaveTelegramSettings(event)" class="space-y-4">
+                            <!-- Token & Chat ID -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#141214] p-4 rounded-2xl border border-pink-500/20">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Telegram Bot Token <span class="text-danger">*</span></label>
+                                    <input type="text" id="telegram-bot-token" required class="w-full rounded-xl border border-pink-500/30 px-3 py-2 text-xs focus:border-sky-400 focus:ring-sky-400 outline-none bg-[#1e1b1e] text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Telegram Chat ID <span class="text-danger">*</span></label>
+                                    <input type="text" id="telegram-chat-id" required class="w-full rounded-xl border border-pink-500/30 px-3 py-2 text-xs focus:border-sky-400 focus:ring-sky-400 outline-none bg-[#1e1b1e] text-white">
+                                </div>
+                            </div>
+
+                            <!-- Variables Quick Insert Guide -->
+                            <div class="bg-pink-500/10 p-3.5 rounded-2xl border border-pink-500/20 text-xs">
+                                <p class="font-bold text-pink-300 mb-1.5 flex items-center"><i class="fas fa-code mr-1.5"></i> แท็กตัวแปรที่นำไปวางในข้อความได้:</p>
+                                <div class="flex flex-wrap gap-1.5 text-[11px]">
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{id}</code> รหัสเคส</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{agentName}</code> ผู้แจ้ง</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{appName}</code> ชื่อแอป</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{claimType}</code> ประกัน</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{purchaseDate}</code> วันที่ซื้อ</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{expiryDate}</code> วันหมดอายุ</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{description}</code> รายละเอียด</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{message}</code> ข้อความแชท</span>
+                                    <span class="bg-[#141214] px-2 py-0.5 rounded text-pink-200 border border-pink-500/30"><code>{time}</code> เวลา</span>
+                                </div>
+                            </div>
+
+                            <!-- 1. Ticket Template -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-xs font-semibold text-gray-200">1. รูปแบบข้อความเมื่อมีเคสใหม่ (New Ticket)</label>
+                                    <button type="button" onclick="resetDefaultTicketTemplate()" class="text-[11px] text-pink-400 hover:text-pink-300 underline">คืนค่าเริ่มต้น</button>
+                                </div>
+                                <textarea id="telegram-ticket-template" required rows="6" class="w-full rounded-2xl border border-pink-500/30 px-3.5 py-2.5 focus:border-sky-400 focus:ring-sky-400 outline-none text-xs leading-relaxed font-mono resize-y bg-[#141214] text-white"></textarea>
+                                <p class="text-[10px] text-gray-400 mt-1">สามารถใส่โค้ด <code>&lt;b&gt;ตัวหนา&lt;/b&gt;</code> หรือ <code>&lt;code&gt;ตัวอักษรกล่อง&lt;/code&gt;</code> ได้ค่ะ</p>
+                            </div>
+
+                            <!-- 2. Chat Message Template -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-xs font-semibold text-gray-200">2. รูปแบบข้อความเมื่อลูกค้าส่งแชทใหม่ (New Message)</label>
+                                    <button type="button" onclick="resetDefaultChatTemplate()" class="text-[11px] text-pink-400 hover:text-pink-300 underline">คืนค่าเริ่มต้น</button>
+                                </div>
+                                <textarea id="telegram-chat-template" required rows="5" class="w-full rounded-2xl border border-pink-500/30 px-3.5 py-2.5 focus:border-sky-400 focus:ring-sky-400 outline-none text-xs leading-relaxed font-mono resize-y bg-[#141214] text-white"></textarea>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                                <button type="button" id="btn-test-telegram" onclick="testTelegramNotification()" class="w-full bg-[#141214] border border-sky-400/40 hover:bg-sky-500/20 text-sky-300 py-3 rounded-full font-semibold transition-all text-sm flex items-center justify-center">
+                                    <i class="fas fa-paper-plane mr-2"></i> <span id="btn-test-telegram-text">ทดสอบส่งแจ้งเตือน</span>
+                                </button>
+                                <button type="submit" id="btn-save-telegram" class="w-full bg-sky-500 hover:bg-sky-400 text-white py-3 rounded-full shadow-md font-semibold transition-transform transform hover:scale-105 text-sm flex items-center justify-center">
+                                    <i class="fas fa-save mr-2"></i> <span id="btn-save-telegram-text">บันทึกข้อความและการตั้งค่า</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View FAQ Modal (Agent) - Pink & White Theme -->
+            <div id="view-faq-modal" onclick="if(event.target===this) closeViewFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-lg overflow-hidden transform transition-all relative">
+                    <div class="bg-pink-50 px-6 py-5 border-b border-pink-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-lg flex items-center"><i class="fas fa-lightbulb text-primary mr-2"></i> คำแนะนำเบื้องต้น</h3>
+                        <button type="button" onclick="closeViewFAQModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-pink-100 absolute top-4 right-4">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <h4 id="view-faq-question" class="text-lg font-bold text-gray-900 mb-4 pr-6 leading-snug">คำถาม?</h4>
+                        <div class="bg-pink-50/50 rounded-2xl p-5 border border-pink-100">
+                            <p id="view-faq-answer" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed">คำตอบ</p>
+                        </div>
+                        <div class="mt-8 flex justify-center">
+                            <button onclick="closeViewFAQModal()" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-primary-hover shadow-md shadow-pink-500/20 transition-all font-medium transform hover:-translate-y-1">เข้าใจแล้ว ขอบคุณค่ะ 💖</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Alert Modal -->
+            <div id="custom-alert-modal" onclick="if(event.target===this) closeCustomAlert()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
+                    <div class="w-16 h-16 bg-pink-500/10 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-pink-500/20">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <p id="custom-alert-text" class="text-white font-medium mb-6"></p>
+                    <button onclick="closeCustomAlert()" class="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-medium shadow-sm transition-all w-full">ตกลง</button>
+                </div>
+            </div>
+
+            <!-- Custom Confirm Modal -->
+            <div id="custom-confirm-modal" onclick="if(event.target===this) closeCustomConfirm()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
+                    <div class="w-16 h-16 bg-warning/10 text-warning rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-warning/20">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <p id="custom-confirm-text" class="text-white font-medium mb-6 whitespace-pre-line"></p>
+                    <div class="flex gap-3 justify-center">
+                        <button onclick="closeCustomConfirm()" class="px-5 py-2.5 bg-[#141214] border border-pink-500/20 rounded-full text-gray-300 hover:bg-white/5 transition-colors font-medium w-full">ยกเลิก</button>
+                        <button onclick="executeConfirm()" class="px-5 py-2.5 bg-primary text-white rounded-full hover:bg-primary-hover shadow-sm transition-all font-medium w-full">ตกลง</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // ป้องกัน SecurityError เมื่อรันใน Canvas Preview iframe
+        window.addEventListener('error', function(e) {
+            if (e && (e.message?.includes('not allowed in Canvas') || e.error?.message?.includes('not allowed in Canvas'))) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return true;
+            }
+        }, true);
+
+        // --- Supabase Cloud Configuration (Publishable Anon Key only) ---
+        const SUPABASE_PROJECT_URL = "https://odkuhnxzskccpmlpimau.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ka3Vobnh6c2tjY3BtbHBpbWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg3NzcsImV4cCI6MjEwNjg5NDc3N30.MxuWQk1jk1Rfg-Sw1gXgvI4kQZHD2eR2RVEiTtVXoAc";
+
+        // --- Telegram Defaults ---
+        const DEFAULT_TELEGRAM_TOKEN = "8817681944:AAGk1wSyvzaXjwlxj6-XYKPXqM1dOCcv4fw";
+        const DEFAULT_TELEGRAM_CHAT_ID = "-5469928489";
+
+        const DEFAULT_TELEGRAM_TICKET_TEMPLATE = `🌸 <b>[MONALI] มีการแจ้งปัญหาใหม่!</b> 🚨
+━━━━━━━━━━━━━━━━━
+🎫 <b>รหัสเคส:</b> <code>{id}</code>
+👤 <b>ผู้แจ้ง:</b> {agentName}
+📱 <b>แอปพลิเคชัน:</b> {appName}
+🛡️ <b>รูปแบบ:</b> {claimType}
+📅 <b>วันที่ซื้อ:</b> {purchaseDate}
+⏰ <b>ครบกำหนด:</b> {expiryDate}
+📝 <b>รายละเอียดปัญหา:</b>
+{description}
+━━━━━━━━━━━━━━━━━
+🕒 <i>เวลา: {time}</i>`;
+
+        const DEFAULT_TELEGRAM_CHAT_TEMPLATE = `💬 <b>[MONALI] ข้อความใหม่จากลูกค้า!</b> 🔔
+━━━━━━━━━━━━━━━━━
+🎫 <b>รหัสเคส:</b> <code>{id}</code> ({appName})
+👤 <b>ผู้ส่ง:</b> {agentName}
+💬 <b>ข้อความ:</b>
+{message}
+━━━━━━━━━━━━━━━━━
+🕒 <i>เวลา: {time}</i>`;
+
+        // Text sanitizer using safe HTML entity replacement
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getTelegramToken() {
+            return localStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
+        }
+
+        function getTelegramChatId() {
+            return localStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
+        }
+
+        function getTelegramTicketTemplate() {
+            return localStorage.getItem('helpCenterTelegramTicketTemplate') || DEFAULT_TELEGRAM_TICKET_TEMPLATE;
+        }
+
+        function getTelegramChatTemplate() {
+            return localStorage.getItem('helpCenterTelegramChatTemplate') || DEFAULT_TELEGRAM_CHAT_TEMPLATE;
+        }
+
+        // --- Application State ---
+        let currentRole = 'agent'; // 'agent' or 'admin'
+        
+        let deviceId = localStorage.getItem('helpCenterDeviceId');
+        if (!deviceId) {
+            deviceId = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            localStorage.setItem('helpCenterDeviceId', deviceId);
+        }
+        
+        let currentAgentName = "Agent " + deviceId;
+        let viewingTicketId = null;
+        let currentFilter = 'All';
+
+        let applications = [];
+        let faqs = [];
+        let tickets = [];
+        let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
+
+        // Button double-click and loading helper
+        function setButtonLoading(btnEl, textEl, isLoading, loadingText, defaultText) {
+            if (!btnEl) return;
+            btnEl.disabled = isLoading;
+            if (isLoading) {
+                btnEl.classList.add('opacity-60', 'cursor-not-allowed');
+                if (textEl) textEl.textContent = loadingText;
+            } else {
+                btnEl.classList.remove('opacity-60', 'cursor-not-allowed');
+                if (textEl) textEl.textContent = defaultText;
+            }
+        }
+
+        // Initialize Supabase Client with x-device-id header
+        let supabaseClient = null;
+        try {
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                supabaseClient = window.supabase.createClient(SUPABASE_PROJECT_URL, SUPABASE_ANON_KEY, {
+                    global: {
+                        headers: {
+                            'x-device-id': deviceId
+                        }
+                    }
+                });
+            }
+        } catch (sbInitErr) {
+            console.warn('Supabase initialization fallback:', sbInitErr);
+        }
+
+        function renderAnnouncement() {
+            const marqueeContainer = document.getElementById('marquee-text-display');
+            if (marqueeContainer) {
+                marqueeContainer.innerHTML = '';
+                const span1 = document.createElement('span');
+                span1.textContent = announcementText;
+                const span2 = document.createElement('span');
+                span2.textContent = announcementText;
+                marqueeContainer.appendChild(span1);
+                marqueeContainer.appendChild(span2);
+            }
+        }
+        renderAnnouncement();
+
+        function compressAndProcessImage(file, maxWidth, maxHeight, quality, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+                    } else {
+                        if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+                    }
+
+                    canvas.width = Math.round(width);
+                    canvas.height = Math.round(height);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+                    callback(compressedBase64);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function handleCoverUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            compressAndProcessImage(file, 1200, 500, 0.75, async function(base64) {
+                document.getElementById('cover-banner-img').src = base64;
+                if (supabaseClient) {
+                    try {
+                        const { error } = await supabaseClient.from('shop_settings').update({ cover_image_url: base64 }).eq('id', 1);
+                        if (error) throw error;
+                        customAlert('อัปเดตภาพปกแบนเนอร์เรียบร้อยแล้วค่ะ 🌸');
+                    } catch (err) {
+                        console.error(err);
+                        customAlert('เกิดข้อผิดพลาดในการบันทึกรูปปก: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+                    }
+                }
+            });
+        }
+
+        async function handleLogoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            compressAndProcessImage(file, 250, 250, 0.85, async function(base64) {
+                document.getElementById('nav-logo-img').src = base64;
+                if (supabaseClient) {
+                    try {
+                        const { error } = await supabaseClient.from('shop_settings').update({ logo_image_url: base64 }).eq('id', 1);
+                        if (error) throw error;
+                        customAlert('อัปเดตโลโก้เรียบร้อยแล้วค่ะ 🌸');
+                    } catch (err) {
+                        console.error(err);
+                        customAlert('เกิดข้อผิดพลาดในการบันทึกโลโก้: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+                    }
+                }
+            });
+        }
+
+        const autoReplyRules = [
+            { keywords: ['รหัสผ่าน', 'ลืมรหัส', 'password'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากคุณพบปัญหาเรื่องรหัสผ่าน สามารถกดที่ปุ่ม "ลืมรหัสผ่าน" (Forgot Password) ที่หน้าเข้าสู่ระบบเพื่อรีเซ็ตได้ด้วยตนเองผ่านอีเมลค่ะ' },
+            { keywords: ['เด้ง', 'ค้าง', 'ดับ'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: สำหรับปัญหาแอปพลิเคชันเด้งหรือค้าง เบื้องต้นแนะนำให้ "เคลียร์แคช (Clear Cache)" ในตั้งค่าโทรศัพท์ หรือตรวจสอบว่าแอปพลิเคชันได้รับการอัปเดตเป็นเวอร์ชันล่าสุดแล้วใน Store ค่ะ' },
+            { keywords: ['เข้าไม่ได้', 'login ไม่ได้', 'เข้าระบบไม่ได้'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากเข้าสู่ระบบไม่ได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต และยืนยันว่าใช้ Username/Password ที่ถูกต้องค่ะ' }
+        ];
+
+        async function syncFromSupabase() {
+            if (!supabaseClient) return;
+            try {
+                // 1. Fetch Shop settings (Row 1)
+                const { data: shopData, error: shopErr } = await supabaseClient
+                    .from('shop_settings')
+                    .select('*')
+                    .eq('id', 1)
+                    .maybeSingle();
+
+                if (shopData && !shopErr) {
+                    if (shopData.announcement_text) {
+                        announcementText = shopData.announcement_text;
+                        renderAnnouncement();
+                    }
+                    if (shopData.cover_image_url) {
+                        document.getElementById('cover-banner-img').src = shopData.cover_image_url;
+                    }
+                    if (shopData.logo_image_url) {
+                        document.getElementById('nav-logo-img').src = shopData.logo_image_url;
+                    }
+                }
+
+                // 2. Fetch Applications
+                const { data: appsData, error: appsErr } = await supabaseClient
+                    .from('applications')
+                    .select('app_name')
+                    .order('id', { ascending: true });
+
+                if (!appsErr && appsData) {
+                    applications = appsData.map(a => a.app_name);
+                    renderAppDropdowns();
+                }
+
+                // 3. Fetch FAQs
+                const { data: faqsData, error: faqsErr } = await supabaseClient
+                    .from('faqs')
+                    .select('id, question, answer, sort_order')
+                    .order('sort_order', { ascending: true });
+
+                if (!faqsErr && faqsData) {
+                    faqs = faqsData;
+                    renderAgentFAQs();
+                    if (currentRole === 'admin') renderAdminFAQList();
+                }
+
+                // 4. Fetch Tickets
+                let query = supabaseClient.from('tickets').select('*');
+                // หากเป็น Guest จะเห็นเฉพาะเครื่องของตัวเองผ่าน RLS อัตโนมัติ (และกรองเพิ่มเติมเพื่อความแน่นอน)
+                if (currentRole !== 'admin') {
+                    query = query.eq('device_id', deviceId);
+                }
+                const { data: ticketsData, error: tckErr } = await query.order('created_at', { ascending: false });
+
+                if (!tckErr && ticketsData) {
+                    tickets = ticketsData.map(t => ({
+                        id: t.id,
+                        deviceId: t.device_id,
+                        agentName: t.agent_name,
+                        appName: t.app_name,
+                        purchaseDate: t.purchase_date,
+                        expiryDate: t.expiry_date,
+                        claimType: t.claim_type,
+                        subject: t.subject,
+                        description: t.description,
+                        status: t.status,
+                        image: t.image_url,
+                        createdAt: t.created_at,
+                        updatedAt: t.updated_at,
+                        messages: []
+                    }));
+
+                    if (currentRole === 'admin') renderAdminDashboard();
+                    else renderAgentDashboard();
+
+                    // If currently viewing a ticket detail, refresh its messages
+                    if (viewingTicketId) {
+                        await loadTicketMessages(viewingTicketId);
+                    }
+                }
+            } catch (err) {
+                console.warn('Sync from Supabase status:', err);
+            }
+        }
+
+        // Load Messages for a specific Ticket
+        async function loadTicketMessages(ticketId) {
+            if (!supabaseClient || !ticketId) return;
+            try {
+                const { data: msgsData, error } = await supabaseClient
+                    .from('messages')
+                    .select('*')
+                    .eq('ticket_id', ticketId)
+                    .order('created_at', { ascending: true });
+
+                if (!error && msgsData) {
+                    const ticket = tickets.find(t => t.id === ticketId);
+                    if (ticket) {
+                        ticket.messages = msgsData.map(m => ({
+                            id: m.id,
+                            sender: m.sender_role,
+                            senderName: m.sender_name,
+                            text: m.text,
+                            image: m.image_url,
+                            timestamp: m.created_at
+                        }));
+                    }
+                    if (viewingTicketId === ticketId) {
+                        renderChatMessages();
+                    }
+                }
+            } catch (msgErr) {
+                console.error('Failed loading messages:', msgErr);
+            }
+        }
+
+        let pollingTimer = null;
+        function startFallbackPolling() {
+            if (pollingTimer) return;
+            pollingTimer = setInterval(() => {
+                syncFromSupabase();
+            }, 5000);
+        }
+
+        function initRealtime() {
+            if (!supabaseClient) return;
+
+            // ตรวจสอบ Sandbox ใน Canvas Preview เพื่อป้องกัน WebSocket SecurityError
+            const isRestrictedSandbox = (function() {
+                try {
+                    if (window.self !== window.top) return true;
+                    if (typeof WebSocket === 'undefined') return true;
+                } catch (e) {
+                    return true;
+                }
+                return false;
+            })();
+
+            if (isRestrictedSandbox) {
+                startFallbackPolling();
+                return;
+            }
+
+            try {
+                supabaseClient.channel('monali-realtime')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, () => syncFromSupabase())
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+                        if (viewingTicketId) loadTicketMessages(viewingTicketId);
+                        syncFromSupabase();
+                    })
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_settings' }, () => syncFromSupabase())
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'faqs' }, () => syncFromSupabase())
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, () => syncFromSupabase())
+                    .subscribe((status) => {
+                        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                            startFallbackPolling();
+                        }
+                    });
+            } catch (rtErr) {
+                console.warn('Realtime fallback to polling:', rtErr);
+                startFallbackPolling();
+            }
+        }
+
+        function renderAppDropdowns() {
+            const createSelect = document.getElementById('app-select');
+            const editSelect = document.getElementById('edit-app-select');
+            if(!createSelect || !editSelect) return;
+
+            const currentCreateVal = createSelect.value;
+            const currentEditVal = editSelect.value;
+
+            createSelect.innerHTML = '<option value="" disabled selected>✨ เลือกแอปพลิเคชัน...</option>';
+            editSelect.innerHTML = '';
+
+            if (applications.length === 0) {
+                createSelect.innerHTML = '<option value="" disabled selected>⏳ กำลังโหลดรายการแอปพลิเคชัน...</option>';
+                return;
+            }
+
+            applications.forEach(app => {
+                const opt1 = document.createElement('option');
+                opt1.value = app;
+                opt1.textContent = app;
+                createSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = app;
+                opt2.textContent = app;
+                editSelect.appendChild(opt2);
+            });
+
+            if (applications.includes(currentCreateVal)) createSelect.value = currentCreateVal;
+            if (applications.includes(currentEditVal)) editSelect.value = currentEditVal;
+        }
+
+        function openManageAppsModal() {
+            renderManageAppsList();
+            document.getElementById('manage-apps-modal').classList.remove('hide');
+        }
+
+        function closeManageAppsModal() {
+            document.getElementById('manage-apps-modal').classList.add('hide');
+        }
+
+        function renderManageAppsList() {
+            const list = document.getElementById('manage-apps-list');
+            list.innerHTML = '';
+
+            if (applications.length === 0) {
+                const emptyP = document.createElement('p');
+                emptyP.className = "text-center text-xs text-gray-400 py-3";
+                emptyP.textContent = "ยังไม่มีรายการแอปพลิเคชันค่ะ ✨";
+                list.appendChild(emptyP);
+                return;
+            }
+
+            applications.forEach((app, index) => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-[#141214] px-4 py-2.5 rounded-2xl border border-pink-500/20";
+                
+                const span = document.createElement('span');
+                span.className = "text-white font-medium text-sm";
+                span.textContent = app;
+
+                const btn = document.createElement('button');
+                btn.type = "button";
+                btn.className = "text-danger hover:text-white hover:bg-danger w-8 h-8 rounded-full transition-colors flex justify-center items-center";
+                btn.innerHTML = '<i class="fas fa-trash-alt text-sm"></i>';
+                btn.onclick = () => deleteApp(index);
+
+                item.appendChild(span);
+                item.appendChild(btn);
+                list.appendChild(item);
+            });
+        }
+
+        async function addApp(event) {
+            event.preventDefault();
+            const input = document.getElementById('new-app-input');
+            const btn = document.getElementById('btn-add-app');
+            const textEl = document.getElementById('btn-add-app-text');
+            const newApp = input.value.trim();
+
+            if (!newApp) return;
+            if (applications.includes(newApp)) {
+                customAlert('มีแอปพลิเคชันนี้ในระบบแล้วค่ะ 🎀');
+                return;
+            }
+
+            setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'เพิ่ม');
+
+            try {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('applications').insert({ app_name: newApp });
+                    if (error) throw error;
+                }
+                applications.push(newApp);
+                input.value = '';
+                renderManageAppsList();
+                renderAppDropdowns();
+            } catch (err) {
+                console.error(err);
+                customAlert('เกิดข้อผิดพลาดในการเพิ่มแอป: ' + (err.message || 'สิทธิ์ไม่ถูกต้อง'));
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'เพิ่ม');
+            }
+        }
+
+        function deleteApp(index) {
+            customConfirm('คุณต้องการลบแอปพลิเคชันนี้ออกจากตัวเลือกใช่หรือไม่? 🗑️', async function() {
+                const appToDelete = applications[index];
+                try {
+                    if (supabaseClient) {
+                        const { error } = await supabaseClient.from('applications').delete().eq('app_name', appToDelete);
+                        if (error) throw error;
+                    }
+                    applications.splice(index, 1);
+                    renderManageAppsList();
+                    renderAppDropdowns();
+                } catch (err) {
+                    console.error(err);
+                    customAlert('เกิดข้อผิดพลาดในการลบแอป: ' + (err.message || 'สิทธิ์ไม่ถูกต้อง'));
+                }
+            });
+        }
+
+        function renderAgentFAQs() {
+            const list = document.getElementById('agent-faq-list');
+            if(!list) return;
+            list.innerHTML = '';
+            
+            if (faqs.length === 0) {
+                list.innerHTML = '<p class="text-sm text-gray-500 col-span-2 text-center py-4 bg-white rounded-2xl border border-pink-200 shadow-sm">ยังไม่มีข้อมูลช่วยเหลือเบื้องต้นในขณะนี้ค่ะ ✨</p>';
+                return;
+            }
+
+            faqs.forEach((faq, index) => {
+                const div = document.createElement('div');
+                div.onclick = function() { openViewFAQ(index); };
+                div.className = "bg-white border border-pink-100 hover:border-primary rounded-2xl p-3 cursor-pointer shadow-sm hover:shadow transition-all flex items-center justify-between group transform hover:-translate-y-0.5";
+                
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <div class="w-8 h-8 rounded-full bg-pink-50 text-primary flex items-center justify-center font-bold text-xs shrink-0">
+                            <i class="fas fa-question"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-gray-900 text-xs sm:text-sm truncate group-hover:text-primary transition-colors">${escapeHtml(faq.question)}</h4>
+                            <p class="text-[10px] text-gray-400">คลิกเพื่อดูวิธีแก้ไข...</p>
+                        </div>
+                    </div>
+                    <div class="text-gray-300 text-xs pl-2 group-hover:text-primary shrink-0">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function openViewFAQ(index) {
+            const faq = faqs[index];
+            if (!faq) return;
+            document.getElementById('view-faq-question').textContent = faq.question;
+            document.getElementById('view-faq-answer').textContent = faq.answer;
+            document.getElementById('view-faq-modal').classList.remove('hide');
+        }
+
+        function closeViewFAQModal() {
+            document.getElementById('view-faq-modal').classList.add('hide');
+        }
+
+        function openManageFAQModal() {
+            renderAdminFAQList();
+            document.getElementById('manage-faq-modal').classList.remove('hide');
+        }
+
+        function closeManageFAQModal() {
+            document.getElementById('manage-faq-modal').classList.add('hide');
+        }
+
+        function renderAdminFAQList() {
+            const list = document.getElementById('admin-faq-list');
+            list.innerHTML = '';
+            
+            if(faqs.length === 0) {
+                 list.innerHTML = '<p class="text-center text-sm text-gray-400 py-4 bg-[#141214] rounded-2xl border border-pink-500/20">ยังไม่มีข้อมูล FAQ ค่ะ ลองเพิ่มข้อมูลด้านล่างดูนะคะ 💖</p>';
+                 return;
+            }
+
+            faqs.forEach((faq, index) => {
+                const item = document.createElement('div');
+                item.className = "bg-[#141214] border border-pink-500/20 rounded-2xl p-5 shadow-sm relative pr-14 transition-all hover:border-warning";
+                
+                const qHeader = document.createElement('h4');
+                qHeader.className = "font-bold text-white text-sm mb-2 leading-relaxed";
+                qHeader.innerHTML = `<span class="text-warning mr-1">Q:</span> ${escapeHtml(faq.question)}`;
+
+                const aPara = document.createElement('p');
+                aPara.className = "text-xs text-gray-300 whitespace-pre-line leading-relaxed";
+                aPara.innerHTML = `<span class="text-success mr-1">A:</span> ${escapeHtml(faq.answer)}`;
+
+                const delBtn = document.createElement('button');
+                delBtn.type = "button";
+                delBtn.className = "absolute top-1/2 -translate-y-1/2 right-4 text-danger hover:text-white hover:bg-danger w-9 h-9 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20";
+                delBtn.innerHTML = '<i class="fas fa-trash-alt text-sm"></i>';
+                delBtn.onclick = () => deleteFAQ(index);
+
+                item.appendChild(qHeader);
+                item.appendChild(aPara);
+                item.appendChild(delBtn);
+                list.appendChild(item);
+            });
+        }
+
+        async function addFAQ(event) {
+            event.preventDefault();
+            const questionInput = document.getElementById('new-faq-question');
+            const answerInput = document.getElementById('new-faq-answer');
+            const btn = document.getElementById('btn-add-faq');
+            const textEl = document.getElementById('btn-add-faq-text');
+
+            const q = questionInput.value.trim();
+            const a = answerInput.value.trim();
+            if (!q || !a) return;
+
+            setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'เพิ่มข้อมูล FAQ');
+
+            try {
+                let newRecord = { question: q, answer: a, sort_order: faqs.length + 1 };
+                if (supabaseClient) {
+                    const { data, error } = await supabaseClient.from('faqs').insert(newRecord).select().single();
+                    if (error) throw error;
+                    if (data) newRecord = data;
+                }
+                faqs.push(newRecord);
+                questionInput.value = '';
+                answerInput.value = '';
+                renderAdminFAQList();
+                renderAgentFAQs();
+                customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
+            } catch (err) {
+                console.error(err);
+                customAlert('เกิดข้อผิดพลาดในการเพิ่ม FAQ: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ');
+            }
+        }
+
+        function deleteFAQ(index) {
+            customConfirm('ต้องการลบข้อมูล FAQ ข้อนี้ใช่หรือไม่คะ? 🗑️', async function() {
+                const item = faqs[index];
+                try {
+                    if (supabaseClient) {
+                        let query = supabaseClient.from('faqs').delete();
+                        if (item.id) query = query.eq('id', item.id);
+                        else query = query.eq('question', item.question);
+                        const { error } = await query;
+                        if (error) throw error;
+                    }
+                    faqs.splice(index, 1);
+                    renderAdminFAQList();
+                    renderAgentFAQs();
+                } catch (err) {
+                    console.error(err);
+                    customAlert('เกิดข้อผิดพลาดในการลบ FAQ: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                }
+            });
+        }
+
+        function switchView(viewId) {
+            // Guard: non-admin users must not open the admin dashboard
+            if (viewId === 'view-admin-dashboard' && currentRole !== 'admin') {
+                customAlert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้ กรุณาเข้าสู่ระบบแอดมินก่อนค่ะ 🔒');
+                switchView('view-agent-dashboard');
+                return;
+            }
+
+            const views = ['view-agent-dashboard', 'view-agent-create', 'view-admin-dashboard', 'view-ticket-detail'];
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hide');
+            });
+            const targetView = document.getElementById(viewId);
+            if (targetView) targetView.classList.remove('hide');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function handleRoleToggleClick() {
+            if (currentRole === 'agent') {
+                document.getElementById('admin-login-email').value = '';
+                document.getElementById('admin-login-password').value = '';
+                document.getElementById('admin-login-modal').classList.remove('hide');
+            } else {
+                // Logout from Admin mode
+                if (supabaseClient) {
+                    try { await supabaseClient.auth.signOut(); } catch(e){}
+                }
+                currentRole = 'agent';
+                document.body.classList.remove('is-admin');
+                const toggleBtn = document.getElementById('btn-role-toggle');
+                const toggleIcon = document.getElementById('role-toggle-icon');
+                const toggleText = document.getElementById('role-toggle-text');
+                toggleBtn.className = 'flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-pink-50 text-primary border border-pink-200 shadow-sm hover:shadow-md transition-all group';
+                toggleIcon.className = 'fas fa-user mr-2 group-hover:scale-110 transition-transform';
+                toggleText.textContent = 'Guest';
+                
+                await syncFromSupabase();
+                renderAgentDashboard();
+                switchView('view-agent-dashboard');
+                customAlert('ออกจากระบบแอดมินเรียบร้อยแล้วค่ะ 🌸');
+            }
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('admin-login-modal').classList.add('hide');
+        }
+
+        async function handleAdminLoginSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('admin-login-email').value.trim();
+            const password = document.getElementById('admin-login-password').value.trim();
+            const btn = document.getElementById('btn-admin-login-submit');
+            const textEl = document.getElementById('btn-admin-login-text');
+
+            if (!email || !password) return;
+            setButtonLoading(btn, textEl, true, 'กำลังตรวจสอบสิทธิ์...', 'เข้าสู่ระบบแอดมิน');
+
+            try {
+                if (!supabaseClient) {
+                    throw new Error('ระบบไม่สามารถเชื่อมต่อฐานข้อมูลได้ในขณะนี้');
+                }
+
+                // 1. Sign in via Supabase Auth
+                const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (authError || !authData?.user) {
+                    throw new Error(authError?.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้องค่ะ ❌');
+                }
+
+                // 2. Authorization Verification via is_admin() RPC function
+                const { data: isAdmin, error: rpcError } = await supabaseClient.rpc('is_admin');
+                if (rpcError) {
+                    console.warn('is_admin RPC notice:', rpcError);
+                }
+
+                // If not verified as admin, sign out immediately
+                if (!isAdmin) {
+                    await supabaseClient.auth.signOut();
+                    customAlert('บัญชีนี้ไม่มีสิทธิ์ผู้ดูแลระบบ (Admin) ค่ะ ❌\nหากเป็นแอดมิน กรุณาติดต่อตรวจสอบสิทธิ์ในฐานข้อมูลนะคะ');
+                    return;
+                }
+
+                // Success
+                closeAdminLoginModal();
+                currentRole = 'admin';
+                document.body.classList.add('is-admin');
+                
+                const toggleBtn = document.getElementById('btn-role-toggle');
+                const toggleIcon = document.getElementById('role-toggle-icon');
+                const toggleText = document.getElementById('role-toggle-text');
+                toggleBtn.className = 'flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:shadow-md transition-all group';
+                toggleIcon.className = 'fas fa-user-shield mr-2 group-hover:scale-110 transition-transform';
+                toggleText.textContent = 'Admin';
+
+                await syncFromSupabase();
+                renderAdminDashboard();
+                switchView('view-admin-dashboard');
+                customAlert('เข้าสู่ระบบแอดมินสำเร็จค่ะ ยินดีต้อนรับคุณแอดมิน 🌟');
+
+            } catch (loginErr) {
+                console.error(loginErr);
+                customAlert(loginErr.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ ❌');
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'เข้าสู่ระบบแอดมิน');
+            }
+        }
+
+        // Check if an existing admin session is already active on startup
+        async function checkInitialAdminSession() {
+            if (!supabaseClient) return;
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session && session.user) {
+                    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+                    if (isAdmin) {
+                        currentRole = 'admin';
+                        document.body.classList.add('is-admin');
+                        const toggleBtn = document.getElementById('btn-role-toggle');
+                        const toggleIcon = document.getElementById('role-toggle-icon');
+                        const toggleText = document.getElementById('role-toggle-text');
+                        toggleBtn.className = 'flex items-center px-5 py-2 text-sm font-semibold rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 shadow-sm hover:shadow-md transition-all group';
+                        toggleIcon.className = 'fas fa-user-shield mr-2 group-hover:scale-110 transition-transform';
+                        toggleText.textContent = 'Admin';
+                    } else {
+                        await supabaseClient.auth.signOut();
+                    }
+                }
+            } catch (sessErr) {
+                console.warn('Session verification notice:', sessErr);
+            }
+        }
+
+        function formatThaiDate(isoString) {
+            if (!isoString) return '-';
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return '-';
+            return date.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function formatThaiTime(isoString) {
+            if (!isoString) return '-';
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return '-';
+            return date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatDate(isoString) {
+            return formatThaiDate(isoString) + ' ' + formatThaiTime(isoString);
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'Open') {
+                return `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-amber-50 text-amber-600 border border-amber-200 flex items-center w-fit"><i class="fas fa-clock mr-1.5"></i> รอดำเนินการ</span>`;
+            } else {
+                return `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center w-fit"><i class="fas fa-check-circle mr-1.5"></i> แก้ไขแล้ว</span>`;
+            }
+        }
+
+        async function renderAgentDashboard() {
+            renderAgentFAQs();
+            const containerEl = document.getElementById('agent-ticket-container');
+            const emptyEl = document.getElementById('agent-empty-state');
+            
+            const agentTickets = tickets.filter(t => t.deviceId === deviceId);
+            containerEl.innerHTML = '';
+            
+            if (agentTickets.length === 0) {
+                emptyEl.classList.remove('hide');
+                containerEl.classList.add('hide');
+            } else {
+                emptyEl.classList.add('hide');
+                containerEl.classList.remove('hide');
+                
+                const allOpenTickets = tickets.filter(t => t.status === 'Open').sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+                for (const ticket of agentTickets) {
+                    let queueInfoHtml = '';
+                    if (ticket.status === 'Open') {
+                        let queueNumber = '-';
+                        let aheadCount = 0;
+
+                        // Calculation via server RPC or client-side fallback
+                        const queueIndex = allOpenTickets.findIndex(t => t.id === ticket.id);
+                        if (queueIndex >= 0) {
+                            queueNumber = queueIndex + 1;
+                            aheadCount = queueIndex;
+                        }
+
+                        queueInfoHtml = `
+                            <div class="bg-pink-50 border border-pink-100 rounded-2xl p-3 flex items-center justify-between text-xs font-medium text-gray-700">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">${queueNumber}</span>
+                                    <span>คิวของคุณในระบบ</span>
+                                </div>
+                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span class="text-gray-900 font-bold">${aheadCount}</span> คิว</span>
+                            </div>
+                        `;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = "bg-white border border-pink-100 hover:border-primary rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800";
+                    card.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="min-w-0 flex-grow">
+                                <div class="flex items-center gap-2 mb-0.5">
+                                    <span class="font-bold text-primary text-sm">${escapeHtml(ticket.id)}</span>
+                                    <span class="text-xs text-gray-300">•</span>
+                                    <span class="text-xs text-pink-600 font-medium truncate">${escapeHtml(ticket.appName)}</span>
+                                </div>
+                                <h4 class="font-bold text-gray-900 text-sm mb-1 truncate">${escapeHtml(ticket.subject)}</h4>
+                                <p class="text-[11px] text-gray-400 flex items-center gap-1"><i class="far fa-clock"></i> อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</p>
+                            </div>
+                        </div>
+                        ${queueInfoHtml}
+                        <div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
+                            <div>${getStatusBadge(ticket.status)}</div>
+                            <button onclick="openTicketDetail('${escapeHtml(ticket.id)}')" class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5">
+                                <i class="fas fa-comments"></i> แตะเพื่อต่อแอดมิน
+                            </button>
+                        </div>
+                    `;
+                    containerEl.appendChild(card);
+                }
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressAndProcessImage(file, 800, 800, 0.7, function(compressedBase64) {
+                document.getElementById('image-preview').src = compressedBase64;
+                document.getElementById('image-preview-container').classList.remove('hide');
+                document.getElementById('compressed-image-data').value = compressedBase64;
+            });
+        }
+
+        function removeImage() {
+            const fileInput = document.getElementById('file-upload');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('image-preview').src = '';
+            document.getElementById('compressed-image-data').value = '';
+            document.getElementById('image-preview-container').classList.add('hide');
+        }
+
+        async function handleCreateTicket(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-submit-ticket');
+            const textEl = document.getElementById('btn-submit-ticket-text');
+
+            const appName = document.getElementById('app-select').value;
+            const purchaseDate = document.getElementById('purchase-date').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const claimType = document.getElementById('claim-type').value;
+            const description = document.getElementById('ticket-desc').value.trim();
+            const imageData = document.getElementById('compressed-image-data').value;
+            
+            if (!imageData) {
+                customAlert('กรุณาแนบรูปหลักฐานการซื้อและรูปปัญหาด้วยค่ะ 📸');
+                return;
+            }
+
+            setButtonLoading(btn, textEl, true, 'กำลังส่งข้อมูล...', 'ส่งข้อมูล');
+
+            const subject = `แจ้งปัญหา ${appName}`;
+            const randomCode = Math.floor(1000 + Math.random() * 9000);
+            const newId = 'TCK-' + randomCode;
+            const now = new Date().toISOString();
+            const formattedDesc = `**รายละเอียดปัญหา:**\n${description}`;
+
+            const newTicket = {
+                id: newId,
+                deviceId: deviceId,
+                agentName: currentAgentName,
+                appName: appName,
+                purchaseDate: purchaseDate,
+                expiryDate: expiryDate,
+                claimType: claimType,
+                subject: subject,
+                description: description,
+                status: 'Open',
+                image: imageData,
+                createdAt: now,
+                updatedAt: now,
+                messages: []
+            };
+
+            try {
+                if (supabaseClient) {
+                    // 1. Insert into tickets table
+                    const { error: ticketError } = await supabaseClient.from('tickets').insert({
+                        id: newId,
+                        device_id: deviceId,
+                        agent_name: currentAgentName,
+                        app_name: appName,
+                        purchase_date: purchaseDate,
+                        expiry_date: expiryDate,
+                        claim_type: claimType,
+                        subject: subject,
+                        description: description,
+                        status: 'Open',
+                        image_url: imageData,
+                        created_at: now,
+                        updated_at: now
+                    });
+                    if (ticketError) throw ticketError;
+
+                    // 2. Insert initial message
+                    await supabaseClient.from('messages').insert({
+                        ticket_id: newId,
+                        sender_role: 'agent',
+                        sender_name: currentAgentName,
+                        text: formattedDesc,
+                        image_url: imageData,
+                        created_at: now
+                    });
+
+                    // 3. Auto-reply rule check
+                    const autoReplyMsg = checkAutoReply(subject + ' ' + description);
+                    if (autoReplyMsg) {
+                        await supabaseClient.from('messages').insert({
+                            ticket_id: newId,
+                            sender_role: 'system',
+                            sender_name: 'System Bot',
+                            text: autoReplyMsg,
+                            created_at: new Date(Date.now() + 1000).toISOString()
+                        });
+                    }
+                }
+
+                tickets.unshift(newTicket);
+
+                // Send Telegram Notification in background
+                sendTelegramNewTicket(newTicket);
+
+                // Reset Form
+                document.getElementById('create-ticket-form').reset();
+                removeImage();
+
+                customAlert('ส่งแจ้งปัญหาเรียบร้อยแล้วค่ะ ทีมงานจะรีบตรวจสอบและตอบกลับนะคะ 🌸');
+                await syncFromSupabase();
+                renderAgentDashboard();
+                switchView('view-agent-dashboard');
+
+            } catch (err) {
+                console.error(err);
+                customAlert('เกิดข้อผิดพลาดในการส่งข้อมูล: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'ส่งข้อมูล');
+            }
+        }
+
+        // Auto reply keyword matcher
+        function checkAutoReply(text) {
+            const lowerText = text.toLowerCase();
+            for (let rule of autoReplyRules) {
+                for (let keyword of rule.keywords) {
+                    if (lowerText.includes(keyword)) {
+                        return rule.message;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function filterAdminTickets(status) {
+            currentFilter = status;
+            const btns = {
+                'All': document.getElementById('filter-all'),
+                'Open': document.getElementById('filter-open'),
+                'Resolved': document.getElementById('filter-resolved')
+            };
+
+            const baseInactiveClass = "px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center";
+
+            Object.values(btns).forEach(btn => {
+                if (btn) btn.className = baseInactiveClass;
+            });
+
+            if (status === 'All' && btns['All']) {
+                btns['All'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition-colors shadow-sm whitespace-nowrap";
+            } else if (status === 'Open' && btns['Open']) {
+                btns['Open'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-warning text-gray-900 transition-colors shadow-sm whitespace-nowrap flex items-center";
+            } else if (status === 'Resolved' && btns['Resolved']) {
+                btns['Resolved'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-success text-white transition-colors shadow-sm whitespace-nowrap flex items-center";
+            }
+            renderAdminDashboard();
+        }
+
+        function renderAdminDashboard() {
+            document.getElementById('stat-total').textContent = tickets.length;
+            document.getElementById('stat-open').textContent = tickets.filter(t => t.status === 'Open').length;
+            document.getElementById('stat-resolved').textContent = tickets.filter(t => t.status === 'Resolved').length;
+
+            const containerEl = document.getElementById('admin-ticket-container');
+            const emptyEl = document.getElementById('admin-empty-state');
+            
+            let filteredTickets = tickets;
+            if (currentFilter !== 'All') {
+                filteredTickets = tickets.filter(t => t.status === currentFilter);
+            }
+            
+            containerEl.innerHTML = '';
+            
+            if (filteredTickets.length === 0) {
+                emptyEl.classList.remove('hide');
+                containerEl.classList.add('hide');
+            } else {
+                emptyEl.classList.add('hide');
+                containerEl.classList.remove('hide');
+                
+                filteredTickets.forEach(ticket => {
+                    const card = document.createElement('div');
+                    card.className = `bg-white border ${ticket.status==='Open' ? 'border-amber-300 ring-2 ring-amber-100 shadow-sm' : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-gray-800`;
+                    card.innerHTML = `
+                        <div class="flex items-start gap-3 sm:gap-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${ticket.status==='Open' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'} flex items-center justify-center font-bold text-base sm:text-lg shrink-0 border">
+                                <i class="fas ${ticket.status==='Open' ? 'fa-clock' : 'fa-check-circle'}"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-bold text-primary text-sm sm:text-base">${escapeHtml(ticket.id)}</span>
+                                    <span class="text-xs text-gray-300">•</span>
+                                    <span class="text-xs text-gray-600"><i class="fas fa-user text-primary mr-1"></i>${escapeHtml(ticket.agentName)}</span>
+                                </div>
+                                <h4 class="font-bold text-gray-900 text-sm sm:text-base mb-1">${escapeHtml(ticket.subject)} <span class="text-xs font-normal text-pink-600">(${escapeHtml(ticket.appName)})</span></h4>
+                                <p class="text-xs text-gray-500 flex items-center gap-1.5"><i class="far fa-clock"></i> อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                            <div>${getStatusBadge(ticket.status)}</div>
+                            <button onclick="openTicketDetail('${escapeHtml(ticket.id)}')" class="bg-gray-100 hover:bg-primary text-gray-700 hover:text-white border border-gray-200 hover:border-primary px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5">
+                                <i class="fas fa-sliders-h"></i> จัดการปัญหา
+                            </button>
+                        </div>
+                    `;
+                    containerEl.appendChild(card);
+                });
+            }
+        }
+
+        function goBackFromDetail() {
+            if (currentRole === 'agent') {
+                renderAgentDashboard();
+                switchView('view-agent-dashboard');
+            } else {
+                renderAdminDashboard();
+                switchView('view-admin-dashboard');
+            }
+        }
+
+        async function openTicketDetail(ticketId) {
+            viewingTicketId = ticketId;
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            document.getElementById('detail-ticket-id').textContent = ticket.id;
+            document.getElementById('detail-ticket-app').textContent = ticket.appName;
+            document.getElementById('detail-purchase-date').textContent = ticket.purchaseDate || '-';
+            document.getElementById('detail-expiry-date').textContent = ticket.expiryDate || '-';
+            document.getElementById('detail-claim-type').textContent = ticket.claimType || '-';
+            document.getElementById('detail-ticket-status').innerHTML = getStatusBadge(ticket.status);
+            document.getElementById('detail-ticket-subject').textContent = ticket.subject;
+            document.getElementById('detail-agent-name').textContent = ticket.agentName;
+
+            const adminActions = document.getElementById('admin-actions');
+            if (currentRole === 'admin' && ticket.status === 'Open') {
+                adminActions.classList.remove('hide');
+            } else {
+                adminActions.classList.add('hide');
+            }
+
+            const inputArea = document.getElementById('chat-input-area');
+            const closedAlert = document.getElementById('chat-closed-alert');
+            if (ticket.status === 'Resolved') {
+                inputArea.classList.add('hide');
+                closedAlert.classList.remove('hide');
+            } else {
+                inputArea.classList.remove('hide');
+                closedAlert.classList.add('hide');
+            }
+
+            // Show loading placeholder in chat while fetching messages
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs"><i class="fas fa-spinner fa-spin mr-2"></i> กำลังโหลดข้อความแชท...</div>';
+
+            switchView('view-ticket-detail');
+            await loadTicketMessages(ticketId);
+        }
+
+        function renderChatMessages() {
+            const ticket = tickets.find(t => t.id === viewingTicketId);
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = '';
+            if (!ticket) return;
+
+            ticket.messages = ticket.messages || [];
+
+            const dateDivider = document.createElement('div');
+            dateDivider.className = "flex justify-center my-5";
+            dateDivider.innerHTML = `<span class="bg-[#1e1b1e] border border-pink-500/20 text-gray-400 text-xs px-4 py-1.5 rounded-full shadow-sm">${formatThaiDate(ticket.createdAt)}</span>`;
+            container.appendChild(dateDivider);
+
+            ticket.messages.forEach(msg => {
+                const msgWrapper = document.createElement('div');
+                msgWrapper.className = "flex w-full mb-5";
+                
+                let isMe = false;
+                if (currentRole === 'agent' && msg.sender === 'agent') isMe = true;
+                if (currentRole === 'admin' && msg.sender === 'admin') isMe = true;
+
+                if (msg.sender === 'system') {
+                    msgWrapper.className += " justify-center";
+                    msgWrapper.innerHTML = `
+                        <div class="max-w-[85%] md:max-w-xl bg-[#1e1b1e] border border-dashed border-warning/40 rounded-2xl p-4 text-gray-300 text-sm shadow-sm flex items-start gap-3">
+                            <i class="fas fa-robot text-warning mt-0.5 text-lg"></i>
+                            <div>
+                                <p class="leading-relaxed">${escapeHtml(msg.text)}</p>
+                                <p class="text-[10px] text-gray-500 mt-1.5 text-right">${formatThaiTime(msg.timestamp)}</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (isMe) {
+                    msgWrapper.className += " justify-end";
+                    let imageHtml = msg.image ? `<img src="${msg.image}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
+                    msgWrapper.innerHTML = `
+                        <div class="max-w-[80%] flex flex-col items-end">
+                            <span class="text-xs text-pink-300 mb-1.5 mr-2 font-medium">คุณ</span>
+                            <div class="bg-primary text-white rounded-2xl rounded-tr-none p-3.5 shadow-sm text-sm">
+                                ${imageHtml}
+                                <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
+                            </div>
+                            <span class="text-[10px] text-gray-500 mt-1.5 mr-2 font-medium">${formatThaiTime(msg.timestamp)}</span>
+                        </div>
+                    `;
+                } else {
+                    msgWrapper.className += " justify-start";
+                    let senderName = msg.sender === 'agent' ? ticket.agentName : 'Admin Support 🌸';
+                    let currentLogoSrc = (document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
+                    let imageHtml = msg.image ? `<img src="${msg.image}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm">` : '';
+                    msgWrapper.innerHTML = `
+                        <div class="max-w-[80%] flex items-end gap-3">
+                            <div class="w-10 h-10 rounded-full bg-[#1e1b1e] text-primary flex items-center justify-center flex-shrink-0 mb-6 shadow-sm border border-pink-500/20 overflow-hidden">
+                                <img src="${currentLogoSrc}" alt="Admin Logo" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex flex-col items-start">
+                                <span class="text-xs text-pink-300 mb-1.5 ml-2 font-medium">${escapeHtml(senderName)}</span>
+                                <div class="bg-[#1e1b1e] text-gray-200 border border-pink-500/20 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-sm">
+                                    ${imageHtml}
+                                    <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
+                                </div>
+                                <span class="text-[10px] text-gray-500 mt-1.5 ml-2 font-medium">${formatThaiTime(msg.timestamp)}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.appendChild(msgWrapper);
+            });
+
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 50);
+        }
+
+        // Enter key to send chat message
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(e);
+            }
+        }
+
+        async function handleSendMessage(event) {
+            if (event && event.preventDefault) event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const btn = document.getElementById('btn-send-chat');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const ticket = tickets.find(t => t.id === viewingTicketId);
+            if (!ticket) return;
+
+            btn.disabled = true;
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+            const now = new Date().toISOString();
+            const senderRole = currentRole;
+            const senderName = currentRole === 'admin' ? 'Admin Support' : currentAgentName;
+
+            try {
+                if (supabaseClient) {
+                    const { error: msgErr } = await supabaseClient.from('messages').insert({
+                        ticket_id: viewingTicketId,
+                        sender_role: senderRole,
+                        sender_name: senderName,
+                        text: text,
+                        created_at: now
+                    });
+                    if (msgErr) throw msgErr;
+
+                    await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
+                }
+
+                ticket.messages = ticket.messages || [];
+                ticket.messages.push({
+                    sender: senderRole,
+                    senderName: senderName,
+                    text: text,
+                    timestamp: now
+                });
+                ticket.updatedAt = now;
+
+                input.value = '';
+                renderChatMessages();
+
+                // Send Telegram Notification if customer sent a message
+                if (currentRole === 'agent') {
+                    sendTelegramNewMessage(ticket, text);
+                }
+            } catch (err) {
+                console.error(err);
+                customAlert('ไม่สามารถส่งข้อความได้: ' + (err.message || 'โปรดลองใหม่อีกครั้ง') + ' ⚠️');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
+        }
+
+        function markTicketResolved() {
+            customConfirm('คุณต้องการปิดงาน (Mark as Resolved) ปัญหานี้ใช่หรือไม่คะ? 🎀', async function() {
+                const ticket = tickets.find(t => t.id === viewingTicketId);
+                if (!ticket) return;
+
+                const btn = document.getElementById('btn-mark-resolved');
+                if (btn) btn.disabled = true;
+
+                const now = new Date().toISOString();
+                try {
+                    if (supabaseClient) {
+                        const { error: updErr } = await supabaseClient.from('tickets').update({ 
+                            status: 'Resolved', 
+                            updated_at: now 
+                        }).eq('id', viewingTicketId);
+                        if (updErr) throw updErr;
+
+                        await supabaseClient.from('messages').insert({
+                            ticket_id: viewingTicketId,
+                            sender_role: 'system',
+                            sender_name: 'System',
+                            text: 'แอดมินได้ทำการปิดรายการแจ้งปัญหานี้แล้วค่ะ ขอบคุณนะคะ 💖',
+                            created_at: now
+                        });
+                    }
+
+                    ticket.status = 'Resolved';
+                    ticket.updatedAt = now;
+                    ticket.messages = ticket.messages || [];
+                    ticket.messages.push({
+                        sender: 'system',
+                        text: 'แอดมินได้ทำการปิดรายการแจ้งปัญหานี้แล้วค่ะ ขอบคุณนะคะ 💖',
+                        timestamp: now
+                    });
+
+                    customAlert('ปิดงานแจ้งปัญหาเรียบร้อยแล้วค่ะ 💖');
+                    await syncFromSupabase();
+                    openTicketDetail(viewingTicketId);
+                } catch (err) {
+                    console.error(err);
+                    customAlert('เกิดข้อผิดพลาดในการปิดงาน: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+                } finally {
+                    if (btn) btn.disabled = false;
+                }
+            });
+        }
+
+        function openEditModal() {
+            const ticket = tickets.find(t => t.id === viewingTicketId);
+            if (!ticket) return;
+            
+            const editSelect = document.getElementById('edit-app-select');
+            if (ticket.appName && !applications.includes(ticket.appName)) {
+                let existingOpt = editSelect.querySelector(`option[value="${ticket.appName}"]`);
+                if (!existingOpt) {
+                    const opt = document.createElement('option');
+                    opt.value = ticket.appName;
+                    opt.textContent = ticket.appName;
+                    editSelect.appendChild(opt);
+                }
+            }
+
+            editSelect.value = ticket.appName;
+            document.getElementById('edit-purchase-date').value = ticket.purchaseDate || '';
+            document.getElementById('edit-expiry-date').value = ticket.expiryDate || '';
+            document.getElementById('edit-claim-type').value = ticket.claimType || 'เคลม (มีประกัน)';
+            document.getElementById('edit-ticket-desc').value = ticket.description || '';
+            
+            document.getElementById('edit-ticket-modal').classList.remove('hide');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-ticket-modal').classList.add('hide');
+        }
+
+        async function handleEditTicket(event) {
+            event.preventDefault();
+            const ticket = tickets.find(t => t.id === viewingTicketId);
+            if (!ticket) return;
+
+            const btn = document.getElementById('btn-save-edit-ticket');
+            const textEl = document.getElementById('btn-save-edit-ticket-text');
+
+            const newApp = document.getElementById('edit-app-select').value;
+            const newPurchaseDate = document.getElementById('edit-purchase-date').value;
+            const newExpiryDate = document.getElementById('edit-expiry-date').value;
+            const newClaimType = document.getElementById('edit-claim-type').value;
+            const newDesc = document.getElementById('edit-ticket-desc').value.trim();
+
+            setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'บันทึกการแก้ไข');
+
+            const now = new Date().toISOString();
+
+            try {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('tickets').update({
+                        app_name: newApp,
+                        subject: `แจ้งปัญหา ${newApp}`,
+                        purchase_date: newPurchaseDate,
+                        expiry_date: newExpiryDate,
+                        claim_type: newClaimType,
+                        description: newDesc,
+                        updated_at: now
+                    }).eq('id', viewingTicketId);
+
+                    if (error) throw error;
+                }
+
+                ticket.appName = newApp;
+                ticket.subject = `แจ้งปัญหา ${newApp}`;
+                ticket.purchaseDate = newPurchaseDate;
+                ticket.expiryDate = newExpiryDate;
+                ticket.claimType = newClaimType;
+                ticket.description = newDesc;
+                ticket.updatedAt = now;
+
+                closeEditModal();
+                openTicketDetail(viewingTicketId);
+                customAlert('บันทึกการแก้ไขข้อมูลเรียบร้อยแล้วค่ะ 🌸');
+                await syncFromSupabase();
+            } catch (err) {
+                console.error(err);
+                customAlert('เกิดข้อผิดพลาดในการแก้ไขข้อมูล: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'บันทึกการแก้ไข');
+            }
+        }
+
+        function openEditAnnouncementModal() {
+            document.getElementById('announcement-input').value = announcementText;
+            document.getElementById('edit-announcement-modal').classList.remove('hide');
+        }
+
+        function closeEditAnnouncementModal() {
+            document.getElementById('edit-announcement-modal').classList.add('hide');
+        }
+
+        async function handleSaveAnnouncement(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-save-announcement');
+            const textEl = document.getElementById('btn-save-announcement-text');
+            const text = document.getElementById('announcement-input').value.trim();
+            if (!text) return;
+
+            setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'บันทึกข้อความประกาศ');
+
+            try {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('shop_settings').update({ announcement_text: text }).eq('id', 1);
+                    if (error) throw error;
+                }
+                announcementText = text;
+                renderAnnouncement();
+                closeEditAnnouncementModal();
+                customAlert('อัปเดตข้อความประกาศเรียบร้อยแล้วค่ะ 🌸');
+            } catch (err) {
+                console.error(err);
+                customAlert('เกิดข้อผิดพลาดในการบันทึกประกาศ: ' + (err.message || 'โปรดตรวจสอบสิทธิ์'));
+            } finally {
+                setButtonLoading(btn, textEl, false, '', 'บันทึกข้อความประกาศ');
+            }
+        }
+
+        function openTelegramModal() {
+            document.getElementById('telegram-bot-token').value = getTelegramToken();
+            document.getElementById('telegram-chat-id').value = getTelegramChatId();
+            document.getElementById('telegram-ticket-template').value = getTelegramTicketTemplate();
+            document.getElementById('telegram-chat-template').value = getTelegramChatTemplate();
+            document.getElementById('telegram-settings-modal').classList.remove('hide');
+        }
+
+        function closeTelegramModal() {
+            document.getElementById('telegram-settings-modal').classList.add('hide');
+        }
+
+        function resetDefaultTicketTemplate() {
+            document.getElementById('telegram-ticket-template').value = DEFAULT_TELEGRAM_TICKET_TEMPLATE;
+        }
+
+        function resetDefaultChatTemplate() {
+            document.getElementById('telegram-chat-template').value = DEFAULT_TELEGRAM_CHAT_TEMPLATE;
+        }
+
+        function handleSaveTelegramSettings(event) {
+            event.preventDefault();
+            const token = document.getElementById('telegram-bot-token').value.trim();
+            const chatId = document.getElementById('telegram-chat-id').value.trim();
+            const ticketTemplate = document.getElementById('telegram-ticket-template').value.trim();
+            const chatTemplate = document.getElementById('telegram-chat-template').value.trim();
+            
+            try {
+                localStorage.setItem('helpCenterTelegramToken', token);
+                localStorage.setItem('helpCenterTelegramChatId', chatId);
+                localStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate);
+                localStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate);
+            } catch(e) {
+                console.warn(e);
+            }
+            
+            closeTelegramModal();
+            customAlert('บันทึกการตั้งค่าและข้อความแจ้งเตือน Telegram เรียบร้อยแล้วค่ะ ✈️✨');
+        }
+
+        async function testTelegramNotification() {
+            const btn = document.getElementById('btn-test-telegram');
+            const textEl = document.getElementById('btn-test-telegram-text');
+            const token = document.getElementById('telegram-bot-token').value.trim() || getTelegramToken();
+            const chatId = document.getElementById('telegram-chat-id').value.trim() || getTelegramChatId();
+            
+            if (!token || !chatId) {
+                customAlert('กรุณากรอกทั้ง Bot Token และ Chat ID ก่อนทดสอบค่ะ ⚠️');
+                return;
+            }
+
+            setButtonLoading(btn, textEl, true, 'กำลังส่งทดสอบ...', 'ทดสอบส่งแจ้งเตือน');
+
+            const testMsg = `🔔 <b>[MONALI] ทดสอบการเชื่อมต่อ Telegram สำเร็จ!</b>\n━━━━━━━━━━━━━━━━━\nระบบแจ้งเตือนปัญหาและแชททำงานได้เป็นปกติแล้วค่ะ 💖\nเวลา: ${new Date().toLocaleTimeString('th-TH')}`;
+            const success = await sendRawTelegramMessage(token, chatId, testMsg);
+            
+            setButtonLoading(btn, textEl, false, '', 'ทดสอบส่งแจ้งเตือน');
+
+            if (success) {
+                customAlert('ส่งข้อความทดสอบเข้า Telegram เรียบร้อยแล้วค่ะ! กรุณาเช็คในแอป Telegram ดูนะคะ 💌');
+            } else {
+                customAlert('ไม่สามารถส่งข้อความได้ กรุณาตรวจสอบว่าบอทถูกเชิญเข้ากลุ่มหรือยัง และอย่าลืมกด /start บอทใน Telegram ก่อนนะคะ ❌');
+            }
+        }
+
+        async function sendRawTelegramMessage(token, chatId, text, base64Photo = null) {
+            if (!token || !chatId) return false;
+            try {
+                if (base64Photo) {
+                    try {
+                        const arr = base64Photo.split(',');
+                        const mime = arr[0].match(/:(.*?);/)[1];
+                        const bstr = atob(arr[1]);
+                        let n = bstr.length;
+                        const u8arr = new Uint8Array(n);
+                        while(n--) {
+                            u8arr[n] = bstr.charCodeAt(n);
+                        }
+                        const blob = new Blob([u8arr], { type: mime });
+                        const formData = new FormData();
+                        formData.append('chat_id', chatId);
+                        
+                        if (text.length <= 1024) {
+                            formData.append('caption', text);
+                            formData.append('parse_mode', 'HTML');
+                        }
+                        formData.append('photo', blob, 'ticket.jpg');
+
+                        const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        if (res.ok) {
+                            if (text.length > 1024) {
+                                await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+                                });
+                            }
+                            return true;
+                        }
+                    } catch (photoErr) {
+                        console.warn('Telegram photo fallback:', photoErr);
+                    }
+                }
+
+                const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: text,
+                        parse_mode: 'HTML'
+                    })
+                });
+                return res.ok;
+            } catch (e) {
+                console.error('Telegram error:', e);
+                return false;
+            }
+        }
+
+        async function sendTelegramNewTicket(ticket) {
+            const token = getTelegramToken();
+            const chatId = getTelegramChatId();
+            if (!token || !chatId) return;
+
+            let template = getTelegramTicketTemplate();
+            const message = template
+                .replace(/{id}/g, escapeHtml(ticket.id))
+                .replace(/{agentName}/g, escapeHtml(ticket.agentName))
+                .replace(/{appName}/g, escapeHtml(ticket.appName))
+                .replace(/{claimType}/g, escapeHtml(ticket.claimType))
+                .replace(/{purchaseDate}/g, escapeHtml(ticket.purchaseDate || '-'))
+                .replace(/{expiryDate}/g, escapeHtml(ticket.expiryDate || '-'))
+                .replace(/{description}/g, escapeHtml(ticket.description || '-'))
+                .replace(/{time}/g, escapeHtml(formatDate(ticket.createdAt)));
+
+            await sendRawTelegramMessage(token, chatId, message, ticket.image);
+        }
+
+        async function sendTelegramNewMessage(ticket, text) {
+            const token = getTelegramToken();
+            const chatId = getTelegramChatId();
+            if (!token || !chatId) return;
+
+            let template = getTelegramChatTemplate();
+            const message = template
+                .replace(/{id}/g, escapeHtml(ticket.id))
+                .replace(/{appName}/g, escapeHtml(ticket.appName))
+                .replace(/{agentName}/g, escapeHtml(ticket.agentName))
+                .replace(/{message}/g, escapeHtml(text))
+                .replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
+
+            await sendRawTelegramMessage(token, chatId, message);
+        }
+
+        let confirmCallback = null;
+
+        function customAlert(message) {
+            document.getElementById('custom-alert-text').textContent = message;
+            document.getElementById('custom-alert-modal').classList.remove('hide');
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-modal').classList.add('hide');
+        }
+
+        function customConfirm(message, callback) {
+            document.getElementById('custom-confirm-text').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('custom-confirm-modal').classList.remove('hide');
+        }
+
+        function closeCustomConfirm() {
+            document.getElementById('custom-confirm-modal').classList.add('hide');
+            confirmCallback = null;
+        }
+
+        function executeConfirm() {
+            if (confirmCallback) {
+                const cb = confirmCallback;
+                confirmCallback = null;
+                cb();
+            }
+            closeCustomConfirm();
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await checkInitialAdminSession();
+            await syncFromSupabase();
+            initRealtime();
+        });
+    </script>
+</body>
+</html>
