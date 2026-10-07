@@ -662,7 +662,10 @@
         const SUPABASE_PROJECT_URL = "https://odkuhnxzskccpmlpimau.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ka3Vobnh6c2tjY3BtbHBpbWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg3NzcsImV4cCI6MjEwNjg5NDc3N30.MxuWQk1jk1Rfg-Sw1gXgvI4kQZHD2eR2RVEiTtVXoAc";
 
-        // --- Telegram Config (ดึงจาก localStorage เท่านั้น ป้องกัน Secret Token รั่วไหล) ---
+        // --- Telegram Config (ฝังค่า Bot Token และ Chat ID ลงในระบบโดยตรง) ---
+        const DEFAULT_TELEGRAM_TOKEN = "8817681944:AAGk1wSyvzaXjwlxj6-XYKPXqM1dOCcv4fw";
+        const DEFAULT_TELEGRAM_CHAT_ID = "-5469928489";
+
         const DEFAULT_TELEGRAM_TICKET_TEMPLATE = `🌸 <b>[MONALI] มีการแจ้งปัญหาใหม่!</b> 🚨
 ━━━━━━━━━━━━━━━━━
 🎫 <b>รหัสเคส:</b> <code>{id}</code>
@@ -707,11 +710,11 @@
         }
 
         function getTelegramToken() {
-            return localStorage.getItem('helpCenterTelegramToken') || '';
+            return localStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
         }
 
         function getTelegramChatId() {
-            return localStorage.getItem('helpCenterTelegramChatId') || '';
+            return localStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
         }
 
         function getTelegramTicketTemplate() {
