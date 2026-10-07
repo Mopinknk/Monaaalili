@@ -517,6 +517,23 @@
                                 <div>
                                     <textarea id="new-faq-answer" required rows="3" placeholder="คำตอบและวิธีแก้ไขเบื้องต้น..." class="w-full rounded-xl border border-pink-500/30 px-4 py-3 focus:border-warning focus:ring-warning outline-none text-sm resize-none bg-[#1e1b1e] text-white"></textarea>
                                 </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1.5">รูปภาพตัวอย่างประกอบคำแนะนำ (ไม่บังคับ)</label>
+                                    <div class="flex items-center gap-3">
+                                        <label class="cursor-pointer bg-[#1e1b1e] text-warning border border-warning/30 hover:bg-warning/10 px-4 py-2 rounded-full transition-colors text-xs font-medium shadow-sm flex items-center">
+                                            <i class="fas fa-image mr-1.5"></i> เลือกรูปภาพตัวอย่าง
+                                            <input type="file" id="faq-file-upload" accept="image/*" class="hidden" onchange="handleFaqImageUpload(event)">
+                                        </label>
+                                        <span class="text-[11px] text-gray-400">(ขนาดไม่เกิน 5MB)</span>
+                                    </div>
+                                    <input type="hidden" id="new-faq-image">
+                                    <div id="faq-image-preview-container" class="hide mt-3 relative inline-block">
+                                        <img id="faq-image-preview" src="" alt="FAQ Preview" class="max-h-36 rounded-xl border border-warning/30 shadow-sm">
+                                        <button type="button" onclick="removeFaqImage()" class="absolute -top-2.5 -right-2.5 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-500 shadow-md">
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="flex justify-end pt-2">
                                     <button type="submit" id="btn-add-faq" class="bg-warning text-gray-900 px-6 py-2.5 rounded-full hover:bg-amber-400 shadow-sm transition-transform transform hover:scale-105 text-sm font-medium flex items-center">
                                         <i class="fas fa-plus mr-2"></i> <span id="btn-add-faq-text">เพิ่มข้อมูล FAQ</span>
@@ -601,17 +618,21 @@
 
             <!-- View FAQ Modal (Agent) -->
             <div id="view-faq-modal" onclick="if(event.target===this) closeViewFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-                <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-lg overflow-hidden transform transition-all relative">
-                    <div class="bg-pink-50 px-6 py-5 border-b border-pink-100 flex justify-between items-center">
+                <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-lg overflow-hidden transform transition-all relative max-h-[90vh] flex flex-col">
+                    <div class="bg-pink-50 px-6 py-5 border-b border-pink-100 flex justify-between items-center shrink-0">
                         <h3 class="font-bold text-gray-900 text-lg flex items-center"><i class="fas fa-lightbulb text-primary mr-2"></i> คำแนะนำเบื้องต้น</h3>
                         <button type="button" onclick="closeViewFAQModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-pink-100 absolute top-4 right-4">
                             <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
-                    <div class="p-6 md:p-8">
+                    <div class="p-6 md:p-8 overflow-y-auto">
                         <h4 id="view-faq-question" class="text-lg font-bold text-gray-900 mb-4 pr-6 leading-snug">คำถาม?</h4>
                         <div class="bg-pink-50/50 rounded-2xl p-5 border border-pink-100">
                             <p id="view-faq-answer" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed">คำตอบ</p>
+                        </div>
+                        <div id="view-faq-image-container" class="hide mt-4">
+                            <p class="text-xs font-semibold text-gray-600 mb-2 flex items-center"><i class="fas fa-image text-primary mr-1.5"></i> รูปภาพตัวอย่างประกอบคำแนะนำ:</p>
+                            <img id="view-faq-image" src="" alt="รูปภาพประกอบคำแนะนำ" class="w-full max-h-80 object-contain rounded-2xl border border-pink-200 shadow-sm bg-white p-1">
                         </div>
                         <div class="mt-8 flex justify-center">
                             <button onclick="closeViewFAQModal()" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-primary-hover shadow-md shadow-pink-500/20 transition-all font-medium transform hover:-translate-y-1">เข้าใจแล้ว ขอบคุณค่ะ 💖</button>
@@ -914,7 +935,7 @@
                 // 3. Fetch FAQs
                 const { data: faqsData, error: faqsErr } = await supabaseClient
                     .from('faqs')
-                    .select('id, question, answer, sort_order')
+                    .select('id, question, answer, image_url, sort_order')
                     .order('sort_order', { ascending: true });
 
                 if (!faqsErr && faqsData) {
@@ -1206,11 +1227,41 @@
             if (!faq) return;
             document.getElementById('view-faq-question').textContent = faq.question;
             document.getElementById('view-faq-answer').textContent = faq.answer;
+            
+            const imgContainer = document.getElementById('view-faq-image-container');
+            const imgEl = document.getElementById('view-faq-image');
+            if (faq.image_url) {
+                imgEl.src = sanitizeMediaUrl(faq.image_url);
+                imgContainer.classList.remove('hide');
+            } else {
+                imgEl.src = '';
+                imgContainer.classList.add('hide');
+            }
+
             document.getElementById('view-faq-modal').classList.remove('hide');
         }
 
         function closeViewFAQModal() {
             document.getElementById('view-faq-modal').classList.add('hide');
+        }
+
+        function handleFaqImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressAndProcessImage(file, 900, 900, 0.75, function(compressedBase64) {
+                document.getElementById('faq-image-preview').src = compressedBase64;
+                document.getElementById('faq-image-preview-container').classList.remove('hide');
+                document.getElementById('new-faq-image').value = compressedBase64;
+            });
+        }
+
+        function removeFaqImage() {
+            const fileInput = document.getElementById('faq-file-upload');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('faq-image-preview').src = '';
+            document.getElementById('new-faq-image').value = '';
+            document.getElementById('faq-image-preview-container').classList.add('hide');
         }
 
         function openManageFAQModal() {
@@ -1243,14 +1294,25 @@
                 aPara.className = "text-xs text-gray-300 whitespace-pre-line leading-relaxed";
                 aPara.innerHTML = `<span class="text-success mr-1">A:</span> ${escapeHtml(faq.answer)}`;
 
+                item.appendChild(qHeader);
+                item.appendChild(aPara);
+
+                if (faq.image_url) {
+                    const imgThumbContainer = document.createElement('div');
+                    imgThumbContainer.className = "mt-3 flex items-center gap-2";
+                    imgThumbContainer.innerHTML = `
+                        <img src="${sanitizeMediaUrl(faq.image_url)}" alt="Thumb" class="h-16 w-16 object-cover rounded-xl border border-pink-500/30">
+                        <span class="text-[11px] text-gray-400"><i class="fas fa-image text-warning mr-1"></i>มีรูปภาพประกอบ</span>
+                    `;
+                    item.appendChild(imgThumbContainer);
+                }
+
                 const delBtn = document.createElement('button');
                 delBtn.type = "button";
-                delBtn.className = "absolute top-1/2 -translate-y-1/2 right-4 text-danger hover:text-white hover:bg-danger w-9 h-9 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20";
+                delBtn.className = "absolute top-5 right-4 text-danger hover:text-white hover:bg-danger w-9 h-9 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20";
                 delBtn.innerHTML = '<i class="fas fa-trash-alt text-sm"></i>';
                 delBtn.onclick = () => deleteFAQ(index);
 
-                item.appendChild(qHeader);
-                item.appendChild(aPara);
                 item.appendChild(delBtn);
                 list.appendChild(item);
             });
@@ -1264,17 +1326,19 @@
             }
             const questionInput = document.getElementById('new-faq-question');
             const answerInput = document.getElementById('new-faq-answer');
+            const imgInput = document.getElementById('new-faq-image');
             const btn = document.getElementById('btn-add-faq');
             const textEl = document.getElementById('btn-add-faq-text');
 
             const q = questionInput.value.trim();
             const a = answerInput.value.trim();
+            const imgData = imgInput.value.trim() || null;
             if (!q || !a) return;
 
             setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'เพิ่มข้อมูล FAQ');
 
             try {
-                let newRecord = { question: q, answer: a, sort_order: faqs.length + 1 };
+                let newRecord = { question: q, answer: a, image_url: imgData, sort_order: faqs.length + 1 };
                 if (supabaseClient) {
                     const { data, error } = await supabaseClient.from('faqs').insert(newRecord).select().single();
                     if (error) throw error;
@@ -1283,9 +1347,10 @@
                 faqs.push(newRecord);
                 questionInput.value = '';
                 answerInput.value = '';
+                removeFaqImage();
                 renderAdminFAQList();
                 renderAgentFAQs();
-                customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
+                customAlert('เพิ่มข้อมูล FAQ พร้อมรูปภาพสำเร็จแล้วค่ะ 🌸');
             } catch (err) {
                 console.error('Add FAQ error:', err);
                 customAlert('ไม่สามารถเพิ่ม FAQ ได้ กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
@@ -1653,7 +1718,7 @@
                 document.getElementById('create-ticket-form').reset();
                 removeImage();
 
-                customAlert('ส่งแจ้งปัญหาเรียบร้อยแล้วค่ะ ทีมงานจะรีบตรวจสอบและตอบกลับนะคะ 🌸');
+                customAlert('ส่งแจ้งปัญหาเรียบร้อยค่ะ แอดมินจะรีบตรวจสอบให้นะคะ');
                 await syncFromSupabase();
                 renderAgentDashboard();
                 switchView('view-agent-dashboard');
