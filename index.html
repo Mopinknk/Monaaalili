@@ -75,7 +75,7 @@
             100% { background-position: 400px 300px; }
         }
 
-        /* Marquee Animation */
+        /* Marquee Animation (วิ่งช้าๆ สบายตา และหยุดนิ่งเมื่อชี้เมาส์) */
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -83,7 +83,10 @@
         .animate-marquee {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 22s linear infinite;
+            animation: marquee 45s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
         }
 
         /* Fix iOS date input overflow and alignment */
@@ -276,29 +279,18 @@
                         </button>
                         <div class="flex space-x-1 bg-white p-1 rounded-full border border-gray-200 shadow-sm overflow-x-auto">
                             <button onclick="filterAdminTickets('All')" id="filter-all" class="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition-colors whitespace-nowrap">ทั้งหมด</button>
-                            <button onclick="filterAdminTickets('CustomerReply')" id="filter-customer-reply" class="px-3.5 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-rose-50 transition-colors whitespace-nowrap flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span> ลูกค้าตอบกลับ <span id="filter-customer-reply-count" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-1 hidden">0</span></button>
                             <button onclick="filterAdminTickets('Open')" id="filter-open" class="px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center"><span class="w-2 h-2 rounded-full bg-warning mr-2"></span> รอดำเนินการ</button>
                             <button onclick="filterAdminTickets('Resolved')" id="filter-resolved" class="px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center"><span class="w-2 h-2 rounded-full bg-success mr-2"></span> แก้ไขแล้ว</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-6">
+                <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
                     <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-pink-100 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left">
                         <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-pink-50 text-primary flex items-center justify-center text-sm sm:text-lg mb-1 sm:mb-0 shrink-0"><i class="fas fa-ticket-alt"></i></div>
                         <div>
                             <p class="text-[10px] sm:text-xs font-medium text-gray-500">ปัญหาทั้งหมด</p>
                             <p class="text-sm sm:text-xl font-bold text-gray-900" id="stat-total">0</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-rose-200 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left relative overflow-hidden">
-                        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-sm sm:text-lg mb-1 sm:mb-0 shrink-0"><i class="fas fa-comment-dots"></i></div>
-                        <div>
-                            <p class="text-[10px] sm:text-xs font-semibold text-rose-600 flex items-center gap-1 justify-center sm:justify-start">
-                                ลูกค้าตอบกลับ
-                                <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span></span>
-                            </p>
-                            <p class="text-sm sm:text-xl font-bold text-rose-600" id="stat-customer-reply">0</p>
                         </div>
                     </div>
                     <div class="bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-amber-100 shadow-sm flex flex-col sm:flex-row items-center sm:gap-3 text-center sm:text-left">
@@ -337,10 +329,9 @@
                 <div class="bg-[#1e1b1e] rounded-t-3xl shadow-lg border border-pink-500/20 border-b-0 p-5 md:p-6 mb-0 relative overflow-hidden flex-shrink-0">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
                         <div>
-                            <div class="flex flex-wrap items-center gap-2.5 mb-1">
+                            <div class="flex items-center gap-3 mb-1">
                                 <span class="font-bold text-primary text-lg" id="detail-ticket-id">TCK-1001</span>
                                 <span id="detail-ticket-status"></span>
-                                <span id="detail-ticket-reply-status"></span>
                             </div>
                             <h2 class="text-xl font-bold text-white" id="detail-ticket-subject">หัวข้อปัญหา</h2>
                         </div>
@@ -947,6 +938,26 @@
             };
         }
 
+        // ฟังก์ชันตรวจสอบว่าแอดมินตอบกลับข้อความแล้วหรือไม่ สำหรับแสดงสัญลักษณ์ในฝั่งลูกค้า
+        function getTicketAdminReplyInfo(ticket) {
+            if (!ticket) return { hasAdminReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            const msgs = ticket.messages || [];
+            if (msgs.length === 0) return { hasAdminReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            
+            // คัดกรองเอาข้อความจริงที่ไม่ใช่ข้อความอัตโนมัติจากบอทระบบ
+            const nonSystemMsgs = msgs.filter(m => m.sender !== 'system');
+            if (nonSystemMsgs.length === 0) return { hasAdminReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            
+            const lastMsg = nonSystemMsgs[nonSystemMsgs.length - 1];
+            const isAdmin = lastMsg.sender === 'admin';
+            return {
+                hasAdminReply: isAdmin,
+                lastSender: lastMsg.sender,
+                lastMessage: lastMsg.text,
+                lastMessageTime: lastMsg.timestamp
+            };
+        }
+
         function setButtonLoading(btnEl, textEl, isLoading, loadingText, defaultText) {
             if (!btnEl) return;
             btnEl.disabled = isLoading;
@@ -1171,11 +1182,14 @@
                         messages: []
                     }));
 
-                    if (currentRole === 'admin') {
+                    // โหลดข้อความแชทของเคสที่เกี่ยวข้องทั้งหมด เพื่อให้ทั้งฝั่งแอดมินและลูกค้าตรวจจับการตอบกลับได้แบบเรียลไทม์
+                    const ticketIds = tickets.map(t => t.id);
+                    if (ticketIds.length > 0) {
                         try {
                             const { data: allMsgs, error: allMsgsErr } = await supabaseClient
                                 .from('messages')
                                 .select('*')
+                                .in('ticket_id', ticketIds)
                                 .order('created_at', { ascending: true });
                             if (!allMsgsErr && allMsgs && allMsgs.length > 0) {
                                 tickets.forEach(t => {
@@ -1950,6 +1964,37 @@
 
                 for (const ticket of agentTickets) {
                     const safeId = escapeHtml(ticket.id);
+                    const adminReplyInfo = getTicketAdminReplyInfo(ticket);
+
+                    // ป้ายสัญลักษณ์และกล่องข้อความเมื่อแอดมินตอบกลับแล้ว
+                    let adminReplyBadgeHtml = '';
+                    let adminReplySnippetHtml = '';
+                    if (adminReplyInfo.hasAdminReply) {
+                        adminReplyBadgeHtml = `
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shadow-xs">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <i class="fas fa-check-double text-emerald-600"></i> แอดมินตอบแล้ว
+                            </span>
+                        `;
+                        if (adminReplyInfo.lastMessage) {
+                            adminReplySnippetHtml = `
+                                <div class="p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs text-gray-700 flex items-start gap-2 shadow-xs">
+                                    <i class="fas fa-comment-dots text-emerald-600 mt-0.5 shrink-0 text-sm"></i>
+                                    <div class="min-w-0 flex-grow">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="font-bold text-emerald-800">ข้อความจากแอดมิน:</span>
+                                            <span class="text-[10px] text-emerald-600 font-medium">${formatThaiTime(adminReplyInfo.lastMessageTime)}</span>
+                                        </div>
+                                        <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(adminReplyInfo.lastMessage)}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+
                     let queueInfoHtml = '';
                     if (ticket.status === 'Open') {
                         const qNumberText = (ticket.queueNumber !== null && ticket.queueNumber !== undefined) ? ticket.queueNumber : '1';
@@ -1967,28 +2012,35 @@
                     }
 
                     const card = document.createElement('div');
-                    card.className = "bg-white border border-pink-100 hover:border-primary rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800";
+                    card.className = `bg-white border ${adminReplyInfo.hasAdminReply ? 'border-emerald-300 ring-2 ring-emerald-100 shadow-sm' : 'border-pink-100 hover:border-primary'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800`;
                     
+                    const buttonText = adminReplyInfo.hasAdminReply ? 'อ่านข้อความจากแอดมิน' : 'แตะเพื่อคุยกับแอดมิน';
+                    const buttonClass = adminReplyInfo.hasAdminReply 
+                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white' 
+                        : 'bg-primary hover:bg-primary-hover text-white';
+
                     card.innerHTML = `
                         <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100">
-                                <i class="fas fa-ticket-alt"></i>
+                            <div class="w-10 h-10 rounded-2xl ${adminReplyInfo.hasAdminReply ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-pink-50 text-primary border border-pink-100'} flex items-center justify-center font-bold text-base shrink-0">
+                                <i class="fas ${adminReplyInfo.hasAdminReply ? 'fa-envelope-open-text' : 'fa-ticket-alt'}"></i>
                             </div>
                             <div class="min-w-0 flex-grow">
-                                <div class="flex items-center gap-2 mb-0.5">
+                                <div class="flex items-center gap-2 mb-0.5 flex-wrap">
                                     <span class="font-bold text-primary text-sm">${safeId}</span>
                                     <span class="text-xs text-gray-300">•</span>
                                     <span class="text-xs text-pink-600 font-medium truncate">${escapeHtml(ticket.appName)}</span>
+                                    ${adminReplyBadgeHtml}
                                 </div>
                                 <h4 class="font-bold text-gray-900 text-sm mb-1 truncate">${escapeHtml(ticket.subject)}</h4>
                                 <p class="text-[11px] text-gray-400 flex items-center gap-1"><i class="far fa-clock"></i> อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</p>
                             </div>
                         </div>
+                        ${adminReplySnippetHtml}
                         ${queueInfoHtml}
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
                             <div>${getStatusBadge(ticket.status)}</div>
-                            <button class="btn-open-ticket bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
-                                <i class="fas fa-comments"></i> แตะเพื่อคุยกับแอดมิน
+                            <button class="btn-open-ticket ${buttonClass} px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
+                                <i class="fas ${adminReplyInfo.hasAdminReply ? 'fa-comment-dots' : 'fa-comments'}"></i> ${buttonText}
                             </button>
                         </div>
                     `;
@@ -2170,7 +2222,6 @@
             currentFilter = status;
             const btns = {
                 'All': document.getElementById('filter-all'),
-                'CustomerReply': document.getElementById('filter-customer-reply'),
                 'Open': document.getElementById('filter-open'),
                 'Resolved': document.getElementById('filter-resolved')
             };
@@ -2183,8 +2234,6 @@
 
             if (status === 'All' && btns['All']) {
                 btns['All'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition-colors shadow-sm whitespace-nowrap";
-            } else if (status === 'CustomerReply' && btns['CustomerReply']) {
-                btns['CustomerReply'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-rose-500 text-white transition-colors shadow-sm whitespace-nowrap flex items-center gap-1.5";
             } else if (status === 'Open' && btns['Open']) {
                 btns['Open'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-warning text-gray-900 transition-colors shadow-sm whitespace-nowrap flex items-center";
             } else if (status === 'Resolved' && btns['Resolved']) {
@@ -2194,30 +2243,15 @@
         }
 
         function renderAdminDashboard() {
-            const customerReplyCount = tickets.filter(t => getTicketCustomerReplyInfo(t).hasCustomerReply).length;
             document.getElementById('stat-total').textContent = tickets.length;
-            const statReplyEl = document.getElementById('stat-customer-reply');
-            if (statReplyEl) statReplyEl.textContent = customerReplyCount;
             document.getElementById('stat-open').textContent = tickets.filter(t => t.status === 'Open').length;
             document.getElementById('stat-resolved').textContent = tickets.filter(t => t.status === 'Resolved').length;
-
-            const badgeCountFilter = document.getElementById('filter-customer-reply-count');
-            if (badgeCountFilter) {
-                badgeCountFilter.textContent = customerReplyCount;
-                if (customerReplyCount > 0) {
-                    badgeCountFilter.classList.remove('hidden');
-                } else {
-                    badgeCountFilter.classList.add('hidden');
-                }
-            }
 
             const containerEl = document.getElementById('admin-ticket-container');
             const emptyEl = document.getElementById('admin-empty-state');
             
             let filteredTickets = tickets;
-            if (currentFilter === 'CustomerReply') {
-                filteredTickets = tickets.filter(t => getTicketCustomerReplyInfo(t).hasCustomerReply);
-            } else if (currentFilter !== 'All') {
+            if (currentFilter !== 'All') {
                 filteredTickets = tickets.filter(t => t.status === currentFilter);
             }
             
@@ -2234,58 +2268,37 @@
                     const replyInfo = getTicketCustomerReplyInfo(ticket);
                     const safeId = escapeHtml(ticket.id);
 
-                    let replyBadgeHtml = '';
+                    // สัญลักษณ์แสดงเมื่อมีข้อความตอบกลับจากลูกค้า (ไม่นับเป็นสถานะของเคส)
+                    let replyIndicatorHtml = '';
                     let replySnippetHtml = '';
-                    let borderClass = 'border-pink-100';
-
-                    if (ticket.status === 'Resolved') {
-                        borderClass = 'border-pink-100 opacity-90';
-                    } else if (replyInfo.hasCustomerReply) {
-                        borderClass = 'border-rose-400 ring-2 ring-rose-200 bg-rose-50/20 shadow-md';
-                        replyBadgeHtml = `
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 border border-rose-300 shadow-sm animate-pulse">
+                    if (replyInfo.hasCustomerReply) {
+                        replyIndicatorHtml = `
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-300 shadow-xs">
                                 <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
                                 </span>
-                                <i class="fas fa-comment-dots text-rose-600"></i> ลูกค้าส่งข้อความใหม่
+                                <i class="fas fa-comment-dots text-pink-600"></i> ลูกค้าส่งข้อความ
                             </span>
                         `;
                         if (replyInfo.lastMessage) {
                             replySnippetHtml = `
-                                <div class="mt-2.5 p-2.5 rounded-2xl bg-rose-50/90 border border-rose-200 text-xs text-rose-900 flex items-start gap-2 shadow-xs">
-                                    <i class="fas fa-reply text-rose-500 mt-0.5 shrink-0"></i>
+                                <div class="mt-2.5 p-2.5 rounded-2xl bg-pink-50/70 border border-pink-200 text-xs text-gray-700 flex items-start gap-2 shadow-xs">
+                                    <i class="fas fa-reply text-pink-500 mt-0.5 shrink-0"></i>
                                     <div class="min-w-0 flex-grow">
                                         <div class="flex items-center justify-between gap-2">
-                                            <span class="font-bold text-rose-700 flex items-center gap-1">ข้อความล่าสุดจากลูกค้า:</span>
-                                            <span class="text-[10px] text-rose-500 font-medium">${formatThaiTime(replyInfo.lastMessageTime)}</span>
+                                            <span class="font-bold text-pink-700">ข้อความล่าสุดจากลูกค้า:</span>
+                                            <span class="text-[10px] text-pink-500 font-medium">${formatThaiTime(replyInfo.lastMessageTime)}</span>
                                         </div>
                                         <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(replyInfo.lastMessage)}</p>
                                     </div>
                                 </div>
                             `;
                         }
-                    } else if (replyInfo.lastSender === 'admin') {
-                        borderClass = 'border-blue-200';
-                        replyBadgeHtml = `
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200">
-                                <i class="fas fa-check-double text-blue-500"></i> แอดมินตอบกลับแล้ว
-                            </span>
-                        `;
-                        if (replyInfo.lastMessage) {
-                            replySnippetHtml = `
-                                <div class="mt-2 p-2 rounded-2xl bg-gray-50 border border-gray-200 text-xs text-gray-600 flex items-center gap-2">
-                                    <i class="fas fa-user-shield text-blue-500 shrink-0"></i>
-                                    <span class="truncate"><b class="text-gray-700">ตอบล่าสุด:</b> ${escapeHtml(replyInfo.lastMessage)}</span>
-                                </div>
-                            `;
-                        }
-                    } else {
-                        borderClass = 'border-amber-300 ring-2 ring-amber-100 shadow-sm';
                     }
 
                     const card = document.createElement('div');
-                    card.className = `bg-white border ${borderClass} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col justify-between gap-3 text-gray-800 hover:shadow-md`;
+                    card.className = `bg-white border ${ticket.status==='Open' ? (replyInfo.hasCustomerReply ? 'border-pink-300 ring-2 ring-pink-100' : 'border-amber-300 ring-2 ring-amber-100') : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col justify-between gap-3 text-gray-800 hover:shadow-md`;
 
                     card.innerHTML = `
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -2295,9 +2308,9 @@
                                 <span class="text-xs text-gray-600 font-medium"><i class="fas fa-user text-primary mr-1"></i>${escapeHtml(ticket.agentName)}</span>
                                 <span class="text-xs text-gray-300">•</span>
                                 <span class="text-xs text-pink-600 font-semibold"><i class="fas fa-box mr-1"></i>${escapeHtml(ticket.appName)}</span>
+                                ${replyIndicatorHtml}
                             </div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                ${replyBadgeHtml}
+                            <div class="flex items-center gap-2">
                                 ${getStatusBadge(ticket.status)}
                             </div>
                         </div>
@@ -2313,8 +2326,8 @@
                         </div>
 
                         <div class="flex items-center justify-end w-full gap-2 sm:gap-3 pt-3 border-t border-gray-100 shrink-0">
-                            <button class="btn-manage-ticket ${replyInfo.hasCustomerReply ? 'bg-rose-500 hover:bg-rose-600 text-white' : 'bg-gray-100 hover:bg-primary text-gray-700 hover:text-white'} border border-transparent px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
-                                <i class="fas ${replyInfo.hasCustomerReply ? 'fa-reply' : 'fa-sliders-h'}"></i> ${replyInfo.hasCustomerReply ? 'ตอบกลับลูกค้า' : 'จัดการปัญหา'}
+                            <button class="btn-manage-ticket bg-gray-100 hover:bg-primary text-gray-700 hover:text-white border border-gray-200 hover:border-primary px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
+                                <i class="fas fa-sliders-h"></i> จัดการปัญหา
                             </button>
                             <button class="btn-delete-ticket bg-red-50 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 px-3.5 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1" title="ลบรายการนี้" data-ticket-id="${safeId}">
                                 <i class="fas fa-trash-alt"></i> ลบ
@@ -2351,21 +2364,6 @@
             document.getElementById('detail-ticket-status').innerHTML = getStatusBadge(ticket.status);
             document.getElementById('detail-ticket-subject').textContent = ticket.subject;
             document.getElementById('detail-agent-name').textContent = ticket.agentName;
-
-            // แสดงสถานะการตอบกลับของลูกค้าในหน้าแชท
-            const replyStatusEl = document.getElementById('detail-ticket-reply-status');
-            if (replyStatusEl) {
-                const replyInfo = getTicketCustomerReplyInfo(ticket);
-                if (ticket.status === 'Resolved') {
-                    replyStatusEl.innerHTML = '';
-                } else if (replyInfo.hasCustomerReply) {
-                    replyStatusEl.innerHTML = `<span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-rose-500/20 text-rose-400 border border-rose-400/30 flex items-center gap-1.5 animate-pulse"><i class="fas fa-comment-dots"></i> ลูกค้ากำลังรอคำตอบ</span>`;
-                } else if (replyInfo.lastSender === 'admin') {
-                    replyStatusEl.innerHTML = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-500/20 text-blue-400 border border-blue-400/30 flex items-center gap-1"><i class="fas fa-check-double"></i> แอดมินตอบแล้ว</span>`;
-                } else {
-                    replyStatusEl.innerHTML = '';
-                }
-            }
 
             const adminActions = document.getElementById('admin-actions');
             const markResolvedBtn = document.getElementById('btn-mark-resolved');
