@@ -856,6 +856,7 @@
                         senderName: 'Agent DEV-USER99',
                         text: 'เข้าจอไม่ได้ค่ะ แจ้งว่ามีคนดูเกินจำนวนหน้าจอ',
                         image: '',
+                        is_read: true,
                         timestamp: new Date(Date.now() - 7200000).toISOString()
                     },
                     {
@@ -864,6 +865,7 @@
                         senderName: 'Admin Support 🌸',
                         text: 'ลองเข้าด้วยโปรไฟล์ที่ 2 ดูหรือยังคะ?',
                         image: '',
+                        is_read: true,
                         timestamp: new Date(Date.now() - 3600000).toISOString()
                     },
                     {
@@ -872,6 +874,7 @@
                         senderName: 'Agent DEV-USER99',
                         text: 'ลองแล้วค่ะ ยังขึ้นเตือนเหมือนเดิมเลย รบกวนแอดมินช่วยตรวจสอบให้หน่อยนะคะ 🙏',
                         image: '',
+                        is_read: false,
                         timestamp: new Date(Date.now() - 600000).toISOString()
                     }
                 ]
@@ -899,6 +902,7 @@
                         senderName: currentAgentName,
                         text: 'เปิดดูคลิปแล้วติดโฆษณา รบกวนตรวจสอบเมลครอบครัวให้หน่อยนะคะ',
                         image: '',
+                        is_read: true,
                         timestamp: new Date(Date.now() - 3600000).toISOString()
                     },
                     {
@@ -907,6 +911,7 @@
                         senderName: 'Admin Support 🌸',
                         text: 'สวัสดีค่ะแอดมินรับเรื่องแล้วนะคะ กำลังตรวจสอบสถานะคำเชิญให้อย่างเร่งด่วนค่ะ รอสักครู่นะคะ 💖',
                         image: '',
+                        is_read: false,
                         timestamp: new Date(Date.now() - 1800000).toISOString()
                     }
                 ]
@@ -914,13 +919,14 @@
         ];
         let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
 
-        // ฟังก์ชันตรวจสอบว่าข้อความล่าสุดส่งมาจากลูกค้าหรือไม่ (Customer Reply Detector)
+        // ฟังก์ชันตรวจสอบว่าข้อความล่าสุดส่งมาจากลูกค้าหรือไม่ พร้อมสถานะว่าเปิดอ่านแล้วหรือยัง
         function getTicketCustomerReplyInfo(ticket) {
-            if (!ticket) return { hasCustomerReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            if (!ticket) return { hasCustomerReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
             const msgs = ticket.messages || [];
             if (msgs.length === 0) {
                 return {
                     hasCustomerReply: ticket.status === 'Open',
+                    isUnread: ticket.status === 'Open',
                     lastSender: 'agent',
                     lastMessage: ticket.description || ticket.subject,
                     lastMessageTime: ticket.updatedAt || ticket.createdAt
@@ -930,28 +936,32 @@
             const nonSystemMsgs = msgs.filter(m => m.sender !== 'system');
             const lastMsg = nonSystemMsgs.length > 0 ? nonSystemMsgs[nonSystemMsgs.length - 1] : msgs[msgs.length - 1];
             const isCustomer = lastMsg.sender === 'agent';
+            const isUnread = isCustomer && !lastMsg.is_read;
             return {
                 hasCustomerReply: isCustomer && ticket.status === 'Open',
+                isUnread: isUnread && ticket.status === 'Open',
                 lastSender: lastMsg.sender,
                 lastMessage: lastMsg.text,
                 lastMessageTime: lastMsg.timestamp
             };
         }
 
-        // ฟังก์ชันตรวจสอบว่าแอดมินตอบกลับข้อความแล้วหรือไม่ สำหรับแสดงสัญลักษณ์ในฝั่งลูกค้า
+        // ฟังก์ชันตรวจสอบว่าแอดมินตอบกลับข้อความแล้วหรือไม่ พร้อมสถานะว่าลูกค้าเปิดอ่านแล้วหรือยัง
         function getTicketAdminReplyInfo(ticket) {
-            if (!ticket) return { hasAdminReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            if (!ticket) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
             const msgs = ticket.messages || [];
-            if (msgs.length === 0) return { hasAdminReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            if (msgs.length === 0) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
             
             // คัดกรองเอาข้อความจริงที่ไม่ใช่ข้อความอัตโนมัติจากบอทระบบ
             const nonSystemMsgs = msgs.filter(m => m.sender !== 'system');
-            if (nonSystemMsgs.length === 0) return { hasAdminReply: false, lastSender: null, lastMessage: null, lastMessageTime: null };
+            if (nonSystemMsgs.length === 0) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
             
             const lastMsg = nonSystemMsgs[nonSystemMsgs.length - 1];
             const isAdmin = lastMsg.sender === 'admin';
+            const isUnread = isAdmin && !lastMsg.is_read;
             return {
                 hasAdminReply: isAdmin,
+                isUnread: isUnread,
                 lastSender: lastMsg.sender,
                 lastMessage: lastMsg.text,
                 lastMessageTime: lastMsg.timestamp
@@ -1201,6 +1211,7 @@
                                             senderName: m.sender_name,
                                             text: m.text,
                                             image: m.image_url,
+                                            is_read: m.is_read === true,
                                             timestamp: m.created_at
                                         }));
                                     }
@@ -1254,6 +1265,7 @@
                             senderName: m.sender_name,
                             text: m.text,
                             image: m.image_url,
+                            is_read: m.is_read === true,
                             timestamp: m.created_at
                         }));
                     }
@@ -1966,27 +1978,36 @@
                     const safeId = escapeHtml(ticket.id);
                     const adminReplyInfo = getTicketAdminReplyInfo(ticket);
 
-                    // ป้ายสัญลักษณ์และกล่องข้อความเมื่อแอดมินตอบกลับแล้ว
+                    // ป้ายสัญลักษณ์และกล่องข้อความเมื่อแอดมินตอบกลับแล้ว (แยกสถานะ: ยังไม่อ่าน / อ่านแล้ว)
                     let adminReplyBadgeHtml = '';
                     let adminReplySnippetHtml = '';
                     if (adminReplyInfo.hasAdminReply) {
-                        adminReplyBadgeHtml = `
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shadow-xs">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        if (adminReplyInfo.isUnread) {
+                            adminReplyBadgeHtml = `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shadow-xs">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    </span>
+                                    <i class="fas fa-comment-dots text-emerald-600"></i> แอดมินตอบแล้ว (ยังไม่อ่าน)
                                 </span>
-                                <i class="fas fa-check-double text-emerald-600"></i> แอดมินตอบแล้ว
-                            </span>
-                        `;
+                            `;
+                        } else {
+                            adminReplyBadgeHtml = `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-200">
+                                    <i class="fas fa-check-double text-emerald-500 text-[10px]"></i> อ่านแล้ว
+                                </span>
+                            `;
+                        }
+
                         if (adminReplyInfo.lastMessage) {
                             adminReplySnippetHtml = `
-                                <div class="p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs text-gray-700 flex items-start gap-2 shadow-xs">
-                                    <i class="fas fa-comment-dots text-emerald-600 mt-0.5 shrink-0 text-sm"></i>
+                                <div class="p-2.5 rounded-2xl ${adminReplyInfo.isUnread ? 'bg-emerald-50/90 border-emerald-200' : 'bg-gray-50 border-gray-200'} border text-xs text-gray-700 flex items-start gap-2 shadow-xs">
+                                    <i class="fas fa-comment-dots ${adminReplyInfo.isUnread ? 'text-emerald-600' : 'text-gray-400'} mt-0.5 shrink-0 text-sm"></i>
                                     <div class="min-w-0 flex-grow">
                                         <div class="flex items-center justify-between gap-2">
-                                            <span class="font-bold text-emerald-800">ข้อความจากแอดมิน:</span>
-                                            <span class="text-[10px] text-emerald-600 font-medium">${formatThaiTime(adminReplyInfo.lastMessageTime)}</span>
+                                            <span class="font-bold ${adminReplyInfo.isUnread ? 'text-emerald-800' : 'text-gray-700'}">ข้อความจากแอดมิน:</span>
+                                            <span class="text-[10px] ${adminReplyInfo.isUnread ? 'text-emerald-600' : 'text-gray-400'} font-medium">${formatThaiTime(adminReplyInfo.lastMessageTime)}</span>
                                         </div>
                                         <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(adminReplyInfo.lastMessage)}</p>
                                     </div>
@@ -2012,10 +2033,10 @@
                     }
 
                     const card = document.createElement('div');
-                    card.className = `bg-white border ${adminReplyInfo.hasAdminReply ? 'border-emerald-300 ring-2 ring-emerald-100 shadow-sm' : 'border-pink-100 hover:border-primary'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800`;
+                    card.className = `bg-white border ${adminReplyInfo.hasAdminReply && adminReplyInfo.isUnread ? 'border-emerald-300 ring-2 ring-emerald-100 shadow-sm' : 'border-pink-100 hover:border-primary'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800`;
                     
-                    const buttonText = adminReplyInfo.hasAdminReply ? 'อ่านข้อความจากแอดมิน' : 'แตะเพื่อคุยกับแอดมิน';
-                    const buttonClass = adminReplyInfo.hasAdminReply 
+                    const buttonText = adminReplyInfo.hasAdminReply ? (adminReplyInfo.isUnread ? 'อ่านข้อความใหม่จากแอดมิน' : 'เปิดดูบทสนทนา') : 'แตะเพื่อคุยกับแอดมิน';
+                    const buttonClass = (adminReplyInfo.hasAdminReply && adminReplyInfo.isUnread)
                         ? 'bg-emerald-500 hover:bg-emerald-600 text-white' 
                         : 'bg-primary hover:bg-primary-hover text-white';
 
@@ -2268,27 +2289,36 @@
                     const replyInfo = getTicketCustomerReplyInfo(ticket);
                     const safeId = escapeHtml(ticket.id);
 
-                    // สัญลักษณ์แสดงเมื่อมีข้อความตอบกลับจากลูกค้า (ไม่นับเป็นสถานะของเคส)
+                    // สัญลักษณ์แสดงเมื่อมีข้อความตอบกลับจากลูกค้า (แยกสถานะ: ยังไม่อ่าน / อ่านแล้ว)
                     let replyIndicatorHtml = '';
                     let replySnippetHtml = '';
                     if (replyInfo.hasCustomerReply) {
-                        replyIndicatorHtml = `
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-300 shadow-xs">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+                        if (replyInfo.isUnread) {
+                            replyIndicatorHtml = `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-300 shadow-xs">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+                                    </span>
+                                    <i class="fas fa-comment-dots text-pink-600"></i> ลูกค้าส่งข้อความ (ยังไม่อ่าน)
                                 </span>
-                                <i class="fas fa-comment-dots text-pink-600"></i> ลูกค้าส่งข้อความ
-                            </span>
-                        `;
+                            `;
+                        } else {
+                            replyIndicatorHtml = `
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                    <i class="fas fa-check-double text-emerald-500 text-[10px]"></i> เปิดอ่านแล้ว
+                                </span>
+                            `;
+                        }
+
                         if (replyInfo.lastMessage) {
                             replySnippetHtml = `
-                                <div class="mt-2.5 p-2.5 rounded-2xl bg-pink-50/70 border border-pink-200 text-xs text-gray-700 flex items-start gap-2 shadow-xs">
-                                    <i class="fas fa-reply text-pink-500 mt-0.5 shrink-0"></i>
+                                <div class="mt-2.5 p-2.5 rounded-2xl ${replyInfo.isUnread ? 'bg-pink-50/80 border-pink-200' : 'bg-gray-50 border-gray-200'} border text-xs text-gray-700 flex items-start gap-2 shadow-xs">
+                                    <i class="fas fa-reply ${replyInfo.isUnread ? 'text-pink-500' : 'text-gray-400'} mt-0.5 shrink-0"></i>
                                     <div class="min-w-0 flex-grow">
                                         <div class="flex items-center justify-between gap-2">
-                                            <span class="font-bold text-pink-700">ข้อความล่าสุดจากลูกค้า:</span>
-                                            <span class="text-[10px] text-pink-500 font-medium">${formatThaiTime(replyInfo.lastMessageTime)}</span>
+                                            <span class="font-bold ${replyInfo.isUnread ? 'text-pink-700' : 'text-gray-700'}">ข้อความล่าสุดจากลูกค้า:</span>
+                                            <span class="text-[10px] ${replyInfo.isUnread ? 'text-pink-500' : 'text-gray-400'} font-medium">${formatThaiTime(replyInfo.lastMessageTime)}</span>
                                         </div>
                                         <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(replyInfo.lastMessage)}</p>
                                     </div>
@@ -2298,7 +2328,7 @@
                     }
 
                     const card = document.createElement('div');
-                    card.className = `bg-white border ${ticket.status==='Open' ? (replyInfo.hasCustomerReply ? 'border-pink-300 ring-2 ring-pink-100' : 'border-amber-300 ring-2 ring-amber-100') : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col justify-between gap-3 text-gray-800 hover:shadow-md`;
+                    card.className = `bg-white border ${ticket.status==='Open' ? (replyInfo.hasCustomerReply && replyInfo.isUnread ? 'border-pink-300 ring-2 ring-pink-100' : 'border-amber-300 ring-2 ring-amber-100') : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col justify-between gap-3 text-gray-800 hover:shadow-md`;
 
                     card.innerHTML = `
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
@@ -2351,6 +2381,34 @@
             }
         }
 
+        // ฟังก์ชันทำเครื่องหมายว่าเปิดอ่านข้อความแล้ว (Mark as Read)
+        async function markMessagesAsRead(ticketId) {
+            const ticket = tickets.find(t => t.id === ticketId);
+            if (!ticket || !ticket.messages) return;
+
+            let updatedCount = 0;
+            const targetSender = currentRole === 'admin' ? 'agent' : 'admin';
+
+            ticket.messages.forEach(msg => {
+                if (msg.sender === targetSender && !msg.is_read) {
+                    msg.is_read = true;
+                    updatedCount++;
+                }
+            });
+
+            if (updatedCount > 0 && supabaseClient) {
+                try {
+                    await supabaseClient
+                        .from('messages')
+                        .update({ is_read: true })
+                        .eq('ticket_id', ticketId)
+                        .eq('sender_role', targetSender);
+                } catch (readErr) {
+                    console.warn('Mark as read Supabase sync notice:', readErr);
+                }
+            }
+        }
+
         async function openTicketDetail(ticketId) {
             viewingTicketId = ticketId;
             const ticket = tickets.find(t => t.id === viewingTicketId);
@@ -2394,8 +2452,11 @@
             container.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs"><i class="fas fa-spinner fa-spin mr-2"></i> กำลังโหลดข้อความแชท...</div>';
 
             switchView('view-ticket-detail');
+            await markMessagesAsRead(ticketId);
             renderChatMessages();
             await loadTicketMessages(ticketId);
+            await markMessagesAsRead(ticketId);
+            renderChatMessages();
         }
 
         function renderChatMessages() {
@@ -2435,6 +2496,23 @@
                 } else if (isMe) {
                     msgWrapper.className += " justify-end";
                     let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
+                    
+                    // ป้ายสถานะ อ่านแล้ว / ส่งแล้ว ฝั่งข้อความของเรา
+                    let readReceiptHtml = '';
+                    if (msg.is_read) {
+                        readReceiptHtml = `
+                            <span class="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+                                <i class="fas fa-check-double text-[10px]"></i> อ่านแล้ว
+                            </span>
+                        `;
+                    } else {
+                        readReceiptHtml = `
+                            <span class="inline-flex items-center gap-1 text-[11px] text-gray-400">
+                                <i class="fas fa-check text-[10px]"></i> ส่งแล้ว
+                            </span>
+                        `;
+                    }
+
                     msgWrapper.innerHTML = `
                         <div class="max-w-[80%] flex flex-col items-end">
                             <span class="text-xs text-pink-300 mb-1.5 mr-2 font-medium">คุณ</span>
@@ -2442,7 +2520,10 @@
                                 ${imageHtml}
                                 <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
                             </div>
-                            <span class="text-[10px] text-gray-500 mt-1.5 mr-2 font-medium">${formatThaiTime(msg.timestamp)}</span>
+                            <div class="flex items-center gap-2 mt-1.5 mr-2">
+                                ${readReceiptHtml}
+                                <span class="text-[10px] text-gray-500 font-medium">${formatThaiTime(msg.timestamp)}</span>
+                            </div>
                         </div>
                     `;
                 } else {
@@ -2505,6 +2586,7 @@
                         sender_role: senderRole,
                         sender_name: senderName,
                         text: text,
+                        is_read: false,
                         created_at: now
                     });
                     if (msgErr) console.warn('Supabase message insert notice:', msgErr);
@@ -2515,6 +2597,7 @@
                     sender: senderRole,
                     senderName: senderName,
                     text: text,
+                    is_read: false,
                     timestamp: now
                 });
                 ticket.updatedAt = now;
