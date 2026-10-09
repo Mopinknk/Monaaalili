@@ -40,10 +40,10 @@
     <style>
         body { font-family: 'Prompt', sans-serif; background-color: #141214; color: #f3e8eb; }
         .hide { display: none !important; }
-        .chat-container { height: calc(100vh - 280px); min-height: 400px; }
+        .chat-container { height: calc(100vh - 290px); min-height: 380px; }
         
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: #141214; }
         ::-webkit-scrollbar-thumb { background: #ff758c; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff526d; }
@@ -75,7 +75,7 @@
             100% { background-position: 400px 300px; }
         }
 
-        /* Marquee Animation (วิ่งช้าๆ สบายตา และหยุดนิ่งเมื่อชี้เมาส์) */
+        /* Marquee Animation */
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -83,7 +83,7 @@
         .animate-marquee {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 45s linear infinite;
+            animation: marquee 40s linear infinite;
         }
         .animate-marquee:hover {
             animation-play-state: paused;
@@ -362,13 +362,35 @@
                     <!-- Chat bubbles injected here -->
                 </div>
 
-                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0" id="chat-input-area">
-                    <form onsubmit="handleSendMessage(event)" class="flex gap-3 items-end">
-                        <div class="flex-grow relative">
-                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white"></textarea>
+                <!-- Chat Input Section with Cute Emoji Drawer Popup -->
+                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0 relative" id="chat-input-area">
+                    <!-- Cute Emoji Picker Drawer Popup -->
+                    <div id="emoji-picker-drawer" class="hide absolute bottom-full mb-3 left-3 right-3 sm:left-auto sm:right-4 sm:w-80 bg-[#1a171a] border border-pink-500/40 rounded-3xl shadow-2xl p-3.5 z-40 backdrop-blur-md transition-all">
+                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-pink-500/20">
+                            <span class="text-xs font-semibold text-pink-200 flex items-center gap-1.5">
+                                <span>🎀</span> อิโมจิ (Emojis)
+                            </span>
+                            <button type="button" onclick="toggleEmojiPicker(false)" class="text-gray-400 hover:text-danger text-xs w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
-                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-14 h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
-                            <i class="fas fa-paper-plane text-lg"></i>
+                        <p class="text-[11px] text-pink-300/80 mb-2 flex items-center"><i class="fas fa-smile mr-1 text-warning"></i> แตะเพื่อแทรกอิโมจิในข้อความ 🌸</p>
+                        <div class="max-h-60 overflow-y-auto pr-1">
+                            <div id="emojis-list-container" class="grid grid-cols-7 sm:grid-cols-8 gap-1.5 text-xl p-1.5 bg-[#141214] rounded-2xl border border-pink-500/20 text-center">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleSendMessage(event)" class="flex gap-2 sm:gap-3 items-end">
+                        <button type="button" id="btn-toggle-emojis" onclick="toggleEmojiPicker()" title="เลือกอิโมจิ" class="rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
+                            <i class="far fa-smile text-xl"></i>
+                        </button>
+                        <div class="flex-grow relative">
+                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
+                        </div>
+                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
+                            <i class="fas fa-paper-plane text-base sm:text-lg"></i>
                         </button>
                     </form>
                 </div>
@@ -723,47 +745,6 @@
                 </div>
             </div>
 
-            <!-- Supabase RLS Fix Modal -->
-            <div id="rls-fix-modal" onclick="if(event.target===this) closeRLSFixModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4">
-                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-emerald-500/40 w-full max-w-xl overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
-                    <div class="bg-emerald-500/10 px-6 py-4 border-b border-emerald-500/20 flex justify-between items-center shrink-0">
-                        <div class="flex items-center gap-2.5">
-                            <i class="fas fa-database text-emerald-400 text-lg"></i>
-                            <h3 class="font-bold text-white text-base sm:text-lg">วิธีแก้ Error 42501 (RLS Policy บน Supabase)</h3>
-                        </div>
-                        <button type="button" onclick="closeRLSFixModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
-                            <i class="fas fa-times text-lg"></i>
-                        </button>
-                    </div>
-                    <div class="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-gray-300">
-                        <p class="leading-relaxed">
-                            Error <code class="text-pink-300 font-mono">42501: new row violates row-level security policy</code> เกิดจากตาราง <code class="text-pink-300 font-mono">messages</code> บน Supabase ยังไม่ได้เปิด Policy อนุญาตให้ลูกค้าหรือแอดมิน <span class="text-emerald-400 font-semibold">INSERT</span> ข้อความค่ะ
-                        </p>
-                        <div class="bg-[#141214] p-3 rounded-2xl border border-pink-500/20">
-                            <p class="font-bold text-white mb-1.5 flex items-center gap-2">
-                                <i class="fas fa-terminal text-emerald-400"></i> ทำตาม 3 ขั้นตอนนี้ใน 1 นาที:
-                            </p>
-                            <ol class="list-decimal list-inside space-y-1 text-gray-300 text-xs pl-1">
-                                <li>ไปที่หน้า Dashboard โครงการของคุณบน <a href="https://supabase.com" target="_blank" class="text-sky-400 underline">Supabase.com</a></li>
-                                <li>กดเมนู <b>SQL Editor</b> เมนูด้านซ้าย</li>
-                                <li>กดปุ่ม <b>"คัดลอกโค้ด SQL"</b> ด้านล่างนี้ แล้วนำไปวางแล้วกดปุ่ม <b>Run</b> ค่ะ ✨</li>
-                            </ol>
-                        </div>
-                        <div class="relative">
-                            <textarea id="rls-sql-code" readonly rows="8" class="w-full rounded-2xl border border-emerald-500/30 p-3.5 bg-[#141214] font-mono text-[11px] leading-relaxed text-emerald-300 outline-none select-all resize-none"></textarea>
-                        </div>
-                        <div class="pt-2 flex flex-col sm:flex-row gap-3">
-                            <button type="button" onclick="copyRLSSql()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-gray-900 py-3 rounded-full font-bold shadow-md transition-all text-sm flex items-center justify-center gap-2">
-                                <i class="fas fa-copy"></i> <span id="btn-copy-sql-text">คัดลอกโค้ด SQL</span>
-                            </button>
-                            <button type="button" onclick="closeRLSFixModal()" class="w-full bg-[#141214] border border-pink-500/20 hover:bg-white/5 text-gray-300 py-3 rounded-full font-medium transition-all text-sm">
-                                ปิดหน้าต่างนี้
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </main>
 
@@ -777,7 +758,33 @@
             }
         }, true);
 
-        // --- Supabase Cloud Configuration (Publishable Anon Key only) ---
+        // Safe Storage Helper (รองรับ iframe sandbox ที่อาจปิดกั้น localStorage)
+        const memoryStorage = {};
+        const safeStorage = {
+            getItem(key) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (e) {
+                    return memoryStorage[key] || null;
+                }
+            },
+            setItem(key, value) {
+                try {
+                    localStorage.setItem(key, value);
+                } catch (e) {
+                    memoryStorage[key] = String(value);
+                }
+            },
+            removeItem(key) {
+                try {
+                    localStorage.removeItem(key);
+                } catch (e) {
+                    delete memoryStorage[key];
+                }
+            }
+        };
+
+        // --- Supabase Cloud Configuration ---
         const SUPABASE_PROJECT_URL = "https://odkuhnxzskccpmlpimau.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ka3Vobnh6c2tjY3BtbHBpbWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg3NzcsImV4cCI6MjEwNjg5NDc3N30.MxuWQk1jk1Rfg-Sw1gXgvI4kQZHD2eR2RVEiTtVXoAc";
 
@@ -807,7 +814,14 @@
 ━━━━━━━━━━━━━━━━━
 🕒 <i>เวลา: {time}</i>`;
 
-        // Text sanitizer using safe HTML entity replacement
+        const CUTE_EMOJIS = [
+            '💖', '🌸', '✨', '🧸', '🐰', '🐱', '🎀', '🍓',
+            '🧁', '🌷', '🥰', '🥺', '🎉', '💌', '⭐', '🤍',
+            '🍰', '🍪', '🥞', '🐾', '💐', '🍭', '🍯', '🫶',
+            '👏', '🌼', '🍬', '🎂', '🍒', '💕', '💫', '🐣',
+            '😊', '😍', '🤩', '😻', '🌻', '🎁', '🎈', '🕊️'
+        ];
+
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -818,7 +832,6 @@
                 .replace(/'/g, '&#39;');
         }
 
-        // Sanitizer สำหรับ URL รูปภาพ ป้องกัน Stored XSS ใน src attribute
         function sanitizeMediaUrl(url) {
             if (!url || typeof url !== 'string') return '';
             const trimmed = url.trim();
@@ -829,35 +842,34 @@
         }
 
         function getTelegramToken() {
-            return localStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
+            return safeStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
         }
 
         function getTelegramChatId() {
-            return localStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
+            return safeStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
         }
 
         function getTelegramTicketTemplate() {
-            return localStorage.getItem('helpCenterTelegramTicketTemplate') || DEFAULT_TELEGRAM_TICKET_TEMPLATE;
+            return safeStorage.getItem('helpCenterTelegramTicketTemplate') || DEFAULT_TELEGRAM_TICKET_TEMPLATE;
         }
 
         function getTelegramChatTemplate() {
-            return localStorage.getItem('helpCenterTelegramChatTemplate') || DEFAULT_TELEGRAM_CHAT_TEMPLATE;
+            return safeStorage.getItem('helpCenterTelegramChatTemplate') || DEFAULT_TELEGRAM_CHAT_TEMPLATE;
         }
 
         // --- Application State ---
         let currentRole = 'agent';
         
-        let deviceId = localStorage.getItem('helpCenterDeviceId');
+        let deviceId = safeStorage.getItem('helpCenterDeviceId');
         if (!deviceId) {
             deviceId = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            localStorage.setItem('helpCenterDeviceId', deviceId);
+            safeStorage.setItem('helpCenterDeviceId', deviceId);
         }
         
         let currentAgentName = "Agent " + deviceId;
         let viewingTicketId = null;
         let currentFilter = 'All';
 
-        // ค่าเริ่มต้นแบบ Fallback กรณีฐานข้อมูลว่าง
         let applications = ['YouTube Premium', 'Netflix', 'Spotify', 'Disney+ Hotstar', 'Canva Pro', 'VIU', 'iQIYI', 'WeTV', 'HBO GO', 'CapCut Pro', 'อื่นๆ'];
         let faqs = [
             {
@@ -875,17 +887,9 @@
                 sort_order: 2
             }
         ];
-        // แยกข้อมูลตามอุปกรณ์เด็ดขาด: เริ่มต้นเป็นอาร์เรย์ว่าง ไม่ใส่เคสตัวอย่างที่ผูกกับ deviceId ป้องกันอุปกรณ์อื่นเห็นข้อมูล
         let tickets = [];
         let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
 
-        // ล้างข้อมูลแคชเคสทดสอบเดิมที่อาจค้างอยู่ใน LocalStorage
-        try {
-            localStorage.removeItem('local_msgs_TCK-2084');
-            localStorage.removeItem('local_msgs_TCK-2085');
-        } catch (e) {}
-
-        // ฟังก์ชันตรวจสอบว่าข้อความล่าสุดส่งมาจากลูกค้าหรือไม่ พร้อมสถานะว่าเปิดอ่านแล้วหรือยัง (รองรับทั้งฐานข้อมูลและ Local fallback)
         function getTicketCustomerReplyInfo(ticket) {
             if (!ticket) return { hasCustomerReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
             const msgs = ticket.messages || [];
@@ -898,14 +902,13 @@
                     lastMessageTime: ticket.updatedAt || ticket.createdAt
                 };
             }
-            // คัดกรองเอาข้อความที่ไม่ใช่บอทระบบ
             const nonSystemMsgs = msgs.filter(m => m.sender !== 'system');
             const lastMsg = nonSystemMsgs.length > 0 ? nonSystemMsgs[nonSystemMsgs.length - 1] : msgs[msgs.length - 1];
             const isCustomer = lastMsg.sender === 'agent';
             
             let isRead = lastMsg.is_read === true;
             try {
-                const adminReadTime = parseInt(localStorage.getItem(`read_admin_${ticket.id}`) || '0', 10);
+                const adminReadTime = parseInt(safeStorage.getItem(`read_admin_${ticket.id}`) || '0', 10);
                 const msgTime = new Date(lastMsg.timestamp).getTime();
                 if (adminReadTime && adminReadTime >= msgTime) {
                     isRead = true;
@@ -922,7 +925,6 @@
             };
         }
 
-        // ฟังก์ชันตรวจสอบว่าแอดมินตอบกลับข้อความแล้วหรือไม่ พร้อมสถานะว่าลูกค้าเปิดอ่านแล้วหรือยัง
         function getTicketAdminReplyInfo(ticket) {
             if (!ticket) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
             const msgs = ticket.messages || [];
@@ -936,7 +938,7 @@
 
             let isRead = lastMsg.is_read === true;
             try {
-                const agentReadTime = parseInt(localStorage.getItem(`read_agent_${ticket.id}`) || '0', 10);
+                const agentReadTime = parseInt(safeStorage.getItem(`read_agent_${ticket.id}`) || '0', 10);
                 const msgTime = new Date(lastMsg.timestamp).getTime();
                 if (agentReadTime && agentReadTime >= msgTime) {
                     isRead = true;
@@ -965,7 +967,6 @@
             }
         }
 
-        // Initialize Supabase Client with x-device-id header
         let supabaseClient = null;
         try {
             if (window.supabase && typeof window.supabase.createClient === 'function') {
@@ -995,7 +996,6 @@
         }
         renderAnnouncement();
 
-        // ตรวจสอบขนาดและประเภทไฟล์ก่อนบีบอัด (File Validation)
         function compressAndProcessImage(file, maxWidth, maxHeight, quality, callback) {
             if (!file) return;
 
@@ -1004,7 +1004,7 @@
                 return;
             }
 
-            const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
+            const maxSizeBytes = 5 * 1024 * 1024;
             if (file.size > maxSizeBytes) {
                 customAlert('ขนาดรูปภาพต้องไม่เกิน 5 MB นะคะ ⚠️');
                 return;
@@ -1087,16 +1087,12 @@
             { keywords: ['เข้าไม่ได้', 'login ไม่ได้', 'เข้าระบบไม่ได้'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากเข้าสู่ระบบไม่ได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต และยืนยันว่าใช้ Username/Password ที่ถูกต้องค่ะ' }
         ];
 
-        // ฟังก์ชันดึงลำดับคิวและจำนวนคิวก่อนหน้าจากฐานข้อมูลส่วนกลาง
         async function fetchTicketQueue(ticketId) {
             if (!supabaseClient || !ticketId) return null;
             try {
                 const { data, error } = await supabaseClient.rpc('get_ticket_queue', { p_ticket_id: ticketId });
                 if (!error && data && data.found) {
                     return data;
-                }
-                if (error) {
-                    console.warn('Queue RPC error:', error);
                 }
             } catch (err) {
                 console.warn('Queue calculation fetch notice:', err);
@@ -1107,14 +1103,14 @@
         async function syncFromSupabase() {
             if (!supabaseClient) return;
             try {
-                // 1. Fetch Shop settings (Row 1)
-                const { data: shopData, error: shopErr } = await supabaseClient
+                // 1. Fetch Shop settings
+                const { data: shopData } = await supabaseClient
                     .from('shop_settings')
                     .select('*')
                     .eq('id', 1)
                     .maybeSingle();
 
-                if (shopData && !shopErr) {
+                if (shopData) {
                     if (shopData.announcement_text) {
                         announcementText = shopData.announcement_text;
                         renderAnnouncement();
@@ -1128,29 +1124,29 @@
                 }
 
                 // 2. Fetch Applications
-                const { data: appsData, error: appsErr } = await supabaseClient
+                const { data: appsData } = await supabaseClient
                     .from('applications')
                     .select('app_name')
                     .order('id', { ascending: true });
 
-                if (!appsErr && appsData && appsData.length > 0) {
+                if (appsData && appsData.length > 0) {
                     applications = appsData.map(a => a.app_name);
                     renderAppDropdowns();
                 }
 
                 // 3. Fetch FAQs
-                const { data: faqsData, error: faqsErr } = await supabaseClient
+                const { data: faqsData } = await supabaseClient
                     .from('faqs')
                     .select('id, question, answer, image_url, sort_order')
                     .order('sort_order', { ascending: true });
 
-                if (!faqsErr && faqsData && faqsData.length > 0) {
+                if (faqsData && faqsData.length > 0) {
                     faqs = faqsData;
                     renderAgentFAQs();
                     if (currentRole === 'admin') renderAdminFAQList();
                 }
 
-                // 4. Fetch Tickets (คัดกรองเฉพาะ device_id ของอุปกรณ์นั้นๆ สำหรับลูกค้า)
+                // 4. Fetch Tickets
                 let query = supabaseClient.from('tickets').select('*');
                 if (currentRole !== 'admin') {
                     query = query.eq('device_id', deviceId);
@@ -1177,16 +1173,15 @@
                         messages: []
                     }));
 
-                    // โหลดข้อความแชทเฉพาะเคสที่อุปกรณ์นี้มีสิทธิ์เข้าถึงเท่านั้น
                     const ticketIds = tickets.map(t => t.id);
                     if (ticketIds.length > 0) {
                         try {
-                            const { data: allMsgs, error: allMsgsErr } = await supabaseClient
+                            const { data: allMsgs } = await supabaseClient
                                 .from('messages')
                                 .select('*')
                                 .in('ticket_id', ticketIds)
                                 .order('created_at', { ascending: true });
-                            if (!allMsgsErr && allMsgs && allMsgs.length > 0) {
+                            if (allMsgs && allMsgs.length > 0) {
                                 tickets.forEach(t => {
                                     const related = allMsgs.filter(m => m.ticket_id === t.id);
                                     if (related.length > 0) {
@@ -1207,7 +1202,6 @@
                         }
                     }
 
-                    // ดึงลำดับคิวและจำนวนคิวก่อนหน้าจริงของเคสทั้งหมดในระบบสำหรับเคสที่ยังรอดำเนินการ
                     if (currentRole !== 'admin') {
                         const openTickets = tickets.filter(t => t.status === 'Open');
                         if (openTickets.length > 0) {
@@ -1233,14 +1227,13 @@
             }
         }
 
-        // Local Cache for messages (ป้องกันข้อความสูญหายหาก Supabase RLS บล็อก)
         function getLocalMessagesKey(ticketId) {
             return `local_msgs_${ticketId}`;
         }
 
         function getLocalMessages(ticketId) {
             try {
-                const stored = localStorage.getItem(getLocalMessagesKey(ticketId));
+                const stored = safeStorage.getItem(getLocalMessagesKey(ticketId));
                 return stored ? JSON.parse(stored) : [];
             } catch(e) {
                 return [];
@@ -1251,7 +1244,7 @@
             try {
                 const list = getLocalMessages(ticketId);
                 list.push(messageObj);
-                localStorage.setItem(getLocalMessagesKey(ticketId), JSON.stringify(list));
+                safeStorage.setItem(getLocalMessagesKey(ticketId), JSON.stringify(list));
             } catch(e) {}
         }
 
@@ -1260,7 +1253,6 @@
             const ticket = tickets.find(t => t.id === ticketId);
             if (!ticket) return;
 
-            // ตรวจสอบความปลอดภัยระดับอุปกรณ์: ลูกค้าทั่วไปห้ามดึงข้อความของเคสที่ไม่ได้สร้างจากเครื่องนี้
             if (currentRole !== 'admin' && ticket.deviceId !== deviceId) {
                 return;
             }
@@ -1291,7 +1283,6 @@
                 }
             }
 
-            // ผสานข้อความจาก Local Cache เพื่อให้ข้อความที่ถูกส่งอยู่ครบเสมอ 100%
             const localMsgs = getLocalMessages(ticketId);
             localMsgs.forEach(lm => {
                 const exists = loadedMessages.some(m => m.text === lm.text && Math.abs(new Date(m.timestamp) - new Date(lm.timestamp)) < 5000);
@@ -1764,15 +1755,7 @@
 
                 if (supabaseClient) {
                     const { data, error } = await supabaseClient.from('faqs').insert(newRecord).select().single();
-                    if (error) {
-                        if (error.message?.includes('image_url') || error.code === 'PGRST204' || error.message?.includes('column')) {
-                            throw new Error('ตาราง faqs ใน Supabase ยังไม่มีคอลัมน์ image_url ค่ะ 🖼️');
-                        }
-                        if (error.message?.includes('row-level security') || error.code === '42501') {
-                            throw new Error('บัญชีของคุณยังไม่มีสิทธิ์ในตาราง admins บน Supabase ค่ะ 🔒');
-                        }
-                        throw error;
-                    }
+                    if (error) throw error;
                     if (data) newRecord = data;
                 }
                 faqs.push(newRecord);
@@ -1784,7 +1767,7 @@
                 customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
             } catch (err) {
                 console.error('Add FAQ error:', err);
-                customAlert(err.message || 'ไม่สามารถเพิ่ม FAQ ได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
+                customAlert('ไม่สามารถเพิ่ม FAQ ได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ');
             }
@@ -1902,10 +1885,7 @@
                     throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้องค่ะ ❌');
                 }
 
-                const { data: isAdmin, error: rpcError } = await supabaseClient.rpc('is_admin');
-                if (rpcError) {
-                    console.warn('is_admin RPC notice:', rpcError);
-                }
+                const { data: isAdmin } = await supabaseClient.rpc('is_admin');
 
                 if (!isAdmin) {
                     await supabaseClient.auth.signOut();
@@ -2011,7 +1991,6 @@
                     const safeId = escapeHtml(ticket.id);
                     const adminReplyInfo = getTicketAdminReplyInfo(ticket);
 
-                    // ป้ายสัญลักษณ์และกล่องข้อความเมื่อแอดมินตอบกลับแล้ว (แยกสถานะ: ยังไม่อ่าน / อ่านแล้ว)
                     let adminReplyBadgeHtml = '';
                     let adminReplySnippetHtml = '';
                     if (adminReplyInfo.hasAdminReply) {
@@ -2248,7 +2227,6 @@
 
             } catch (err) {
                 console.error('Create ticket error:', err);
-                // หากติดขัดด้าน RLS ใน Local Preview ยังคงอนุญาตให้บันทึกลง local state เพื่อให้ทดสอบต่อได้
                 tickets.unshift(newTicket);
                 document.getElementById('create-ticket-form').reset();
                 removeImage();
@@ -2322,7 +2300,6 @@
                     const replyInfo = getTicketCustomerReplyInfo(ticket);
                     const safeId = escapeHtml(ticket.id);
 
-                    // สัญลักษณ์แสดงเมื่อมีข้อความตอบกลับจากลูกค้า (แยกสถานะ: ยังไม่อ่าน / อ่านแล้ว)
                     let replyIndicatorHtml = '';
                     let replySnippetHtml = '';
                     if (replyInfo.hasCustomerReply) {
@@ -2414,7 +2391,6 @@
             }
         }
 
-        // ฟังก์ชันทำเครื่องหมายว่าเปิดอ่านข้อความแล้ว (Mark as Read)
         async function markMessagesAsRead(ticketId) {
             const ticket = tickets.find(t => t.id === ticketId);
             if (!ticket || !ticket.messages) return;
@@ -2429,21 +2405,17 @@
                 }
             });
 
-            // บันทึกเวลาที่เปิดอ่านลง Local Storage เพื่อให้สถานะทำงานได้ทันทีแม้ฐานข้อมูล Supabase ยังไม่มีคอลัมน์ is_read
             try {
-                localStorage.setItem(`read_${currentRole}_${ticketId}`, Date.now().toString());
+                safeStorage.setItem(`read_${currentRole}_${ticketId}`, Date.now().toString());
             } catch (e) {}
 
             if (updatedCount > 0 && supabaseClient) {
                 try {
-                    const { error } = await supabaseClient
+                    await supabaseClient
                         .from('messages')
                         .update({ is_read: true })
                         .eq('ticket_id', ticketId)
                         .eq('sender_role', targetSender);
-                    if (error) {
-                        console.warn('is_read column sync notice (will use local fallback):', error.message);
-                    }
                 } catch (readErr) {
                     console.warn('Mark as read Supabase sync notice:', readErr);
                 }
@@ -2455,8 +2427,6 @@
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
 
-            // การตรวจสอบความปลอดภัยระดับอุปกรณ์อย่างเข้มงวด (Strict Device Isolation)
-            // หากไม่ใช่แอดมิน และเคสนี้ไม่ได้เป็นของอุปกรณ์นี้ ห้ามเปิดดูและส่งกลับหน้าหลักทันที
             if (currentRole !== 'admin' && ticket.deviceId !== deviceId) {
                 customAlert('คุณไม่มีสิทธิ์เข้าถึงรายการแจ้งปัญหานี้ค่ะ 🔒');
                 switchView('view-agent-dashboard');
@@ -2530,6 +2500,22 @@
                 if (currentRole === 'admin' && msg.sender === 'admin') isMe = true;
 
                 const safeImgUrl = sanitizeMediaUrl(msg.image);
+                const isStickerMsg = typeof msg.text === 'string' && msg.text.startsWith('🏷️ [สติ๊กเกอร์]');
+                
+                let stickerContentHtml = '';
+                if (isStickerMsg) {
+                    const cleanStickerText = msg.text.replace('🏷️ [สติ๊กเกอร์]', '').trim();
+                    const firstEmojiMatch = cleanStickerText.match(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u);
+                    const stickerEmoji = firstEmojiMatch ? firstEmojiMatch[0] : '🌸';
+                    const remainingStickerText = cleanStickerText.replace(stickerEmoji, '').trim();
+
+                    stickerContentHtml = `
+                        <div class="flex items-center gap-2.5 py-1">
+                            <span class="text-3xl filter drop-shadow-sm select-none transform transition-transform hover:scale-125 inline-block">${stickerEmoji}</span>
+                            <span class="font-medium tracking-wide leading-relaxed text-sm">${escapeHtml(remainingStickerText)}</span>
+                        </div>
+                    `;
+                }
 
                 if (msg.sender === 'system') {
                     msgWrapper.className += " justify-center";
@@ -2546,7 +2532,6 @@
                     msgWrapper.className += " justify-end";
                     let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
                     
-                    // ป้ายสถานะ อ่านแล้ว / ส่งแล้ว ฝั่งข้อความของเรา
                     let readReceiptHtml = '';
                     if (msg.is_read) {
                         readReceiptHtml = `
@@ -2562,12 +2547,20 @@
                         `;
                     }
 
+                    const bubbleContent = isStickerMsg 
+                        ? stickerContentHtml 
+                        : `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>`;
+
+                    const bubbleClasses = isStickerMsg
+                        ? "bg-gradient-to-r from-pink-500 to-rose-400 text-white rounded-3xl rounded-tr-none px-4 py-3 shadow-md border border-pink-300/30"
+                        : "bg-primary text-white rounded-2xl rounded-tr-none p-3.5 shadow-sm text-sm";
+
                     msgWrapper.innerHTML = `
-                        <div class="max-w-[80%] flex flex-col items-end">
+                        <div class="max-w-[85%] sm:max-w-[80%] flex flex-col items-end">
                             <span class="text-xs text-pink-300 mb-1.5 mr-2 font-medium">คุณ</span>
-                            <div class="bg-primary text-white rounded-2xl rounded-tr-none p-3.5 shadow-sm text-sm">
+                            <div class="${bubbleClasses}">
                                 ${imageHtml}
-                                <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
+                                ${bubbleContent}
                             </div>
                             <div class="flex items-center gap-2 mt-1.5 mr-2">
                                 ${readReceiptHtml}
@@ -2580,16 +2573,25 @@
                     let senderName = msg.sender === 'agent' ? ticket.agentName : 'Admin Support 🌸';
                     let currentLogoSrc = sanitizeMediaUrl(document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
                     let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm">` : '';
+                    
+                    const bubbleContent = isStickerMsg 
+                        ? stickerContentHtml 
+                        : `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>`;
+
+                    const bubbleClasses = isStickerMsg
+                        ? "bg-gradient-to-r from-[#261f25] to-[#201820] text-pink-100 border border-pink-500/40 rounded-3xl rounded-tl-none px-4 py-3 shadow-md"
+                        : "bg-[#1e1b1e] text-gray-200 border border-pink-500/20 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-sm";
+
                     msgWrapper.innerHTML = `
-                        <div class="max-w-[80%] flex items-end gap-3">
-                            <div class="w-10 h-10 rounded-full bg-[#1e1b1e] text-primary flex items-center justify-center flex-shrink-0 mb-6 shadow-sm border border-pink-500/20 overflow-hidden">
+                        <div class="max-w-[85%] sm:max-w-[80%] flex items-end gap-2.5 sm:gap-3">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e1b1e] text-primary flex items-center justify-center flex-shrink-0 mb-6 shadow-sm border border-pink-500/20 overflow-hidden">
                                 <img src="${currentLogoSrc}" alt="Admin Logo" class="w-full h-full object-cover">
                             </div>
                             <div class="flex flex-col items-start">
                                 <span class="text-xs text-pink-300 mb-1.5 ml-2 font-medium">${escapeHtml(senderName)}</span>
-                                <div class="bg-[#1e1b1e] text-gray-200 border border-pink-500/20 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-sm">
+                                <div class="${bubbleClasses}">
                                     ${imageHtml}
-                                    <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
+                                    ${bubbleContent}
                                 </div>
                                 <span class="text-[10px] text-gray-500 mt-1.5 ml-2 font-medium">${formatThaiTime(msg.timestamp)}</span>
                             </div>
@@ -2604,6 +2606,49 @@
             }, 50);
         }
 
+        function toggleEmojiPicker(forceOpen = null) {
+            const drawer = document.getElementById('emoji-picker-drawer');
+            if (!drawer) return;
+            const isHidden = drawer.classList.contains('hide');
+            const shouldOpen = forceOpen !== null ? forceOpen : isHidden;
+
+            if (shouldOpen) {
+                drawer.classList.remove('hide');
+                renderEmojiPickerContent();
+            } else {
+                drawer.classList.add('hide');
+            }
+        }
+
+        function renderEmojiPickerContent() {
+            const emojisContainer = document.getElementById('emojis-list-container');
+            if (emojisContainer && emojisContainer.children.length === 0) {
+                emojisContainer.innerHTML = '';
+                CUTE_EMOJIS.forEach(emoji => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-9 h-9 rounded-xl hover:bg-pink-500/20 active:scale-90 transition-transform flex items-center justify-center text-xl cursor-pointer select-none';
+                    btn.textContent = emoji;
+                    btn.onclick = () => insertEmojiToChat(emoji);
+                    emojisContainer.appendChild(btn);
+                });
+            }
+        }
+
+        function insertEmojiToChat(emoji) {
+            const input = document.getElementById('chat-input');
+            if (!input) return;
+
+            const startPos = input.selectionStart || input.value.length;
+            const endPos = input.selectionEnd || input.value.length;
+            const prevVal = input.value;
+
+            input.value = prevVal.substring(0, startPos) + emoji + prevVal.substring(endPos);
+            input.focus();
+            const newPos = startPos + emoji.length;
+            input.setSelectionRange(newPos, newPos);
+        }
+
         function handleChatKeydown(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -2611,18 +2656,18 @@
             }
         }
 
-        async function handleSendMessage(event) {
-            if (event && event.preventDefault) event.preventDefault();
-            const input = document.getElementById('chat-input');
-            const btn = document.getElementById('btn-send-chat');
-            const text = input.value.trim();
+        async function dispatchMessage(textToSend) {
+            const text = (textToSend || '').trim();
             if (!text) return;
 
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
 
-            btn.disabled = true;
-            btn.classList.add('opacity-60', 'cursor-not-allowed');
+            const btn = document.getElementById('btn-send-chat');
+            if (btn) {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
 
             const now = new Date().toISOString();
             const senderRole = currentRole;
@@ -2631,7 +2676,6 @@
 
             try {
                 if (supabaseClient) {
-                    // 1. ลองส่งผ่าน Security Definer RPC (หากผู้ใช้รันคำสั่ง SQL สร้างไว้แล้ว)
                     try {
                         const { data: rpcData, error: rpcErr } = await supabaseClient.rpc('send_ticket_message', {
                             p_ticket_id: viewingTicketId,
@@ -2642,11 +2686,8 @@
                         if (!rpcErr && rpcData?.success) {
                             dbSaved = true;
                         }
-                    } catch (rpcErr) {
-                        // RPC ยังไม่ได้สร้าง ข้ามไปทำ direct insert
-                    }
+                    } catch (rpcErr) {}
 
-                    // 2. Direct insert เข้าตาราง messages ปกติ
                     if (!dbSaved) {
                         const baseMsgPayload = {
                             ticket_id: viewingTicketId,
@@ -2661,7 +2702,6 @@
                             is_read: false
                         });
 
-                        // Fallback กรณีตารางยังไม่มีคอลัมน์ is_read
                         if (msgErr && (msgErr.message?.includes('is_read') || msgErr.code === 'PGRST204' || msgErr.code === '42703')) {
                             const retryRes = await supabaseClient.from('messages').insert(baseMsgPayload);
                             msgErr = retryRes.error;
@@ -2672,18 +2712,10 @@
                             try {
                                 await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
                             } catch (tckErr) {}
-                        } else if (msgErr.code === '42501' || msgErr.message?.includes('row-level security')) {
-                            console.warn('Supabase RLS 42501 caught. Message cached locally and sent via Telegram.');
-                            if (currentRole === 'admin') {
-                                customAlert('⚠️ Supabase แจ้งเตือน RLS Policy (Error 42501)\nข้อความบันทึกในเครื่องและส่ง Telegram เรียบร้อยแล้วค่ะ\n\n💡 แอดมินสามารถกดปุ่ม "ปลดล็อค RLS (SQL)" บนแถบ Dashboard เพื่อก๊อปปี้ SQL ปลดล็อคได้ทันทีค่ะ 🌸');
-                            }
-                        } else {
-                            console.warn('Message insert notice:', msgErr);
                         }
                     }
                 }
 
-                // Optimistic Local State & Local Storage update
                 const newMsg = {
                     id: 'msg-' + Date.now(),
                     sender: senderRole,
@@ -2698,20 +2730,30 @@
                 ticket.updatedAt = now;
 
                 saveLocalMessage(viewingTicketId, newMsg);
-
-                input.value = '';
                 renderChatMessages();
 
-                // ส่ง Telegram แจ้งเตือนเสมอเพื่อให้ทีมงานและลูกค้าได้รับข้อความทันที
                 if (currentRole === 'agent') {
                     sendTelegramNewMessage(ticket, text);
                 }
             } catch (err) {
                 console.error('Send message process notice:', err);
             } finally {
-                btn.disabled = false;
-                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                }
             }
+        }
+
+        async function handleSendMessage(event) {
+            if (event && event.preventDefault) event.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            toggleEmojiPicker(false);
+            await dispatchMessage(text);
         }
 
         function markTicketResolved() {
@@ -2906,80 +2948,6 @@
             document.getElementById('edit-announcement-modal').classList.add('hide');
         }
 
-        // --- RLS Fix SQL Modal & Helpers ---
-        const SUPABASE_RLS_FIX_SQL = `-- 1. เปิด RLS และสร้าง Policy อนุญาตให้ลูกค้าและแอดมินส่งข้อความได้ 100%
-ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Allow public insert messages" ON messages;
-DROP POLICY IF EXISTS "Allow anon insert messages" ON messages;
-DROP POLICY IF EXISTS "Allow insert messages" ON messages;
-DROP POLICY IF EXISTS "Enable insert for all users" ON messages;
-DROP POLICY IF EXISTS "Users can insert messages" ON messages;
-
-CREATE POLICY "Enable insert for all users" ON messages
-FOR INSERT
-WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Enable select for all users" ON messages;
-CREATE POLICY "Enable select for all users" ON messages
-FOR SELECT
-USING (true);
-
--- 2. สร้างคอลัมน์เสริมสำหรับสถานะเปิดอ่านและรูปภาพ
-ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT false;
-ALTER TABLE messages ADD COLUMN IF NOT EXISTS image_url TEXT;
-
--- 3. สร้างฟังก์ชัน Security Definer สำหรับส่งข้อความ (ข้าม RLS อัตโนมัติ ป้องกัน Error 42501)
-CREATE OR REPLACE FUNCTION send_ticket_message(
-    p_ticket_id TEXT,
-    p_sender_role TEXT,
-    p_sender_name TEXT,
-    p_text TEXT,
-    p_image_url TEXT DEFAULT NULL
-)
-RETURNS JSONB
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-DECLARE
-    new_msg_id BIGINT;
-BEGIN
-    INSERT INTO messages (ticket_id, sender_role, sender_name, text, image_url, created_at, is_read)
-    VALUES (p_ticket_id, p_sender_role, p_sender_name, p_text, p_image_url, NOW(), false)
-    RETURNING id INTO new_msg_id;
-
-    UPDATE tickets SET updated_at = NOW() WHERE id = p_ticket_id;
-
-    RETURN jsonb_build_object('success', true, 'id', new_msg_id);
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION send_ticket_message TO anon, authenticated;`;
-
-        function openRLSFixModal() {
-            const sqlArea = document.getElementById('rls-sql-code');
-            if (sqlArea) sqlArea.value = SUPABASE_RLS_FIX_SQL;
-            document.getElementById('rls-fix-modal').classList.remove('hide');
-        }
-
-        function closeRLSFixModal() {
-            document.getElementById('rls-fix-modal').classList.add('hide');
-        }
-
-        function copyRLSSql() {
-            const sqlArea = document.getElementById('rls-sql-code');
-            if (!sqlArea) return;
-            sqlArea.select();
-            document.execCommand('copy');
-            const textEl = document.getElementById('btn-copy-sql-text');
-            if (textEl) {
-                const prev = textEl.textContent;
-                textEl.textContent = 'คัดลอกสำเร็จแล้ว! ✓';
-                setTimeout(() => { textEl.textContent = prev; }, 2000);
-            }
-            customAlert('คัดลอกคำสั่ง SQL เรียบร้อยแล้วค่ะ! นำไปวางใน Supabase SQL Editor แล้วกด Run ได้เลยนะคะ 🌸');
-        }
-
         async function handleSaveAnnouncement(event) {
             event.preventDefault();
             if (currentRole !== 'admin') {
@@ -3046,10 +3014,10 @@ GRANT EXECUTE ON FUNCTION send_ticket_message TO anon, authenticated;`;
             const chatTemplate = document.getElementById('telegram-chat-template').value.trim();
             
             try {
-                localStorage.setItem('helpCenterTelegramToken', token);
-                localStorage.setItem('helpCenterTelegramChatId', chatId);
-                localStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate);
-                localStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate);
+                safeStorage.setItem('helpCenterTelegramToken', token);
+                safeStorage.setItem('helpCenterTelegramChatId', chatId);
+                safeStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate);
+                safeStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate);
             } catch(e) {
                 console.warn('Storage save notice:', e);
             }
@@ -3233,6 +3201,16 @@ GRANT EXECUTE ON FUNCTION send_ticket_message TO anon, authenticated;`;
             await checkInitialAdminSession();
             await syncFromSupabase();
             initRealtime();
+
+            document.addEventListener('click', (e) => {
+                const drawer = document.getElementById('emoji-picker-drawer');
+                const btnToggle = document.getElementById('btn-toggle-emojis');
+                if (drawer && !drawer.classList.contains('hide')) {
+                    if (!drawer.contains(e.target) && !btnToggle.contains(e.target)) {
+                        drawer.classList.add('hide');
+                    }
+                }
+            });
 
             if (supabaseClient && supabaseClient.auth) {
                 supabaseClient.auth.onAuthStateChange(async (event, session) => {
