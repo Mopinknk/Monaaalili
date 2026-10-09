@@ -875,92 +875,15 @@
                 sort_order: 2
             }
         ];
-        let tickets = [
-            {
-                id: 'TCK-2085',
-                deviceId: 'DEV-USER99',
-                agentName: 'Agent DEV-USER99',
-                appName: 'Netflix',
-                purchaseDate: '2026-10-05',
-                expiryDate: '2026-11-05',
-                claimType: 'เคลม (มีประกัน)',
-                subject: 'แจ้งปัญหา Netflix',
-                description: 'เข้าจอไม่ได้ค่ะ แจ้งว่ามีคนดูเกินจำนวนหน้าจอ',
-                status: 'Open',
-                image: '',
-                createdAt: new Date(Date.now() - 7200000).toISOString(),
-                updatedAt: new Date(Date.now() - 600000).toISOString(),
-                queueNumber: 2,
-                aheadCount: 1,
-                messages: [
-                    {
-                        id: 'msg-3',
-                        sender: 'agent',
-                        senderName: 'Agent DEV-USER99',
-                        text: 'เข้าจอไม่ได้ค่ะ แจ้งว่ามีคนดูเกินจำนวนหน้าจอ',
-                        image: '',
-                        is_read: true,
-                        timestamp: new Date(Date.now() - 7200000).toISOString()
-                    },
-                    {
-                        id: 'msg-4',
-                        sender: 'admin',
-                        senderName: 'Admin Support 🌸',
-                        text: 'ลองเข้าด้วยโปรไฟล์ที่ 2 ดูหรือยังคะ?',
-                        image: '',
-                        is_read: true,
-                        timestamp: new Date(Date.now() - 3600000).toISOString()
-                    },
-                    {
-                        id: 'msg-5',
-                        sender: 'agent',
-                        senderName: 'Agent DEV-USER99',
-                        text: 'ลองแล้วค่ะ ยังขึ้นเตือนเหมือนเดิมเลย รบกวนแอดมินช่วยตรวจสอบให้หน่อยนะคะ 🙏',
-                        image: '',
-                        is_read: false,
-                        timestamp: new Date(Date.now() - 600000).toISOString()
-                    }
-                ]
-            },
-            {
-                id: 'TCK-2084',
-                deviceId: deviceId,
-                agentName: currentAgentName,
-                appName: 'YouTube Premium',
-                purchaseDate: '2026-10-01',
-                expiryDate: '2026-11-01',
-                claimType: 'เคลม (มีประกัน)',
-                subject: 'แจ้งปัญหา YouTube Premium',
-                description: 'เปิดดูคลิปแล้วติดโฆษณา รบกวนตรวจสอบเมลครอบครัวให้หน่อยนะคะ',
-                status: 'Open',
-                image: '',
-                createdAt: new Date(Date.now() - 3600000).toISOString(),
-                updatedAt: new Date(Date.now() - 1800000).toISOString(),
-                queueNumber: 1,
-                aheadCount: 0,
-                messages: [
-                    {
-                        id: 'msg-1',
-                        sender: 'agent',
-                        senderName: currentAgentName,
-                        text: 'เปิดดูคลิปแล้วติดโฆษณา รบกวนตรวจสอบเมลครอบครัวให้หน่อยนะคะ',
-                        image: '',
-                        is_read: true,
-                        timestamp: new Date(Date.now() - 3600000).toISOString()
-                    },
-                    {
-                        id: 'msg-2',
-                        sender: 'admin',
-                        senderName: 'Admin Support 🌸',
-                        text: 'สวัสดีค่ะแอดมินรับเรื่องแล้วนะคะ กำลังตรวจสอบสถานะคำเชิญให้อย่างเร่งด่วนค่ะ รอสักครู่นะคะ 💖',
-                        image: '',
-                        is_read: false,
-                        timestamp: new Date(Date.now() - 1800000).toISOString()
-                    }
-                ]
-            }
-        ];
+        // แยกข้อมูลตามอุปกรณ์เด็ดขาด: เริ่มต้นเป็นอาร์เรย์ว่าง ไม่ใส่เคสตัวอย่างที่ผูกกับ deviceId ป้องกันอุปกรณ์อื่นเห็นข้อมูล
+        let tickets = [];
         let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
+
+        // ล้างข้อมูลแคชเคสทดสอบเดิมที่อาจค้างอยู่ใน LocalStorage
+        try {
+            localStorage.removeItem('local_msgs_TCK-2084');
+            localStorage.removeItem('local_msgs_TCK-2085');
+        } catch (e) {}
 
         // ฟังก์ชันตรวจสอบว่าข้อความล่าสุดส่งมาจากลูกค้าหรือไม่ พร้อมสถานะว่าเปิดอ่านแล้วหรือยัง (รองรับทั้งฐานข้อมูลและ Local fallback)
         function getTicketCustomerReplyInfo(ticket) {
@@ -1227,14 +1150,14 @@
                     if (currentRole === 'admin') renderAdminFAQList();
                 }
 
-                // 4. Fetch Tickets
+                // 4. Fetch Tickets (คัดกรองเฉพาะ device_id ของอุปกรณ์นั้นๆ สำหรับลูกค้า)
                 let query = supabaseClient.from('tickets').select('*');
                 if (currentRole !== 'admin') {
                     query = query.eq('device_id', deviceId);
                 }
                 const { data: ticketsData, error: tckErr } = await query.order('created_at', { ascending: false });
 
-                if (!tckErr && ticketsData && ticketsData.length > 0) {
+                if (!tckErr && ticketsData) {
                     tickets = ticketsData.map(t => ({
                         id: t.id,
                         deviceId: t.device_id,
@@ -1254,7 +1177,7 @@
                         messages: []
                     }));
 
-                    // โหลดข้อความแชทของเคสที่เกี่ยวข้องทั้งหมด เพื่อให้ทั้งฝั่งแอดมินและลูกค้าตรวจจับการตอบกลับได้แบบเรียลไทม์
+                    // โหลดข้อความแชทเฉพาะเคสที่อุปกรณ์นี้มีสิทธิ์เข้าถึงเท่านั้น
                     const ticketIds = tickets.map(t => t.id);
                     if (ticketIds.length > 0) {
                         try {
@@ -1336,6 +1259,11 @@
             if (!ticketId) return;
             const ticket = tickets.find(t => t.id === ticketId);
             if (!ticket) return;
+
+            // ตรวจสอบความปลอดภัยระดับอุปกรณ์: ลูกค้าทั่วไปห้ามดึงข้อความของเคสที่ไม่ได้สร้างจากเครื่องนี้
+            if (currentRole !== 'admin' && ticket.deviceId !== deviceId) {
+                return;
+            }
 
             let loadedMessages = [];
 
@@ -2526,6 +2454,14 @@
             viewingTicketId = ticketId;
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
+
+            // การตรวจสอบความปลอดภัยระดับอุปกรณ์อย่างเข้มงวด (Strict Device Isolation)
+            // หากไม่ใช่แอดมิน และเคสนี้ไม่ได้เป็นของอุปกรณ์นี้ ห้ามเปิดดูและส่งกลับหน้าหลักทันที
+            if (currentRole !== 'admin' && ticket.deviceId !== deviceId) {
+                customAlert('คุณไม่มีสิทธิ์เข้าถึงรายการแจ้งปัญหานี้ค่ะ 🔒');
+                switchView('view-agent-dashboard');
+                return;
+            }
 
             document.getElementById('detail-ticket-id').textContent = ticket.id;
             document.getElementById('detail-ticket-app').textContent = ticket.appName;
