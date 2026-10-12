@@ -362,6 +362,15 @@
                     <!-- Chat bubbles injected here -->
                 </div>
 
+                <!-- Floating Scroll to Bottom Button -->
+                <div class="relative w-full">
+                    <button type="button" id="btn-scroll-to-bottom" onclick="scrollToBottomChat(true)" class="hide absolute -top-14 right-4 bg-pink-600/95 hover:bg-primary text-white px-3.5 py-2 rounded-full shadow-2xl border border-pink-400/40 backdrop-blur-md z-30 transition-all transform hover:scale-105 flex items-center gap-1.5 text-xs font-semibold">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                        <span>เลื่อนลงล่างสุด</span>
+                        <span id="scroll-bottom-badge" class="hide bg-white text-pink-600 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full shadow-sm">ใหม่</span>
+                    </button>
+                </div>
+
                 <!-- Chat Input Section with Cute Emoji Drawer Popup -->
                 <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0 relative" id="chat-input-area">
                     <!-- Cute Emoji Picker Drawer Popup -->
@@ -382,12 +391,31 @@
                         </div>
                     </div>
 
+                    <!-- Pending Chat Image Attachment Preview -->
+                    <div id="chat-image-preview-container" class="hide mb-3 p-2 bg-[#141214] border border-pink-500/30 rounded-2xl flex items-center justify-between w-fit max-w-full">
+                        <div class="flex items-center gap-2.5 min-w-0 pr-3">
+                            <img id="chat-image-preview" src="" alt="Chat Attachment Preview" class="w-12 h-12 object-cover rounded-xl border border-pink-500/40 shrink-0">
+                            <div class="min-w-0 text-left">
+                                <span class="text-xs text-pink-300 font-medium block truncate"><i class="fas fa-image text-primary mr-1"></i> แนบรูปภาพแล้ว</span>
+                                <span class="text-[10px] text-gray-400 block truncate">กดปุ่มส่งข้อความเพื่อส่งรูปภาพ</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="removeChatImage()" title="ยกเลิกรูปภาพ" class="text-gray-400 hover:text-danger w-7 h-7 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </div>
+
                     <form onsubmit="handleSendMessage(event)" class="flex gap-2 sm:gap-3 items-end">
                         <button type="button" id="btn-toggle-emojis" onclick="toggleEmojiPicker()" title="เลือกอิโมจิ" class="rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
                             <i class="far fa-smile text-xl"></i>
                         </button>
+                        <!-- Button: Attach Image in Chat -->
+                        <label title="แนบรูปภาพในแชท" class="cursor-pointer rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
+                            <i class="fas fa-image text-xl"></i>
+                            <input type="file" id="chat-image-input" accept="image/*" class="hidden" onchange="handleChatImageUpload(event)">
+                        </label>
                         <div class="flex-grow relative">
-                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
+                            <textarea id="chat-input" rows="2" onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
                         </div>
                         <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
                             <i class="fas fa-paper-plane text-base sm:text-lg"></i>
@@ -745,6 +773,17 @@
                 </div>
             </div>
 
+            <!-- Image Lightbox Viewer Modal -->
+            <div id="image-viewer-modal" onclick="if(event.target===this) closeImageViewer()" class="hide fixed inset-0 bg-black/85 backdrop-blur-md z-[120] flex items-center justify-center p-4">
+                <button type="button" onclick="closeImageViewer()" class="text-white hover:text-danger text-xl absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="max-w-4xl max-h-[85vh] p-2 flex flex-col items-center">
+                    <img id="image-viewer-img" src="" alt="Enlarged Preview" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-pink-500/30">
+                    <span class="text-xs text-gray-400 mt-2">แตะบริเวณว่างหรือปุ่มกากบาทเพื่อปิด</span>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -869,6 +908,50 @@
         let currentAgentName = "Agent " + deviceId;
         let viewingTicketId = null;
         let currentFilter = 'All';
+        let currentChatImage = null;
+
+        function handleChatImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressAndProcessImage(file, 1000, 1000, 0.75, function(compressedBase64) {
+                currentChatImage = compressedBase64;
+                const previewImg = document.getElementById('chat-image-preview');
+                const previewContainer = document.getElementById('chat-image-preview-container');
+                if (previewImg && previewContainer) {
+                    previewImg.src = compressedBase64;
+                    previewContainer.classList.remove('hide');
+                }
+            });
+        }
+
+        function removeChatImage() {
+            currentChatImage = null;
+            const fileInput = document.getElementById('chat-image-input');
+            if (fileInput) fileInput.value = '';
+            const previewContainer = document.getElementById('chat-image-preview-container');
+            const previewImg = document.getElementById('chat-image-preview');
+            if (previewContainer) previewContainer.classList.add('hide');
+            if (previewImg) previewImg.src = '';
+        }
+
+        function openImageViewer(url) {
+            const safe = sanitizeMediaUrl(url);
+            if (!safe) return;
+            const modal = document.getElementById('image-viewer-modal');
+            const img = document.getElementById('image-viewer-img');
+            if (modal && img) {
+                img.src = safe;
+                modal.classList.remove('hide');
+            }
+        }
+
+        function closeImageViewer() {
+            const modal = document.getElementById('image-viewer-modal');
+            const img = document.getElementById('image-viewer-img');
+            if (modal) modal.classList.add('hide');
+            if (img) img.src = '';
+        }
 
         let applications = ['YouTube Premium', 'Netflix', 'Spotify', 'Disney+ Hotstar', 'Canva Pro', 'VIU', 'iQIYI', 'WeTV', 'HBO GO', 'CapCut Pro', 'อื่นๆ'];
         let faqs = [
@@ -1248,7 +1331,7 @@
             } catch(e) {}
         }
 
-        async function loadTicketMessages(ticketId) {
+        async function loadTicketMessages(ticketId, isInitialLoad = false) {
             if (!ticketId) return;
             const ticket = tickets.find(t => t.id === ticketId);
             if (!ticket) return;
@@ -1292,10 +1375,20 @@
             });
 
             loadedMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+            // ตรวจสอบว่าข้อความมีการเปลี่ยนแปลงจริงหรือไม่ เพื่อป้องกันการกระตุกหรือดึง scroll ลงล่าง
+            const oldMsgs = ticket.messages || [];
+            const hasChanged = isInitialLoad ||
+                oldMsgs.length !== loadedMessages.length ||
+                oldMsgs.some((m, idx) => {
+                    const lm = loadedMessages[idx];
+                    return !lm || m.id !== lm.id || m.is_read !== lm.is_read || m.text !== lm.text;
+                });
+
             ticket.messages = loadedMessages;
 
-            if (viewingTicketId === ticketId) {
-                renderChatMessages();
+            if (viewingTicketId === ticketId && hasChanged) {
+                renderChatMessages(isInitialLoad);
             }
         }
 
@@ -1304,9 +1397,6 @@
             if (pollingTimer) return;
             pollingTimer = setInterval(() => {
                 syncFromSupabase();
-                if (viewingTicketId) {
-                    loadTicketMessages(viewingTicketId);
-                }
             }, 4000);
         }
 
@@ -2433,6 +2523,8 @@
                 return;
             }
 
+            removeChatImage();
+
             document.getElementById('detail-ticket-id').textContent = ticket.id;
             document.getElementById('detail-ticket-app').textContent = ticket.appName;
             document.getElementById('detail-purchase-date').textContent = ticket.purchaseDate || '-';
@@ -2472,18 +2564,51 @@
 
             switchView('view-ticket-detail');
             await markMessagesAsRead(ticketId);
-            renderChatMessages();
-            await loadTicketMessages(ticketId);
+            renderChatMessages(true);
+            await loadTicketMessages(ticketId, true);
             await markMessagesAsRead(ticketId);
-            renderChatMessages();
+            renderChatMessages(true);
         }
 
-        function renderChatMessages() {
+        function scrollToBottomChat(smooth = true) {
+            const container = document.getElementById('chat-messages-container');
+            if (!container) return;
+            if (smooth) {
+                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            } else {
+                container.scrollTop = container.scrollHeight;
+            }
+            const scrollBtn = document.getElementById('btn-scroll-to-bottom');
+            if (scrollBtn) scrollBtn.classList.add('hide');
+            const badge = document.getElementById('scroll-bottom-badge');
+            if (badge) badge.classList.add('hide');
+        }
+
+        function handleChatScroll() {
+            const container = document.getElementById('chat-messages-container');
+            const scrollBtn = document.getElementById('btn-scroll-to-bottom');
+            if (!container || !scrollBtn) return;
+
+            const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+            if (distanceFromBottom > 160) {
+                scrollBtn.classList.remove('hide');
+            } else {
+                scrollBtn.classList.add('hide');
+                const badge = document.getElementById('scroll-bottom-badge');
+                if (badge) badge.classList.add('hide');
+            }
+        }
+
+        function renderChatMessages(forceScroll = false) {
             const ticket = tickets.find(t => t.id === viewingTicketId);
             const container = document.getElementById('chat-messages-container');
-            container.innerHTML = '';
-            if (!ticket) return;
+            if (!container || !ticket) return;
 
+            // ตรวจสอบว่าผู้ใช้อยู่ใกล้ล่างสุดหรือไม่ก่อน Render
+            const wasNearBottom = (container.scrollHeight - container.scrollTop - container.clientHeight) < 140;
+            const previousScrollTop = container.scrollTop;
+
+            container.innerHTML = '';
             ticket.messages = ticket.messages || [];
 
             const dateDivider = document.createElement('div');
@@ -2530,7 +2655,7 @@
                     `;
                 } else if (isMe) {
                     msgWrapper.className += " justify-end";
-                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
+                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" onclick="openImageViewer('${safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm hover:opacity-90 transition-opacity">` : '';
                     
                     let readReceiptHtml = '';
                     if (msg.is_read) {
@@ -2549,7 +2674,7 @@
 
                     const bubbleContent = isStickerMsg 
                         ? stickerContentHtml 
-                        : `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>`;
+                        : (msg.text ? `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>` : '');
 
                     const bubbleClasses = isStickerMsg
                         ? "bg-gradient-to-r from-pink-500 to-rose-400 text-white rounded-3xl rounded-tr-none px-4 py-3 shadow-md border border-pink-300/30"
@@ -2572,11 +2697,11 @@
                     msgWrapper.className += " justify-start";
                     let senderName = msg.sender === 'agent' ? ticket.agentName : 'Admin Support 🌸';
                     let currentLogoSrc = sanitizeMediaUrl(document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
-                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm">` : '';
+                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" onclick="openImageViewer('${safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm hover:opacity-90 transition-opacity">` : '';
                     
                     const bubbleContent = isStickerMsg 
                         ? stickerContentHtml 
-                        : `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>`;
+                        : (msg.text ? `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>` : '');
 
                     const bubbleClasses = isStickerMsg
                         ? "bg-gradient-to-r from-[#261f25] to-[#201820] text-pink-100 border border-pink-500/40 rounded-3xl rounded-tl-none px-4 py-3 shadow-md"
@@ -2601,9 +2726,21 @@
                 container.appendChild(msgWrapper);
             });
 
-            setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
-            }, 50);
+            // เลื่อนลงล่างเฉพาะเมื่อถูกสั่งบังคับ (เช่น ตอนเปิดเคสหรือกดส่งข้อความ) หรือเมื่อผู้ใช้อยู่ล่างสุดอยู่แล้ว
+            if (forceScroll || wasNearBottom) {
+                setTimeout(() => {
+                    container.scrollTop = container.scrollHeight;
+                }, 40);
+            } else {
+                // รักษาตำแหน่ง scroll เดิมของผู้ใช้ไว้ ไม่ให้กระตุกกลับลงล่าง
+                setTimeout(() => {
+                    container.scrollTop = previousScrollTop;
+                    const scrollBtn = document.getElementById('btn-scroll-to-bottom');
+                    const badge = document.getElementById('scroll-bottom-badge');
+                    if (scrollBtn) scrollBtn.classList.remove('hide');
+                    if (badge) badge.classList.remove('hide');
+                }, 40);
+            }
         }
 
         function toggleEmojiPicker(forceOpen = null) {
@@ -2656,9 +2793,10 @@
             }
         }
 
-        async function dispatchMessage(textToSend) {
+        async function dispatchMessage(textToSend, imageToSend = null) {
             const text = (textToSend || '').trim();
-            if (!text) return;
+            const image = imageToSend || null;
+            if (!text && !image) return;
 
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
@@ -2672,47 +2810,35 @@
             const now = new Date().toISOString();
             const senderRole = currentRole;
             const senderName = currentRole === 'admin' ? 'Admin Support' : currentAgentName;
+            const displayText = text || (image ? '📷 ส่งรูปภาพ' : '');
             let dbSaved = false;
 
             try {
                 if (supabaseClient) {
-                    try {
-                        const { data: rpcData, error: rpcErr } = await supabaseClient.rpc('send_ticket_message', {
-                            p_ticket_id: viewingTicketId,
-                            p_sender_role: senderRole,
-                            p_sender_name: senderName,
-                            p_text: text
-                        });
-                        if (!rpcErr && rpcData?.success) {
-                            dbSaved = true;
-                        }
-                    } catch (rpcErr) {}
+                    const baseMsgPayload = {
+                        ticket_id: viewingTicketId,
+                        sender_role: senderRole,
+                        sender_name: senderName,
+                        text: displayText,
+                        image_url: image,
+                        created_at: now
+                    };
 
-                    if (!dbSaved) {
-                        const baseMsgPayload = {
-                            ticket_id: viewingTicketId,
-                            sender_role: senderRole,
-                            sender_name: senderName,
-                            text: text,
-                            created_at: now
-                        };
+                    let { error: msgErr } = await supabaseClient.from('messages').insert({
+                        ...baseMsgPayload,
+                        is_read: false
+                    });
 
-                        let { error: msgErr } = await supabaseClient.from('messages').insert({
-                            ...baseMsgPayload,
-                            is_read: false
-                        });
+                    if (msgErr && (msgErr.message?.includes('is_read') || msgErr.code === 'PGRST204' || msgErr.code === '42703')) {
+                        const retryRes = await supabaseClient.from('messages').insert(baseMsgPayload);
+                        msgErr = retryRes.error;
+                    }
 
-                        if (msgErr && (msgErr.message?.includes('is_read') || msgErr.code === 'PGRST204' || msgErr.code === '42703')) {
-                            const retryRes = await supabaseClient.from('messages').insert(baseMsgPayload);
-                            msgErr = retryRes.error;
-                        }
-
-                        if (!msgErr) {
-                            dbSaved = true;
-                            try {
-                                await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
-                            } catch (tckErr) {}
-                        }
+                    if (!msgErr) {
+                        dbSaved = true;
+                        try {
+                            await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
+                        } catch (tckErr) {}
                     }
                 }
 
@@ -2720,7 +2846,8 @@
                     id: 'msg-' + Date.now(),
                     sender: senderRole,
                     senderName: senderName,
-                    text: text,
+                    text: displayText,
+                    image: image,
                     is_read: false,
                     timestamp: now
                 };
@@ -2730,10 +2857,10 @@
                 ticket.updatedAt = now;
 
                 saveLocalMessage(viewingTicketId, newMsg);
-                renderChatMessages();
+                renderChatMessages(true);
 
                 if (currentRole === 'agent') {
-                    sendTelegramNewMessage(ticket, text);
+                    sendTelegramNewMessage(ticket, text, image);
                 }
             } catch (err) {
                 console.error('Send message process notice:', err);
@@ -2748,12 +2875,14 @@
         async function handleSendMessage(event) {
             if (event && event.preventDefault) event.preventDefault();
             const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text) return;
+            const text = input ? input.value.trim() : '';
+            if (!text && !currentChatImage) return;
 
-            input.value = '';
+            const imgToSend = currentChatImage;
+            if (input) input.value = '';
+            removeChatImage();
             toggleEmojiPicker(false);
-            await dispatchMessage(text);
+            await dispatchMessage(text, imgToSend);
         }
 
         function markTicketResolved() {
@@ -3128,21 +3257,21 @@
 
             await sendRawTelegramMessage(token, chatId, message, ticket.image);
         }
-
-        async function sendTelegramNewMessage(ticket, text) {
+        async function sendTelegramNewMessage(ticket, text, image = null) {
             const token = getTelegramToken();
             const chatId = getTelegramChatId();
             if (!token || !chatId) return;
 
             let template = getTelegramChatTemplate();
+            const messageContent = text || (image ? '📷 [แนบรูปภาพ]' : '');
             const message = template
                 .replace(/{id}/g, escapeHtml(ticket.id))
                 .replace(/{appName}/g, escapeHtml(ticket.appName))
                 .replace(/{agentName}/g, escapeHtml(ticket.agentName))
-                .replace(/{message}/g, escapeHtml(text))
+                .replace(/{message}/g, escapeHtml(messageContent))
                 .replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
 
-            await sendRawTelegramMessage(token, chatId, message);
+            await sendRawTelegramMessage(token, chatId, message, image);
         }
 
         let confirmCallback = null;
@@ -3201,6 +3330,11 @@
             await checkInitialAdminSession();
             await syncFromSupabase();
             initRealtime();
+
+            const chatMessagesContainer = document.getElementById('chat-messages-container');
+            if (chatMessagesContainer) {
+                chatMessagesContainer.addEventListener('scroll', handleChatScroll);
+            }
 
             document.addEventListener('click', (e) => {
                 const drawer = document.getElementById('emoji-picker-drawer');
