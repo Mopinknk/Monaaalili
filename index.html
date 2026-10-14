@@ -274,15 +274,18 @@
                         <p class="text-pink-200/70 text-sm mt-1">จัดการและช่วยเหลือปัญหาของตัวแทนทั้งหมด 🌟</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto">
-                        <div class="grid grid-cols-3 gap-2 sm:flex sm:gap-2">
-                            <button onclick="openManageFAQModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-warning hover:text-gray-900 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                        <div class="grid grid-cols-2 md:flex md:flex-wrap gap-2 sm:gap-2">
+                            <button onclick="openManageFAQModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-warning hover:text-gray-900 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto">
                                 <i class="fas fa-question-circle text-warning mr-1.5 sm:mr-2"></i> จัดการ FAQ
                             </button>
-                            <button onclick="openManageAppsModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-primary hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <button onclick="openManageAppsModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-primary hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto">
                                 <i class="fas fa-list-ul text-primary mr-1.5 sm:mr-2"></i> รายการแอป
                             </button>
-                            <button onclick="openTelegramModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-sky-500 hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <button onclick="openTelegramModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-sky-500 hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto">
                                 <i class="fab fa-telegram-plane text-sky-500 mr-1.5 sm:mr-2"></i> Telegram
+                            </button>
+                            <button onclick="openManageBotModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-emerald-500 hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto group">
+                                <i class="fas fa-robot text-emerald-500 group-hover:text-white mr-1.5 sm:mr-2 transition-colors"></i> บอทตอบกลับ
                             </button>
                         </div>
                         <div class="flex bg-white p-1 rounded-full border border-gray-200 shadow-sm w-full sm:w-auto sm:min-w-[320px]">
@@ -729,6 +732,71 @@
                 </div>
             </div>
 
+            <!-- Manage Bot Rules Modal (Admin) -->
+            <div id="manage-bot-modal" onclick="if(event.target===this) closeManageBotModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[115] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-emerald-500/30 w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+                    <div class="bg-emerald-500/10 px-6 py-4 border-b border-emerald-500/20 flex justify-between items-center shrink-0">
+                        <h3 class="font-bold text-white text-lg"><i class="fas fa-robot text-emerald-500 mr-2"></i> จัดการบอทตอบกลับอัตโนมัติ</h3>
+                        <button type="button" onclick="closeManageBotModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 overflow-y-auto grow space-y-4">
+                        <p class="text-sm text-gray-400 mb-2">เมื่อลูกค้าพิมพ์ข้อความที่มี "คีย์เวิร์ด" ตรงกับที่กำหนดไว้ บอทจะตอบกลับด้วยข้อความนั้นทันที 🤖</p>
+                        <div id="admin-bot-rules-list" class="space-y-3 mb-6">
+                            <!-- Bot rules injected here -->
+                        </div>
+                        <div class="bg-[#141214] p-5 rounded-2xl border border-emerald-500/20 shadow-sm">
+                            <h4 class="font-bold text-white mb-3 text-sm flex items-center"><i class="fas fa-plus-circle text-emerald-500 mr-2"></i> เพิ่มกฎบอทใหม่</h4>
+                            <form onsubmit="addBotRule(event)" class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">คีย์เวิร์ดดักจับ (คั่นด้วยลูกน้ำ ,)</label>
+                                    <input type="text" id="new-bot-keywords" required placeholder="เช่น รหัสผ่าน, ลืมรหัส, เข้าไม่ได้" class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm bg-[#1e1b1e] text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">ข้อความที่บอทตอบกลับ</label>
+                                    <textarea id="new-bot-message" required rows="3" placeholder="ข้อความที่จะให้บอทพิมพ์ตอบกลับอัตโนมัติ..." class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm resize-none bg-[#1e1b1e] text-white"></textarea>
+                                </div>
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-emerald-500 text-white px-6 py-2.5 rounded-full hover:bg-emerald-600 shadow-sm transition-transform transform hover:scale-105 text-sm font-medium flex items-center">
+                                        <i class="fas fa-save mr-2"></i> บันทึกกฎใหม่
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Bot Rule Modal (Admin) -->
+            <div id="edit-bot-modal" onclick="if(event.target===this) closeEditBotModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4">
+                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-emerald-500/30 w-full max-w-lg overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+                    <div class="bg-emerald-500/10 px-6 py-4 border-b border-emerald-500/20 flex justify-between items-center shrink-0">
+                        <h3 class="font-bold text-white text-lg"><i class="fas fa-edit text-emerald-500 mr-2"></i> แก้ไขกฎบอทตอบกลับ</h3>
+                        <button type="button" onclick="closeEditBotModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <form onsubmit="handleEditBotRule(event)" class="p-6 space-y-4 overflow-y-auto grow">
+                        <input type="hidden" id="edit-bot-index">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">คีย์เวิร์ดดักจับ (คั่นด้วยลูกน้ำ ,)</label>
+                            <input type="text" id="edit-bot-keywords" required class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm bg-[#141214] text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">ข้อความที่บอทตอบกลับ</label>
+                            <textarea id="edit-bot-message" required rows="4" class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm resize-none bg-[#141214] text-white"></textarea>
+                        </div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="closeEditBotModal()" class="px-5 py-2.5 bg-[#141214] border border-pink-500/20 rounded-full text-gray-300 hover:bg-white/5 transition-colors font-medium text-sm">ยกเลิก</button>
+                            <button type="submit" class="bg-emerald-500 text-white px-6 py-2.5 rounded-full hover:bg-emerald-600 shadow-sm transition-transform transform hover:scale-105 text-sm font-semibold flex items-center">
+                                <i class="fas fa-save mr-2"></i> บันทึกการแก้ไข
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- View FAQ Modal (Agent) -->
             <div id="view-faq-modal" onclick="if(event.target===this) closeViewFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
                 <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-lg overflow-hidden transform transition-all relative max-h-[90vh] flex flex-col">
@@ -1171,11 +1239,29 @@
             });
         }
 
-        const autoReplyRules = [
+        const DEFAULT_BOT_RULES = [
             { keywords: ['รหัสผ่าน', 'ลืมรหัส', 'password'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากคุณพบปัญหาเรื่องรหัสผ่าน สามารถกดที่ปุ่ม "ลืมรหัสผ่าน" (Forgot Password) ที่หน้าเข้าสู่ระบบเพื่อรีเซ็ตได้ด้วยตนเองผ่านอีเมลค่ะ' },
             { keywords: ['เด้ง', 'ค้าง', 'ดับ'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: สำหรับปัญหาแอปพลิเคชันเด้งหรือค้าง เบื้องต้นแนะนำให้ "เคลียร์แคช (Clear Cache)" ในตั้งค่าโทรศัพท์ หรือตรวจสอบว่าแอปพลิเคชันได้รับการอัปเดตเป็นเวอร์ชันล่าสุดแล้วใน Store ค่ะ' },
             { keywords: ['เข้าไม่ได้', 'login ไม่ได้', 'เข้าระบบไม่ได้'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากเข้าสู่ระบบไม่ได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต และยืนยันว่าใช้ Username/Password ที่ถูกต้องค่ะ' }
         ];
+
+        let autoReplyRules = [];
+        try {
+            const savedRules = safeStorage.getItem('helpCenterBotRules');
+            if (savedRules) {
+                autoReplyRules = JSON.parse(savedRules);
+            } else {
+                autoReplyRules = [...DEFAULT_BOT_RULES];
+            }
+        } catch(e) {
+            autoReplyRules = [...DEFAULT_BOT_RULES];
+        }
+
+        function saveBotRulesToStorage() {
+            try {
+                safeStorage.setItem('helpCenterBotRules', JSON.stringify(autoReplyRules));
+            } catch(e) {}
+        }
 
         async function fetchTicketQueue(ticketId) {
             if (!supabaseClient || !ticketId) return null;
@@ -2392,7 +2478,7 @@
             const lowerText = text.toLowerCase();
             for (let rule of autoReplyRules) {
                 for (let keyword of rule.keywords) {
-                    if (lowerText.includes(keyword)) {
+                    if (lowerText.includes(keyword.toLowerCase().trim())) {
                         return rule.message;
                     }
                 }
@@ -3227,6 +3313,123 @@
             
             closeTelegramModal();
             customAlert('บันทึกการตั้งค่าและข้อความแจ้งเตือน Telegram เรียบร้อยแล้วค่ะ ✈️✨');
+        }
+
+        // --- Bot Rules Management ---
+        function openManageBotModal() {
+            if (currentRole !== 'admin') {
+                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
+                return;
+            }
+            renderBotRulesList();
+            document.getElementById('manage-bot-modal').classList.remove('hide');
+        }
+
+        function closeManageBotModal() {
+            document.getElementById('manage-bot-modal').classList.add('hide');
+        }
+
+        function renderBotRulesList() {
+            const list = document.getElementById('admin-bot-rules-list');
+            list.innerHTML = '';
+            
+            if(autoReplyRules.length === 0) {
+                 list.innerHTML = '<p class="text-center text-sm text-gray-400 py-4 bg-[#141214] rounded-2xl border border-emerald-500/20">ยังไม่มีกฎบอทตอบกลับค่ะ 🤖</p>';
+                 return;
+            }
+
+            autoReplyRules.forEach((rule, index) => {
+                const item = document.createElement('div');
+                item.className = "bg-[#141214] border border-emerald-500/20 rounded-2xl p-4 shadow-sm relative pr-24 transition-all hover:border-emerald-400";
+                
+                const kws = rule.keywords.map(k => `<span class="bg-[#1e1b1e] border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded text-[10px] mr-1 mb-1 inline-block font-medium">${escapeHtml(k)}</span>`).join('');
+                
+                item.innerHTML = `
+                    <div class="mb-2">${kws}</div>
+                    <p class="text-xs text-gray-300 whitespace-pre-line leading-relaxed border-l-2 border-emerald-500/50 pl-2 py-0.5">${escapeHtml(rule.message)}</p>
+                    <div class="absolute top-4 right-4 flex items-center gap-1.5">
+                        <button type="button" onclick="openEditBotModal(${index})" class="text-emerald-500 hover:text-white hover:bg-emerald-500 w-8 h-8 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-emerald-500/30">
+                            <i class="fas fa-edit text-xs"></i>
+                        </button>
+                        <button type="button" onclick="deleteBotRule(${index})" class="text-danger hover:text-white hover:bg-danger w-8 h-8 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function addBotRule(event) {
+            event.preventDefault();
+            const kwInput = document.getElementById('new-bot-keywords').value;
+            const msgInput = document.getElementById('new-bot-message').value;
+            
+            const keywordsArray = kwInput.split(',').map(k => k.trim()).filter(k => k);
+            if (keywordsArray.length === 0 || !msgInput.trim()) {
+                customAlert('กรุณากรอกคีย์เวิร์ดและข้อความให้ครบถ้วนค่ะ ⚠️');
+                return;
+            }
+
+            autoReplyRules.push({
+                keywords: keywordsArray,
+                message: msgInput.trim()
+            });
+
+            saveBotRulesToStorage();
+            document.getElementById('new-bot-keywords').value = '';
+            document.getElementById('new-bot-message').value = '';
+            renderBotRulesList();
+            customAlert('เพิ่มกฎบอทตอบกลับเรียบร้อยแล้วค่ะ 🤖');
+        }
+
+        function deleteBotRule(index) {
+            customConfirm('ต้องการลบกฎบอทข้อนี้ใช่หรือไม่คะ? 🗑️', function() {
+                autoReplyRules.splice(index, 1);
+                saveBotRulesToStorage();
+                renderBotRulesList();
+            });
+        }
+
+        let editingBotIndex = null;
+        function openEditBotModal(index) {
+            const rule = autoReplyRules[index];
+            if(!rule) return;
+            editingBotIndex = index;
+            
+            document.getElementById('edit-bot-index').value = index;
+            document.getElementById('edit-bot-keywords').value = rule.keywords.join(', ');
+            document.getElementById('edit-bot-message').value = rule.message;
+            document.getElementById('edit-bot-modal').classList.remove('hide');
+        }
+
+        function closeEditBotModal() {
+            document.getElementById('edit-bot-modal').classList.add('hide');
+            editingBotIndex = null;
+        }
+
+        function handleEditBotRule(event) {
+            event.preventDefault();
+            if(editingBotIndex === null) return;
+            
+            const kwInput = document.getElementById('edit-bot-keywords').value;
+            const msgInput = document.getElementById('edit-bot-message').value;
+            
+            const keywordsArray = kwInput.split(',').map(k => k.trim()).filter(k => k);
+            if (keywordsArray.length === 0 || !msgInput.trim()) {
+                customAlert('กรุณากรอกคีย์เวิร์ดและข้อความให้ครบถ้วนค่ะ ⚠️');
+                return;
+            }
+
+            autoReplyRules[editingBotIndex] = {
+                keywords: keywordsArray,
+                message: msgInput.trim()
+            };
+
+            saveBotRulesToStorage();
+            closeEditBotModal();
+            renderBotRulesList();
+            customAlert('แก้ไขกฎบอทเรียบร้อยแล้วค่ะ 🤖');
         }
 
         async function testTelegramNotification() {
