@@ -909,6 +909,7 @@
         let viewingTicketId = null;
         let currentFilter = 'All';
         let currentChatImage = null;
+        let realtimeChannel = null;
 
         function handleChatImageUpload(event) {
             const file = event.target.files[0];
@@ -1237,24 +1238,28 @@
                 const { data: ticketsData, error: tckErr } = await query.order('created_at', { ascending: false });
 
                 if (!tckErr && ticketsData) {
-                    tickets = ticketsData.map(t => ({
-                        id: t.id,
-                        deviceId: t.device_id,
-                        agentName: t.agent_name,
-                        appName: t.app_name,
-                        purchaseDate: t.purchase_date,
-                        expiryDate: t.expiry_date,
-                        claimType: t.claim_type,
-                        subject: t.subject,
-                        description: t.description,
-                        status: t.status,
-                        image: t.image_url,
-                        createdAt: t.created_at,
-                        updatedAt: t.updated_at,
-                        queueNumber: null,
-                        aheadCount: null,
-                        messages: []
-                    }));
+                    const oldTickets = [...tickets];
+                    tickets = ticketsData.map(t => {
+                        const oldTicket = oldTickets.find(ot => ot.id === t.id);
+                        return {
+                            id: t.id,
+                            deviceId: t.device_id,
+                            agentName: t.agent_name,
+                            appName: t.app_name,
+                            purchaseDate: t.purchase_date,
+                            expiryDate: t.expiry_date,
+                            claimType: t.claim_type,
+                            subject: t.subject,
+                            description: t.description,
+                            status: t.status,
+                            image: t.image_url,
+                            createdAt: t.created_at,
+                            updatedAt: t.updated_at,
+                            queueNumber: oldTicket ? oldTicket.queueNumber : null,
+                            aheadCount: oldTicket ? oldTicket.aheadCount : null,
+                            messages: oldTicket ? oldTicket.messages : []
+                        };
+                    });
 
                     const ticketIds = tickets.map(t => t.id);
                     if (ticketIds.length > 0) {
@@ -1266,9 +1271,11 @@
                                 .order('created_at', { ascending: true });
                             if (allMsgs && allMsgs.length > 0) {
                                 tickets.forEach(t => {
-                                    const related = allMsgs.filter(m => m.ticket_id === t.id);
+                                    // ไม่เขียนทับข้อความของแชทที่กำลังเปิดอยู่ เพื่อป้องกันการกระตุก (ปล่อยให้ loadTicketMessages จัดการ)
+                                    if (t.id !== viewingTicketId) {
+                                        const related = allMsgs.filter(m => m.ticket_id === t.id);
                                     if (related.length > 0) {
-                                        t.messages = related.map(m => ({
+                                        let mappedMsgs = related.map(m => ({
                                             id: m.id,
                                             sender: m.sender_role,
                                             senderName: m.sender_name,
@@ -1277,6 +1284,24 @@
                                             is_read: m.is_read === true,
                                             timestamp: m.created_at
                                         }));
+
+                                        // Implicit Read Status Logic: หากอีกฝ่ายมีการตอบกลับ ถือว่าอ่านข้อความก่อนหน้าแล้วแน่นอน
+                                        let lastAg = 0, lastAd = 0;
+                                        mappedMsgs.forEach(m => {
+                                            const time = new Date(m.timestamp).getTime();
+                                            if (m.sender === 'agent') lastAg = Math.max(lastAg, time);
+                                            if (m.sender === 'admin') lastAd = Math.max(lastAd, time);
+                                        });
+                                        mappedMsgs.forEach(m => {
+                                            const time = new Date(m.timestamp).getTime();
+                                            if (!m.is_read) {
+                                                if (m.sender === 'admin' && time <= lastAg) m.is_read = true;
+                                                if (m.sender === 'agent' && time <= lastAd) m.is_read = true;
+                                            }
+                                        });
+
+                                        t.messages = mappedMsgs;
+                                    }
                                     }
                                 });
                             }
@@ -1376,19 +1401,26 @@
 
             loadedMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-            // ตรวจสอบว่าข้อความมีการเปลี่ยนแปลงจริงหรือไม่ เพื่อป้องกันการกระตุกหรือดึง scroll ลงล่าง
-            const oldMsgs = ticket.messages || [];
-            const hasChanged = isInitialLoad ||
-                oldMsgs.length !== loadedMessages.length ||
-                oldMsgs.some((m, idx) => {
-                    const lm = loadedMessages[idx];
-                    return !lm || m.id !== lm.id || m.is_read !== lm.is_read || m.text !== lm.text;
-                });
+            // Implicit Read Status Logic สำหรับข้อความที่ดึงมาใหม่
+            let lastAgentTime = 0;
+            let lastAdminTime = 0;
+            loadedMessages.forEach(m => {
+                const t = new Date(m.timestamp).getTime();
+                if (m.sender === 'agent') lastAgentTime = Math.max(lastAgentTime, t);
+                if (m.sender === 'admin') lastAdminTime = Math.max(lastAdminTime, t);
+            });
+            loadedMessages.forEach(m => {
+                const t = new Date(m.timestamp).getTime();
+                if (!m.is_read) {
+                    if (m.sender === 'admin' && t <= lastAgentTime) m.is_read = true;
+                    if (m.sender === 'agent' && t <= lastAdminTime) m.is_read = true;
+                }
+            });
 
             ticket.messages = loadedMessages;
 
-            if (viewingTicketId === ticketId && hasChanged) {
-                renderChatMessages(isInitialLoad);
+            if (viewingTicketId === ticketId) {
+                renderChatMessages();
             }
         }
 
@@ -1397,6 +1429,9 @@
             if (pollingTimer) return;
             pollingTimer = setInterval(() => {
                 syncFromSupabase();
+                if (viewingTicketId) {
+                    loadTicketMessages(viewingTicketId);
+                }
             }, 4000);
         }
 
@@ -1419,11 +1454,30 @@
             }
 
             try {
-                supabaseClient.channel('monali-realtime')
+                realtimeChannel = supabaseClient.channel('monali-realtime')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, () => syncFromSupabase())
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
-                        if (viewingTicketId) loadTicketMessages(viewingTicketId);
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
+                        if (viewingTicketId && payload.new && payload.new.ticket_id === viewingTicketId) {
+                            loadTicketMessages(viewingTicketId);
+                            markMessagesAsRead(viewingTicketId);
+                        }
                         syncFromSupabase();
+                    })
+                    .on('broadcast', { event: 'mark_messages_read' }, (payload) => {
+                        if (payload.payload && payload.payload.ticketId === viewingTicketId) {
+                            const readByRole = payload.payload.readByRole;
+                            const ticket = tickets.find(t => t.id === viewingTicketId);
+                            if (ticket && ticket.messages && currentRole !== readByRole) {
+                                let changed = false;
+                                ticket.messages.forEach(m => {
+                                    if (m.sender === currentRole && !m.is_read) {
+                                        m.is_read = true;
+                                        changed = true;
+                                    }
+                                });
+                                if (changed) renderChatMessages();
+                            }
+                        }
                     })
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_settings' }, () => syncFromSupabase())
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'faqs' }, () => syncFromSupabase())
@@ -2499,15 +2553,29 @@
                 safeStorage.setItem(`read_${currentRole}_${ticketId}`, Date.now().toString());
             } catch (e) {}
 
-            if (updatedCount > 0 && supabaseClient) {
-                try {
-                    await supabaseClient
-                        .from('messages')
-                        .update({ is_read: true })
-                        .eq('ticket_id', ticketId)
-                        .eq('sender_role', targetSender);
-                } catch (readErr) {
-                    console.warn('Mark as read Supabase sync notice:', readErr);
+            if (updatedCount > 0) {
+                // 1. กระจายสัญญาณ Realtime ไปยังอีกฝั่งทันที (หากออนไลน์อยู่ทั้งคู่)
+                if (realtimeChannel) {
+                    try {
+                        realtimeChannel.send({
+                            type: 'broadcast',
+                            event: 'mark_messages_read',
+                            payload: { ticketId: ticketId, readByRole: currentRole }
+                        }).catch(() => {});
+                    } catch(e) {}
+                }
+
+                // 2. อัปเดตลงฐานข้อมูล
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient
+                            .from('messages')
+                            .update({ is_read: true })
+                            .eq('ticket_id', ticketId)
+                            .eq('sender_role', targetSender);
+                    } catch (readErr) {
+                        console.warn('Mark as read Supabase sync notice:', readErr);
+                    }
                 }
             }
         }
