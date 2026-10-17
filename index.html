@@ -401,25 +401,29 @@
                     </div>
 
                     <!-- Pending Chat Image Attachment Preview -->
-                    <div id="chat-image-preview-container" class="hide mb-3 p-2 bg-[#141214] border border-pink-500/30 rounded-2xl flex items-center justify-between w-fit max-w-full">
+                    <div id="chat-image-preview-container" class="hide mb-3 p-2 bg-[#141214] border border-pink-500/30 rounded-2xl flex items-center justify-between w-fit max-w-full shadow-sm">
                         <div class="flex items-center gap-2.5 min-w-0 pr-3">
-                            <img id="chat-image-preview" src="" alt="Chat Attachment Preview" class="w-12 h-12 object-cover rounded-xl border border-pink-500/40 shrink-0">
+                            <img id="chat-image-preview" src="" alt="Preview" class="w-12 h-12 object-cover rounded-xl border border-pink-500/40 shrink-0">
                             <div class="min-w-0 text-left">
                                 <span class="text-xs text-pink-300 font-medium block truncate"><i class="fas fa-image text-primary mr-1"></i> แนบรูปภาพแล้ว</span>
-                                <span class="text-[10px] text-gray-400 block truncate">กดปุ่มส่งข้อความเพื่อส่งรูปภาพ</span>
+                                <span class="text-[10px] text-gray-400 block truncate">กดปุ่มส่งเพื่อส่งรูปภาพ</span>
                             </div>
                         </div>
-                        <button type="button" onclick="removeChatImage()" title="ยกเลิกรูปภาพ" class="text-gray-400 hover:text-danger w-7 h-7 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
+                        <button type="button" onclick="removeChatImage()" title="ยกเลิก" class="text-gray-400 hover:text-danger w-7 h-7 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
                             <i class="fas fa-times text-xs"></i>
                         </button>
                     </div>
 
                     <form onsubmit="handleSendMessage(event)" class="flex gap-2 sm:gap-3 items-end">
+                        <label title="แนบรูปภาพ" class="cursor-pointer rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
+                            <i class="fas fa-image text-xl"></i>
+                            <input type="file" id="chat-image-input" accept="image/*" class="hidden" onchange="handleChatImageUpload(event)">
+                        </label>
                         <button type="button" id="btn-toggle-emojis" onclick="toggleEmojiPicker()" title="เลือกอิโมจิ" class="rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
                             <i class="far fa-smile text-xl"></i>
                         </button>
                         <div class="flex-grow relative">
-                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กดปุ่มส่งข้อความ หรือ Ctrl+Enter เพื่อส่ง) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
+                            <textarea id="chat-input" rows="2" onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
                         </div>
                         <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
                             <i class="fas fa-paper-plane text-base sm:text-lg"></i>
@@ -978,32 +982,6 @@
         let viewingTicketId = null;
         let currentFilter = 'All';
         let currentChatImage = null;
-        let realtimeChannel = null;
-
-        function handleChatImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            compressAndProcessImage(file, 1000, 1000, 0.75, function(compressedBase64) {
-                currentChatImage = compressedBase64;
-                const previewImg = document.getElementById('chat-image-preview');
-                const previewContainer = document.getElementById('chat-image-preview-container');
-                if (previewImg && previewContainer) {
-                    previewImg.src = compressedBase64;
-                    previewContainer.classList.remove('hide');
-                }
-            });
-        }
-
-        function removeChatImage() {
-            currentChatImage = null;
-            const fileInput = document.getElementById('chat-image-input');
-            if (fileInput) fileInput.value = '';
-            const previewContainer = document.getElementById('chat-image-preview-container');
-            const previewImg = document.getElementById('chat-image-preview');
-            if (previewContainer) previewContainer.classList.add('hide');
-            if (previewImg) previewImg.src = '';
-        }
 
         function openImageViewer(url) {
             const safe = sanitizeMediaUrl(url);
@@ -2678,7 +2656,7 @@
                 return;
             }
 
-            removeChatImage();
+            if (typeof removeChatImage === 'function') removeChatImage();
 
             document.getElementById('detail-ticket-id').textContent = ticket.id;
             document.getElementById('detail-ticket-app').textContent = ticket.appName;
@@ -2941,10 +2919,33 @@
             input.setSelectionRange(newPos, newPos);
         }
 
+        function handleChatImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressAndProcessImage(file, 1000, 1000, 0.75, function(compressedBase64) {
+                currentChatImage = compressedBase64;
+                const previewImg = document.getElementById('chat-image-preview');
+                const previewContainer = document.getElementById('chat-image-preview-container');
+                if (previewImg && previewContainer) {
+                    previewImg.src = compressedBase64;
+                    previewContainer.classList.remove('hide');
+                }
+            });
+        }
+
+        function removeChatImage() {
+            currentChatImage = null;
+            const fileInput = document.getElementById('chat-image-input');
+            if (fileInput) fileInput.value = '';
+            const previewContainer = document.getElementById('chat-image-preview-container');
+            const previewImg = document.getElementById('chat-image-preview');
+            if (previewContainer) previewContainer.classList.add('hide');
+            if (previewImg) previewImg.src = '';
+        }
+
         function handleChatKeydown(e) {
-            // ยกเลิกการกด Enter แล้วส่งทันที (ปล่อยให้ Enter ทำหน้าที่ขึ้นบรรทัดใหม่ตามธรรมชาติ)
-            // ถ้าอยากใช้คีย์ลัดส่ง ให้กด Ctrl + Enter หรือ Cmd + Enter แทน
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSendMessage(e);
             }
@@ -2970,30 +2971,44 @@
 
             try {
                 if (supabaseClient) {
-                    const baseMsgPayload = {
-                        ticket_id: viewingTicketId,
-                        sender_role: senderRole,
-                        sender_name: senderName,
-                        text: displayText,
-                        image_url: image,
-                        created_at: now
-                    };
+                    try {
+                        const { data: rpcData, error: rpcErr } = await supabaseClient.rpc('send_ticket_message', {
+                            p_ticket_id: viewingTicketId,
+                            p_sender_role: senderRole,
+                            p_sender_name: senderName,
+                            p_text: displayText
+                        });
+                        if (!rpcErr && rpcData?.success) {
+                            dbSaved = true;
+                        }
+                    } catch (rpcErr) {}
 
-                    let { error: msgErr } = await supabaseClient.from('messages').insert({
-                        ...baseMsgPayload,
-                        is_read: false
-                    });
+                    if (!dbSaved) {
+                        const baseMsgPayload = {
+                            ticket_id: viewingTicketId,
+                            sender_role: senderRole,
+                            sender_name: senderName,
+                            text: displayText,
+                            image_url: image,
+                            created_at: now
+                        };
 
-                    if (msgErr && (msgErr.message?.includes('is_read') || msgErr.code === 'PGRST204' || msgErr.code === '42703')) {
-                        const retryRes = await supabaseClient.from('messages').insert(baseMsgPayload);
-                        msgErr = retryRes.error;
-                    }
+                        let { error: msgErr } = await supabaseClient.from('messages').insert({
+                            ...baseMsgPayload,
+                            is_read: false
+                        });
 
-                    if (!msgErr) {
-                        dbSaved = true;
-                        try {
-                            await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
-                        } catch (tckErr) {}
+                        if (msgErr && (msgErr.message?.includes('is_read') || msgErr.code === 'PGRST204' || msgErr.code === '42703')) {
+                            const retryRes = await supabaseClient.from('messages').insert(baseMsgPayload);
+                            msgErr = retryRes.error;
+                        }
+
+                        if (!msgErr) {
+                            dbSaved = true;
+                            try {
+                                await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
+                            } catch (tckErr) {}
+                        }
                     }
                 }
 
@@ -3012,7 +3027,7 @@
                 ticket.updatedAt = now;
 
                 saveLocalMessage(viewingTicketId, newMsg);
-                renderChatMessages(true);
+                renderChatMessages();
 
                 if (currentRole === 'agent') {
                     sendTelegramNewMessage(ticket, text, image);
@@ -3529,6 +3544,7 @@
 
             await sendRawTelegramMessage(token, chatId, message, ticket.image);
         }
+
         async function sendTelegramNewMessage(ticket, text, image = null) {
             const token = getTelegramToken();
             const chatId = getTelegramChatId();
