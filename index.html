@@ -2950,7 +2950,7 @@
             }
         }
 
-        async function dispatchMessage(textToSend) {
+        async function dispatchMessage(text, image) {
             if (!text && !image) return;
 
             const ticket = tickets.find(t => t.id === viewingTicketId);
