@@ -65,6 +65,17 @@
 
         /* Sparkle Star Background Effect */
         body {
+            background-color: #141214; 
+            color: #f3e8eb;
+            font-family: 'Prompt', sans-serif;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            pointer-events: none;
             background-image: 
                 radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 40px 70px, #ff758c, rgba(0,0,0,0)),
@@ -76,6 +87,7 @@
             background-repeat: repeat;
             background-size: 400px 300px;
             animation: twinkle 15s linear infinite;
+            will-change: background-position;
         }
         @keyframes twinkle {
             0% { background-position: 0 0; }
@@ -423,7 +435,7 @@
                             <i class="far fa-smile text-xl"></i>
                         </button>
                         <div class="flex-grow relative">
-                            <textarea id="chat-input" rows="2" onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
+                            <textarea id="chat-input" rows="2" placeholder="พิมพ์ข้อความที่นี่..." class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
                         </div>
                         <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
                             <i class="fas fa-paper-plane text-base sm:text-lg"></i>
@@ -2228,7 +2240,7 @@
                                     <div class="min-w-0 flex-grow">
                                         <div class="flex items-center justify-between gap-2">
                                             <span class="font-bold ${adminReplyInfo.isUnread ? 'text-emerald-800' : 'text-gray-700'}">ข้อความจากแอดมิน:</span>
-                                            <span class="text-[10px] ${adminReplyInfo.isUnread ? 'text-emerald-600' : 'text-gray-400'} font-medium">${formatThaiTime(adminReplyInfo.lastMessageTime)}</span>
+                                            <span class="text-[10px] adminReplyInfo.isUnread?'text-emerald-600':'text-gray-400'font-medium">{formatThaiTime(adminReplyInfo.lastMessageTime)}</span>
                                         </div>
                                         <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(adminReplyInfo.lastMessage)}</p>
                                     </div>
@@ -2245,10 +2257,10 @@
                         queueInfoHtml = `
                             <div class="bg-pink-50 border border-pink-100 rounded-2xl p-3 flex items-center justify-between text-xs font-medium text-gray-700">
                                 <div class="flex items-center gap-2">
-                                    <span id="queue-num-${safeId}" class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">${qNumberText}</span>
+                                    <span id="queue-num-safeId"class="w-7h-7rounded-fullbg-primarytext-whiteflexitems-centerjustify-centerfont-boldtext-xsshadow-sm">{qNumberText}</span>
                                     <span>คิวของคุณในระบบ</span>
                                 </div>
-                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-${safeId}" class="text-gray-900 font-bold">${aheadCountText}</span> คิว</span>
+                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-safeId"class="text-gray-900font-bold">{aheadCountText}</span> คิว</span>
                             </div>
                         `;
                     }
@@ -2281,7 +2293,7 @@
                         ${queueInfoHtml}
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
                             <div>${getStatusBadge(ticket.status)}</div>
-                            <button class="btn-open-ticket ${buttonClass} px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
+                            <button class="btn-open-ticket buttonClasspx-4py-2rounded-fulltext-xsfont-semiboldshadow-smtransition-alltransformhover:scale-105whitespace-nowrapflexitems-centergap-1.5"data-ticket-id="{safeId}">
                                 <i class="fas ${adminReplyInfo.hasAdminReply ? 'fa-comment-dots' : 'fa-comments'}"></i> ${buttonText}
                             </button>
                         </div>
@@ -2537,7 +2549,7 @@
                                     <div class="min-w-0 flex-grow">
                                         <div class="flex items-center justify-between gap-2">
                                             <span class="font-bold ${replyInfo.isUnread ? 'text-pink-700' : 'text-gray-700'}">ข้อความล่าสุดจากลูกค้า:</span>
-                                            <span class="text-[10px] ${replyInfo.isUnread ? 'text-pink-500' : 'text-gray-400'} font-medium">${formatThaiTime(replyInfo.lastMessageTime)}</span>
+                                            <span class="text-[10px] replyInfo.isUnread?'text-pink-500':'text-gray-400'font-medium">{formatThaiTime(replyInfo.lastMessageTime)}</span>
                                         </div>
                                         <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(replyInfo.lastMessage)}</p>
                                     </div>
@@ -2717,19 +2729,28 @@
             if (badge) badge.classList.add('hide');
         }
 
+        let chatScrollTimer = null;
         function handleChatScroll() {
-            const container = document.getElementById('chat-messages-container');
-            const scrollBtn = document.getElementById('btn-scroll-to-bottom');
-            if (!container || !scrollBtn) return;
+            if (chatScrollTimer) return;
+            // ใช้ requestAnimationFrame เพื่อลดภาระการรันอีเวนต์ตอน Scroll รัวๆ
+            chatScrollTimer = requestAnimationFrame(() => {
+                const container = document.getElementById('chat-messages-container');
+                const scrollBtn = document.getElementById('btn-scroll-to-bottom');
+                if (!container || !scrollBtn) {
+                    chatScrollTimer = null;
+                    return;
+                }
 
-            const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-            if (distanceFromBottom > 160) {
-                scrollBtn.classList.remove('hide');
-            } else {
-                scrollBtn.classList.add('hide');
-                const badge = document.getElementById('scroll-bottom-badge');
-                if (badge) badge.classList.add('hide');
-            }
+                const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+                if (distanceFromBottom > 160) {
+                    scrollBtn.classList.remove('hide');
+                } else {
+                    scrollBtn.classList.add('hide');
+                    const badge = document.getElementById('scroll-bottom-badge');
+                    if (badge) badge.classList.add('hide');
+                }
+                chatScrollTimer = null;
+            });
         }
 
         function renderChatMessages(forceScroll = false) {
@@ -2744,10 +2765,13 @@
             container.innerHTML = '';
             ticket.messages = ticket.messages || [];
 
+            // ใช้ DocumentFragment เพื่อมัดรวม DOM ก่อนวาดลงหน้าจอทีเดียว ลดอาการหน่วง
+            const fragment = document.createDocumentFragment();
+
             const dateDivider = document.createElement('div');
             dateDivider.className = "flex justify-center my-5";
             dateDivider.innerHTML = `<span class="bg-[#1e1b1e] border border-pink-500/20 text-gray-400 text-xs px-4 py-1.5 rounded-full shadow-sm">${formatThaiDate(ticket.createdAt)}</span>`;
-            container.appendChild(dateDivider);
+            fragment.appendChild(dateDivider);
 
             ticket.messages.forEach(msg => {
                 const msgWrapper = document.createElement('div');
@@ -2788,7 +2812,7 @@
                     `;
                 } else if (isMe) {
                     msgWrapper.className += " justify-end";
-                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" onclick="openImageViewer('${safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm hover:opacity-90 transition-opacity">` : '';
+                    let imageHtml = safeImgUrl ? `<img src="safeImgUrl"onclick="openImageViewer('{safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm hover:opacity-90 transition-opacity">` : '';
                     
                     let readReceiptHtml = '';
                     if (msg.is_read) {
@@ -2830,7 +2854,7 @@
                     msgWrapper.className += " justify-start";
                     let senderName = msg.sender === 'agent' ? ticket.agentName : 'Admin Support 🌸';
                     let currentLogoSrc = sanitizeMediaUrl(document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
-                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" onclick="openImageViewer('${safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm hover:opacity-90 transition-opacity">` : '';
+                    let imageHtml = safeImgUrl ? `<img src="safeImgUrl"onclick="openImageViewer('{safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm hover:opacity-90 transition-opacity">` : '';
                     
                     const bubbleContent = isStickerMsg 
                         ? stickerContentHtml 
@@ -2856,8 +2880,10 @@
                         </div>
                     `;
                 }
-                container.appendChild(msgWrapper);
+                fragment.appendChild(msgWrapper);
             });
+
+            container.appendChild(fragment);
 
             // เลื่อนลงล่างเฉพาะเมื่อถูกสั่งบังคับ (เช่น ตอนเปิดเคสหรือกดส่งข้อความ) หรือเมื่อผู้ใช้อยู่ล่างสุดอยู่แล้ว
             if (forceScroll || wasNearBottom) {
@@ -2944,13 +2970,6 @@
             if (previewImg) previewImg.src = '';
         }
 
-        function handleChatKeydown(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage(e);
-            }
-        }
-
         async function dispatchMessage(text, image) {
             if (!text && !image) return;
 
@@ -2967,6 +2986,32 @@
             const senderRole = currentRole;
             const senderName = currentRole === 'admin' ? 'Admin Support' : currentAgentName;
             const displayText = text || (image ? '📷 ส่งรูปภาพ' : '');
+            
+            // === เริ่มการทำงานแบบ Optimistic UI Update ===
+            // นำข้อความขึ้นแสดงบนหน้าจอทันทีโดยไม่ต้องรอฐานข้อมูล เพื่อให้รู้สึกว่าส่งแชทเร็วปรู๊ดปร๊าด
+            const newMsg = {
+                id: 'msg-' + Date.now(),
+                sender: senderRole,
+                senderName: senderName,
+                text: displayText,
+                image: image,
+                is_read: false,
+                timestamp: now
+            };
+
+            ticket.messages = ticket.messages || [];
+            ticket.messages.push(newMsg);
+            ticket.updatedAt = now;
+
+            saveLocalMessage(viewingTicketId, newMsg);
+            renderChatMessages(true);
+
+            if (currentRole === 'agent') {
+                // ยิง Telegram แบบ Background Task
+                sendTelegramNewMessage(ticket, text, image).catch(e => console.warn(e));
+            }
+            // ===========================================
+
             let dbSaved = false;
 
             try {
@@ -3010,27 +3055,6 @@
                             } catch (tckErr) {}
                         }
                     }
-                }
-
-                const newMsg = {
-                    id: 'msg-' + Date.now(),
-                    sender: senderRole,
-                    senderName: senderName,
-                    text: displayText,
-                    image: image,
-                    is_read: false,
-                    timestamp: now
-                };
-
-                ticket.messages = ticket.messages || [];
-                ticket.messages.push(newMsg);
-                ticket.updatedAt = now;
-
-                saveLocalMessage(viewingTicketId, newMsg);
-                renderChatMessages();
-
-                if (currentRole === 'agent') {
-                    sendTelegramNewMessage(ticket, text, image);
                 }
             } catch (err) {
                 console.error('Send message process notice:', err);
@@ -3653,3 +3677,4 @@
     </script>
 </body>
 </html>
+
