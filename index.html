@@ -355,12 +355,24 @@
                     <!-- Chat bubbles injected here -->
                 </div>
 
-                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0" id="chat-input-area">
-                    <form onsubmit="handleSendMessage(event)" class="flex gap-3 items-end">
+                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0 flex flex-col gap-2" id="chat-input-area">
+                    <!-- Image Preview for Chat -->
+                    <div id="chat-image-preview-container" class="hide relative inline-block w-fit mb-1">
+                        <img id="chat-image-preview" src="" alt="Chat Preview" class="max-h-32 rounded-xl border border-pink-500/30 shadow-sm">
+                        <button type="button" onclick="removeChatImage()" class="absolute -top-2 -right-2 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-500 shadow-md">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                        <input type="hidden" id="chat-compressed-image">
+                    </div>
+                    <form onsubmit="handleSendMessage(event)" class="flex gap-2 sm:gap-3 items-end w-full">
+                        <label class="cursor-pointer bg-[#141214] text-primary border border-pink-500/30 hover:bg-white/5 rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-sm transition-colors" title="แนบรูปภาพ">
+                            <i class="fas fa-image text-lg"></i>
+                            <input type="file" id="chat-file-upload" accept="image/*" class="hidden" onchange="handleChatImageUpload(event)">
+                        </label>
                         <div class="flex-grow relative">
-                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white"></textarea>
+                            <textarea id="chat-input" rows="2" onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... ✍️" class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm sm:text-base"></textarea>
                         </div>
-                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-14 h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
+                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
                             <i class="fas fa-paper-plane text-lg"></i>
                         </button>
                     </form>
@@ -2233,12 +2245,36 @@
             }
         }
 
+        function handleChatImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressAndProcessImage(file, 800, 800, 0.7, function(compressedBase64) {
+                document.getElementById('chat-image-preview').src = compressedBase64;
+                document.getElementById('chat-image-preview-container').classList.remove('hide');
+                document.getElementById('chat-compressed-image').value = compressedBase64;
+            });
+        }
+
+        function removeChatImage() {
+            const fileInput = document.getElementById('chat-file-upload');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('chat-image-preview').src = '';
+            document.getElementById('chat-compressed-image').value = '';
+            document.getElementById('chat-image-preview-container').classList.add('hide');
+        }
+
         async function handleSendMessage(event) {
             if (event && event.preventDefault) event.preventDefault();
             const input = document.getElementById('chat-input');
             const btn = document.getElementById('btn-send-chat');
+            const imgInput = document.getElementById('chat-compressed-image');
+            
             const text = input.value.trim();
-            if (!text) return;
+            const imageData = imgInput ? imgInput.value : '';
+
+            // ต้องมีข้อความหรือรูปภาพอย่างน้อย 1 อย่างถึงจะส่งได้
+            if (!text && !imageData) return;
 
             const ticket = tickets.find(t => t.id === viewingTicketId);
             if (!ticket) return;
@@ -2257,10 +2293,10 @@
                         sender_role: senderRole,
                         sender_name: senderName,
                         text: text,
+                        image_url: imageData || null,
                         created_at: now
                     });
                     if (msgErr) throw msgErr;
-                    // ไม่ต้องส่ง ticket update จากฝั่งหน้าเว็บ เนื่องจากมี Trigger ทาง SQL คอยจัดการอัปเดต updated_at ให้เสมอ
                 }
 
                 ticket.messages = ticket.messages || [];
@@ -2268,15 +2304,17 @@
                     sender: senderRole,
                     senderName: senderName,
                     text: text,
+                    image: imageData || null,
                     timestamp: now
                 });
                 ticket.updatedAt = now;
 
                 input.value = '';
+                removeChatImage();
                 renderChatMessages();
 
                 if (currentRole === 'agent') {
-                    sendTelegramNewMessage(ticket, text);
+                    sendTelegramNewMessage(ticket, text, imageData);
                 }
             } catch (err) {
                 console.error('Send message error:', err);
@@ -2657,20 +2695,21 @@
             await sendRawTelegramMessage(token, chatId, message, ticket.image);
         }
 
-        async function sendTelegramNewMessage(ticket, text) {
+        async function sendTelegramNewMessage(ticket, text, image = null) {
             const token = getTelegramToken();
             const chatId = getTelegramChatId();
             if (!token || !chatId) return;
 
             let template = getTelegramChatTemplate();
+            const msgText = text ? text : '(แนบรูปภาพ)';
             const message = template
                 .replace(/{id}/g, escapeHtml(ticket.id))
                 .replace(/{appName}/g, escapeHtml(ticket.appName))
                 .replace(/{agentName}/g, escapeHtml(ticket.agentName))
-                .replace(/{message}/g, escapeHtml(text))
+                .replace(/{message}/g, escapeHtml(msgText))
                 .replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
 
-            await sendRawTelegramMessage(token, chatId, message);
+            await sendRawTelegramMessage(token, chatId, message, image);
         }
 
         let confirmCallback = null;
