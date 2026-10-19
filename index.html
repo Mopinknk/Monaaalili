@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MONALI Help Center</title>
-    
-    <!-- Open Graph Meta Tags (ป้องกันแอปดึงข้อความประกาศไปแสดงตอนแชร์ลิงก์) -->
-    <meta name="description" content=" ">
-    <meta property="og:title" content="MONALI Help Center">
-    <meta property="og:description" content=" ">
-    <meta property="og:type" content="website">
-
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -19,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script>
         tailwind.config = {
             theme: {
@@ -43,14 +35,13 @@
             }
         }
     </script>
-    
     <style>
         body { font-family: 'Prompt', sans-serif; background-color: #141214; color: #f3e8eb; }
         .hide { display: none !important; }
-        .chat-container { height: calc(100vh - 290px); min-height: 380px; }
+        .chat-container { height: calc(100vh - 280px); min-height: 400px; }
         
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #141214; }
         ::-webkit-scrollbar-thumb { background: #ff758c; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff526d; }
@@ -65,17 +56,6 @@
 
         /* Sparkle Star Background Effect */
         body {
-            background-color: #141214; 
-            color: #f3e8eb;
-            font-family: 'Prompt', sans-serif;
-            position: relative;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            pointer-events: none;
             background-image: 
                 radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 40px 70px, #ff758c, rgba(0,0,0,0)),
@@ -87,7 +67,6 @@
             background-repeat: repeat;
             background-size: 400px 300px;
             animation: twinkle 15s linear infinite;
-            will-change: background-position;
         }
         @keyframes twinkle {
             0% { background-position: 0 0; }
@@ -102,10 +81,7 @@
         .animate-marquee {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 40s linear infinite;
-        }
-        .animate-marquee:hover {
-            animation-play-state: paused;
+            animation: marquee 20s linear infinite;
         }
 
         /* Fix iOS date input overflow and alignment */
@@ -137,7 +113,8 @@
         <div class="w-full bg-primary/20 border-b border-pink-500/30 overflow-hidden py-1.5 mb-2 relative group">
             <div class="whitespace-nowrap overflow-hidden">
                 <div id="marquee-text-display" class="animate-marquee text-xs sm:text-sm text-pink-200 font-medium flex items-center gap-8">
-                    <!-- ลบข้อความที่ฝังในโค้ด HTML ออก เพื่อหลบสายตาบอทของแอปแชท (ข้อความจะถูกเสกขึ้นมาด้วย JavaScript แทน) -->
+                    <span>🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖</span>
+                    <span>✨ กำลังเชื่อมต่อระบบฐานข้อมูลแบบเรียลไทม์... 🌟</span>
                 </div>
             </div>
             <!-- Admin edit announcement trigger -->
@@ -285,25 +262,20 @@
                         <h2 class="text-2xl font-bold text-white flex items-center"><i class="fas fa-magic text-primary mr-2"></i> Dashboard</h2>
                         <p class="text-pink-200/70 text-sm mt-1">จัดการและช่วยเหลือปัญหาของตัวแทนทั้งหมด 🌟</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full sm:w-auto">
-                        <div class="grid grid-cols-2 md:flex md:flex-wrap gap-2 sm:gap-2">
-                            <button onclick="openManageFAQModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-warning hover:text-gray-900 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto">
-                                <i class="fas fa-question-circle text-warning mr-1.5 sm:mr-2"></i> จัดการ FAQ
-                            </button>
-                            <button onclick="openManageAppsModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-primary hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto">
-                                <i class="fas fa-list-ul text-primary mr-1.5 sm:mr-2"></i> รายการแอป
-                            </button>
-                            <button onclick="openTelegramModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-sky-500 hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto">
-                                <i class="fab fa-telegram-plane text-sky-500 mr-1.5 sm:mr-2"></i> Telegram
-                            </button>
-                            <button onclick="openManageBotModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-emerald-500 hover:text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center justify-center w-full sm:w-auto group">
-                                <i class="fas fa-robot text-emerald-500 group-hover:text-white mr-1.5 sm:mr-2 transition-colors"></i> บอทตอบกลับ
-                            </button>
-                        </div>
-                        <div class="flex bg-white p-1 rounded-full border border-gray-200 shadow-sm w-full sm:w-auto sm:min-w-[320px]">
-                            <button onclick="filterAdminTickets('All')" id="filter-all" class="flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-primary text-white transition-all shadow-sm whitespace-nowrap flex items-center justify-center">ทั้งหมด</button>
-                            <button onclick="filterAdminTickets('Open')" id="filter-open" class="flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-all whitespace-nowrap flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-warning mr-1.5"></span> รอดำเนินการ</button>
-                            <button onclick="filterAdminTickets('Resolved')" id="filter-resolved" class="flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-all whitespace-nowrap flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-success mr-1.5"></span> แก้ไขแล้ว</button>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <button onclick="openManageFAQModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-warning hover:text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <i class="fas fa-question-circle text-warning mr-2"></i> จัดการ FAQ
+                        </button>
+                        <button onclick="openManageAppsModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-primary hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <i class="fas fa-list-ul text-primary mr-2"></i> จัดการรายการแอป
+                        </button>
+                        <button onclick="openTelegramModal()" class="bg-white border border-gray-200 text-gray-900 hover:bg-sky-500 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all flex items-center justify-center">
+                            <i class="fab fa-telegram-plane text-sky-500 mr-2"></i> ตั้งค่า Telegram
+                        </button>
+                        <div class="flex space-x-1 bg-white p-1 rounded-full border border-gray-200 shadow-sm overflow-x-auto">
+                            <button onclick="filterAdminTickets('All')" id="filter-all" class="px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition-colors whitespace-nowrap">ทั้งหมด</button>
+                            <button onclick="filterAdminTickets('Open')" id="filter-open" class="px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center"><span class="w-2 h-2 rounded-full bg-warning mr-2"></span> รอดำเนินการ</button>
+                            <button onclick="filterAdminTickets('Resolved')" id="filter-resolved" class="px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center"><span class="w-2 h-2 rounded-full bg-success mr-2"></span> แก้ไขแล้ว</button>
                         </div>
                     </div>
                 </div>
@@ -383,62 +355,13 @@
                     <!-- Chat bubbles injected here -->
                 </div>
 
-                <!-- Floating Scroll to Bottom Button -->
-                <div class="relative w-full">
-                    <button type="button" id="btn-scroll-to-bottom" onclick="scrollToBottomChat(true)" class="hide absolute -top-14 right-4 bg-pink-600/95 hover:bg-primary text-white px-3.5 py-2 rounded-full shadow-2xl border border-pink-400/40 backdrop-blur-md z-30 transition-all transform hover:scale-105 flex items-center gap-1.5 text-xs font-semibold">
-                        <i class="fas fa-chevron-down text-xs"></i>
-                        <span>เลื่อนลงล่างสุด</span>
-                        <span id="scroll-bottom-badge" class="hide bg-white text-pink-600 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full shadow-sm">ใหม่</span>
-                    </button>
-                </div>
-
-                <!-- Chat Input Section with Cute Emoji Drawer Popup -->
-                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0 relative" id="chat-input-area">
-                    <!-- Cute Emoji Picker Drawer Popup -->
-                    <div id="emoji-picker-drawer" class="hide absolute bottom-full mb-3 left-3 right-3 sm:left-auto sm:right-4 sm:w-80 bg-[#1a171a] border border-pink-500/40 rounded-3xl shadow-2xl p-3.5 z-40 backdrop-blur-md transition-all">
-                        <div class="flex items-center justify-between pb-2 mb-2 border-b border-pink-500/20">
-                            <span class="text-xs font-semibold text-pink-200 flex items-center gap-1.5">
-                                <span>🎀</span> อิโมจิ (Emojis)
-                            </span>
-                            <button type="button" onclick="toggleEmojiPicker(false)" class="text-gray-400 hover:text-danger text-xs w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <p class="text-[11px] text-pink-300/80 mb-2 flex items-center"><i class="fas fa-smile mr-1 text-warning"></i> แตะเพื่อแทรกอิโมจิในข้อความ 🌸</p>
-                        <div class="max-h-60 overflow-y-auto pr-1">
-                            <div id="emojis-list-container" class="grid grid-cols-7 sm:grid-cols-8 gap-1.5 text-xl p-1.5 bg-[#141214] rounded-2xl border border-pink-500/20 text-center">
-                                <!-- Injected via JS -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pending Chat Image Attachment Preview -->
-                    <div id="chat-image-preview-container" class="hide mb-3 p-2 bg-[#141214] border border-pink-500/30 rounded-2xl flex items-center justify-between w-fit max-w-full shadow-sm">
-                        <div class="flex items-center gap-2.5 min-w-0 pr-3">
-                            <img id="chat-image-preview" src="" alt="Preview" class="w-12 h-12 object-cover rounded-xl border border-pink-500/40 shrink-0">
-                            <div class="min-w-0 text-left">
-                                <span class="text-xs text-pink-300 font-medium block truncate"><i class="fas fa-image text-primary mr-1"></i> แนบรูปภาพแล้ว</span>
-                                <span class="text-[10px] text-gray-400 block truncate">กดปุ่มส่งเพื่อส่งรูปภาพ</span>
-                            </div>
-                        </div>
-                        <button type="button" onclick="removeChatImage()" title="ยกเลิก" class="text-gray-400 hover:text-danger w-7 h-7 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors shrink-0">
-                            <i class="fas fa-times text-xs"></i>
-                        </button>
-                    </div>
-
-                    <form onsubmit="handleSendMessage(event)" class="flex gap-2 sm:gap-3 items-end">
-                        <label title="แนบรูปภาพ" class="cursor-pointer rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
-                            <i class="fas fa-image text-xl"></i>
-                            <input type="file" id="chat-image-input" accept="image/*" class="hidden" onchange="handleChatImageUpload(event)">
-                        </label>
-                        <button type="button" id="btn-toggle-emojis" onclick="toggleEmojiPicker()" title="เลือกอิโมจิ" class="rounded-2xl w-12 h-12 flex items-center justify-center flex-shrink-0 bg-[#141214] border border-pink-500/30 text-pink-300 hover:text-white hover:bg-primary/20 transition-all shadow-sm">
-                            <i class="far fa-smile text-xl"></i>
-                        </button>
+                <div class="bg-[#1e1b1e] border border-pink-500/20 border-t-0 rounded-b-3xl p-3 md:p-4 shadow-lg flex-shrink-0" id="chat-input-area">
+                    <form onsubmit="handleSendMessage(event)" class="flex gap-3 items-end">
                         <div class="flex-grow relative">
-                            <textarea id="chat-input" rows="2" placeholder="พิมพ์ข้อความที่นี่..." class="w-full rounded-2xl border border-pink-500/30 px-4 sm:px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white text-sm"></textarea>
+                            <textarea id="chat-input" rows="2" required onkeydown="handleChatKeydown(event)" placeholder="พิมพ์ข้อความตอบกลับที่นี่... (กด Enter เพื่อส่ง, Shift+Enter ขึ้นบรรทัดใหม่) ✍️" class="w-full rounded-2xl border border-pink-500/30 px-5 py-3 focus:border-primary focus:ring-primary outline-none transition-all resize-none bg-[#141214] text-white"></textarea>
                         </div>
-                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-12 sm:w-14 h-12 sm:h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
-                            <i class="fas fa-paper-plane text-base sm:text-lg"></i>
+                        <button type="submit" id="btn-send-chat" class="bg-primary hover:bg-primary-hover text-white rounded-2xl w-14 h-14 flex items-center justify-center flex-shrink-0 shadow-md shadow-pink-500/20 transition-transform transform hover:scale-105">
+                            <i class="fas fa-paper-plane text-lg"></i>
                         </button>
                     </form>
                 </div>
@@ -743,71 +666,6 @@
                 </div>
             </div>
 
-            <!-- Manage Bot Rules Modal (Admin) -->
-            <div id="manage-bot-modal" onclick="if(event.target===this) closeManageBotModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[115] flex items-center justify-center p-4">
-                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-emerald-500/30 w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-                    <div class="bg-emerald-500/10 px-6 py-4 border-b border-emerald-500/20 flex justify-between items-center shrink-0">
-                        <h3 class="font-bold text-white text-lg"><i class="fas fa-robot text-emerald-500 mr-2"></i> จัดการบอทตอบกลับอัตโนมัติ</h3>
-                        <button type="button" onclick="closeManageBotModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
-                            <i class="fas fa-times text-lg"></i>
-                        </button>
-                    </div>
-                    <div class="p-6 overflow-y-auto grow space-y-4">
-                        <p class="text-sm text-gray-400 mb-2">เมื่อลูกค้าพิมพ์ข้อความที่มี "คีย์เวิร์ด" ตรงกับที่กำหนดไว้ บอทจะตอบกลับด้วยข้อความนั้นทันที 🤖</p>
-                        <div id="admin-bot-rules-list" class="space-y-3 mb-6">
-                            <!-- Bot rules injected here -->
-                        </div>
-                        <div class="bg-[#141214] p-5 rounded-2xl border border-emerald-500/20 shadow-sm">
-                            <h4 class="font-bold text-white mb-3 text-sm flex items-center"><i class="fas fa-plus-circle text-emerald-500 mr-2"></i> เพิ่มกฎบอทใหม่</h4>
-                            <form onsubmit="addBotRule(event)" class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">คีย์เวิร์ดดักจับ (คั่นด้วยลูกน้ำ ,)</label>
-                                    <input type="text" id="new-bot-keywords" required placeholder="เช่น รหัสผ่าน, ลืมรหัส, เข้าไม่ได้" class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm bg-[#1e1b1e] text-white">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">ข้อความที่บอทตอบกลับ</label>
-                                    <textarea id="new-bot-message" required rows="3" placeholder="ข้อความที่จะให้บอทพิมพ์ตอบกลับอัตโนมัติ..." class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm resize-none bg-[#1e1b1e] text-white"></textarea>
-                                </div>
-                                <div class="flex justify-end pt-2">
-                                    <button type="submit" class="bg-emerald-500 text-white px-6 py-2.5 rounded-full hover:bg-emerald-600 shadow-sm transition-transform transform hover:scale-105 text-sm font-medium flex items-center">
-                                        <i class="fas fa-save mr-2"></i> บันทึกกฎใหม่
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Bot Rule Modal (Admin) -->
-            <div id="edit-bot-modal" onclick="if(event.target===this) closeEditBotModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4">
-                <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-emerald-500/30 w-full max-w-lg overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-                    <div class="bg-emerald-500/10 px-6 py-4 border-b border-emerald-500/20 flex justify-between items-center shrink-0">
-                        <h3 class="font-bold text-white text-lg"><i class="fas fa-edit text-emerald-500 mr-2"></i> แก้ไขกฎบอทตอบกลับ</h3>
-                        <button type="button" onclick="closeEditBotModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5">
-                            <i class="fas fa-times text-lg"></i>
-                        </button>
-                    </div>
-                    <form onsubmit="handleEditBotRule(event)" class="p-6 space-y-4 overflow-y-auto grow">
-                        <input type="hidden" id="edit-bot-index">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-300 mb-1">คีย์เวิร์ดดักจับ (คั่นด้วยลูกน้ำ ,)</label>
-                            <input type="text" id="edit-bot-keywords" required class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm bg-[#141214] text-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-300 mb-1">ข้อความที่บอทตอบกลับ</label>
-                            <textarea id="edit-bot-message" required rows="4" class="w-full rounded-xl border border-emerald-500/30 px-4 py-3 focus:border-emerald-500 focus:ring-emerald-500 outline-none text-sm resize-none bg-[#141214] text-white"></textarea>
-                        </div>
-                        <div class="pt-4 flex justify-end gap-3">
-                            <button type="button" onclick="closeEditBotModal()" class="px-5 py-2.5 bg-[#141214] border border-pink-500/20 rounded-full text-gray-300 hover:bg-white/5 transition-colors font-medium text-sm">ยกเลิก</button>
-                            <button type="submit" class="bg-emerald-500 text-white px-6 py-2.5 rounded-full hover:bg-emerald-600 shadow-sm transition-transform transform hover:scale-105 text-sm font-semibold flex items-center">
-                                <i class="fas fa-save mr-2"></i> บันทึกการแก้ไข
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <!-- View FAQ Modal (Agent) -->
             <div id="view-faq-modal" onclick="if(event.target===this) closeViewFAQModal()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
                 <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-lg overflow-hidden transform transition-all relative max-h-[90vh] flex flex-col">
@@ -834,7 +692,7 @@
             </div>
 
             <!-- Custom Alert Modal -->
-            <div id="custom-alert-modal" onclick="if(event.target===this) closeCustomAlert()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+            <div id="custom-alert-modal" onclick="if(event.target===this) closeCustomAlert()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                 <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
                     <div class="w-16 h-16 bg-pink-500/10 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-pink-500/20">
                         <i class="fas fa-info-circle"></i>
@@ -845,7 +703,7 @@
             </div>
 
             <!-- Custom Confirm Modal -->
-            <div id="custom-confirm-modal" onclick="if(event.target===this) closeCustomConfirm()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+            <div id="custom-confirm-modal" onclick="if(event.target===this) closeCustomConfirm()" class="hide fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
                 <div class="bg-[#1e1b1e] text-white rounded-3xl shadow-2xl border border-pink-500/30 w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
                     <div class="w-16 h-16 bg-warning/10 text-warning rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-warning/20">
                         <i class="fas fa-question-circle"></i>
@@ -855,17 +713,6 @@
                         <button onclick="closeCustomConfirm()" class="px-5 py-2.5 bg-[#141214] border border-pink-500/20 rounded-full text-gray-300 hover:bg-white/5 transition-colors font-medium w-full">ยกเลิก</button>
                         <button onclick="executeConfirm()" class="px-5 py-2.5 bg-primary text-white rounded-full hover:bg-primary-hover shadow-sm transition-all font-medium w-full">ตกลง</button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Image Lightbox Viewer Modal -->
-            <div id="image-viewer-modal" onclick="if(event.target===this) closeImageViewer()" class="hide fixed inset-0 bg-black/85 backdrop-blur-md z-[200] flex items-center justify-center p-4">
-                <button type="button" onclick="closeImageViewer()" class="text-white hover:text-danger text-xl absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="max-w-4xl max-h-[85vh] p-2 flex flex-col items-center">
-                    <img id="image-viewer-img" src="" alt="Enlarged Preview" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-pink-500/30">
-                    <span class="text-xs text-gray-400 mt-2">แตะบริเวณว่างหรือปุ่มกากบาทเพื่อปิด</span>
                 </div>
             </div>
 
@@ -882,37 +729,11 @@
             }
         }, true);
 
-        // Safe Storage Helper (รองรับ iframe sandbox ที่อาจปิดกั้น localStorage)
-        const memoryStorage = {};
-        const safeStorage = {
-            getItem(key) {
-                try {
-                    return localStorage.getItem(key);
-                } catch (e) {
-                    return memoryStorage[key] || null;
-                }
-            },
-            setItem(key, value) {
-                try {
-                    localStorage.setItem(key, value);
-                } catch (e) {
-                    memoryStorage[key] = String(value);
-                }
-            },
-            removeItem(key) {
-                try {
-                    localStorage.removeItem(key);
-                } catch (e) {
-                    delete memoryStorage[key];
-                }
-            }
-        };
-
-        // --- Supabase Cloud Configuration ---
+        // --- Supabase Cloud Configuration (Publishable Anon Key only) ---
         const SUPABASE_PROJECT_URL = "https://odkuhnxzskccpmlpimau.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ka3Vobnh6c2tjY3BtbHBpbWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg3NzcsImV4cCI6MjEwNjg5NDc3N30.MxuWQk1jk1Rfg-Sw1gXgvI4kQZHD2eR2RVEiTtVXoAc";
 
-        // --- Telegram Config ---
+        // --- Telegram Config (ฝังค่า Bot Token และ Chat ID ลงในระบบโดยตรง) ---
         const DEFAULT_TELEGRAM_TOKEN = "8817681944:AAGk1wSyvzaXjwlxj6-XYKPXqM1dOCcv4fw";
         const DEFAULT_TELEGRAM_CHAT_ID = "-5469928489";
 
@@ -938,14 +759,7 @@
 ━━━━━━━━━━━━━━━━━
 🕒 <i>เวลา: {time}</i>`;
 
-        const CUTE_EMOJIS = [
-            '💖', '🌸', '✨', '🧸', '🐰', '🐱', '🎀', '🍓',
-            '🧁', '🌷', '🥰', '🥺', '🎉', '💌', '⭐', '🤍',
-            '🍰', '🍪', '🥞', '🐾', '💐', '🍭', '🍯', '🫶',
-            '👏', '🌼', '🍬', '🎂', '🍒', '💕', '💫', '🐣',
-            '😊', '😍', '🤩', '😻', '🌻', '🎁', '🎈', '🕊️'
-        ];
-
+        // Text sanitizer using safe HTML entity replacement
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
@@ -956,6 +770,7 @@
                 .replace(/'/g, '&#39;');
         }
 
+        // Sanitizer สำหรับ URL รูปภาพ ป้องกัน Stored XSS ใน src attribute
         function sanitizeMediaUrl(url) {
             if (!url || typeof url !== 'string') return '';
             const trimmed = url.trim();
@@ -966,137 +781,38 @@
         }
 
         function getTelegramToken() {
-            return safeStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
+            return localStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN;
         }
 
         function getTelegramChatId() {
-            return safeStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
+            return localStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID;
         }
 
         function getTelegramTicketTemplate() {
-            return safeStorage.getItem('helpCenterTelegramTicketTemplate') || DEFAULT_TELEGRAM_TICKET_TEMPLATE;
+            return localStorage.getItem('helpCenterTelegramTicketTemplate') || DEFAULT_TELEGRAM_TICKET_TEMPLATE;
         }
 
         function getTelegramChatTemplate() {
-            return safeStorage.getItem('helpCenterTelegramChatTemplate') || DEFAULT_TELEGRAM_CHAT_TEMPLATE;
+            return localStorage.getItem('helpCenterTelegramChatTemplate') || DEFAULT_TELEGRAM_CHAT_TEMPLATE;
         }
 
         // --- Application State ---
         let currentRole = 'agent';
         
-        let deviceId = safeStorage.getItem('helpCenterDeviceId');
+        let deviceId = localStorage.getItem('helpCenterDeviceId');
         if (!deviceId) {
             deviceId = 'DEV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            safeStorage.setItem('helpCenterDeviceId', deviceId);
+            localStorage.setItem('helpCenterDeviceId', deviceId);
         }
         
         let currentAgentName = "Agent " + deviceId;
         let viewingTicketId = null;
         let currentFilter = 'All';
-        let currentChatImage = null;
 
-        function openImageViewer(url) {
-            const safe = sanitizeMediaUrl(url);
-            if (!safe) return;
-            const modal = document.getElementById('image-viewer-modal');
-            const img = document.getElementById('image-viewer-img');
-            if (modal && img) {
-                img.src = safe;
-                modal.classList.remove('hide');
-            }
-        }
-
-        function closeImageViewer() {
-            const modal = document.getElementById('image-viewer-modal');
-            const img = document.getElementById('image-viewer-img');
-            if (modal) modal.classList.add('hide');
-            if (img) img.src = '';
-        }
-
-        let applications = ['YouTube Premium', 'Netflix', 'Spotify', 'Disney+ Hotstar', 'Canva Pro', 'VIU', 'iQIYI', 'WeTV', 'HBO GO', 'CapCut Pro', 'อื่นๆ'];
-        let faqs = [
-            {
-                id: 1,
-                question: 'แอปแจ้งเตือนให้อัปเดต หรือเข้าสู่ระบบไม่ได้?',
-                answer: 'เบื้องต้นแนะนำให้ทำการเคลียร์แคช (Clear Cache) ของตัวแอปในตั้งค่ามือถือ หรือลองลบและติดตั้งแอปใหม่อีกครั้ง หากยังไม่สามารถใช้งานได้สามารถส่งเรื่องพร้อมภาพหน้าจอเข้ามาได้เลยค่ะ',
-                image_url: null,
-                sort_order: 1
-            },
-            {
-                id: 2,
-                question: 'การนับวันรับประกัน และเงื่อนไขการเคลม?',
-                answer: 'ระบบจะเริ่มนับวันประกันตั้งแต่วันที่ลูกค้าสั่งซื้อสำเร็จ หากเป็นแพ็กเกจแบบเคลม (มีประกัน) ทางเรายินดีดูแลเปลี่ยนเมลหรือแอคเคาท์ใหม่ให้ตลอดอายุการใช้งานค่ะ',
-                image_url: null,
-                sort_order: 2
-            }
-        ];
+        let applications = [];
+        let faqs = [];
         let tickets = [];
         let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
-
-        function getTicketCustomerReplyInfo(ticket) {
-            if (!ticket) return { hasCustomerReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
-            const msgs = ticket.messages || [];
-            if (msgs.length === 0) {
-                return {
-                    hasCustomerReply: ticket.status === 'Open',
-                    isUnread: ticket.status === 'Open',
-                    lastSender: 'agent',
-                    lastMessage: ticket.description || ticket.subject,
-                    lastMessageTime: ticket.updatedAt || ticket.createdAt
-                };
-            }
-            const nonSystemMsgs = msgs.filter(m => m.sender !== 'system');
-            const lastMsg = nonSystemMsgs.length > 0 ? nonSystemMsgs[nonSystemMsgs.length - 1] : msgs[msgs.length - 1];
-            const isCustomer = lastMsg.sender === 'agent';
-            
-            let isRead = lastMsg.is_read === true;
-            try {
-                const adminReadTime = parseInt(safeStorage.getItem(`read_admin_${ticket.id}`) || '0', 10);
-                const msgTime = new Date(lastMsg.timestamp).getTime();
-                if (adminReadTime && adminReadTime >= msgTime) {
-                    isRead = true;
-                }
-            } catch(e) {}
-
-            const isUnread = isCustomer && !isRead;
-            return {
-                hasCustomerReply: isCustomer && ticket.status === 'Open',
-                isUnread: isUnread && ticket.status === 'Open',
-                lastSender: lastMsg.sender,
-                lastMessage: lastMsg.text,
-                lastMessageTime: lastMsg.timestamp
-            };
-        }
-
-        function getTicketAdminReplyInfo(ticket) {
-            if (!ticket) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
-            const msgs = ticket.messages || [];
-            if (msgs.length === 0) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
-            
-            const nonSystemMsgs = msgs.filter(m => m.sender !== 'system');
-            if (nonSystemMsgs.length === 0) return { hasAdminReply: false, isUnread: false, lastSender: null, lastMessage: null, lastMessageTime: null };
-            
-            const lastMsg = nonSystemMsgs[nonSystemMsgs.length - 1];
-            const isAdmin = lastMsg.sender === 'admin';
-
-            let isRead = lastMsg.is_read === true;
-            try {
-                const agentReadTime = parseInt(safeStorage.getItem(`read_agent_${ticket.id}`) || '0', 10);
-                const msgTime = new Date(lastMsg.timestamp).getTime();
-                if (agentReadTime && agentReadTime >= msgTime) {
-                    isRead = true;
-                }
-            } catch(e) {}
-
-            const isUnread = isAdmin && !isRead;
-            return {
-                hasAdminReply: isAdmin,
-                isUnread: isUnread,
-                lastSender: lastMsg.sender,
-                lastMessage: lastMsg.text,
-                lastMessageTime: lastMsg.timestamp
-            };
-        }
 
         function setButtonLoading(btnEl, textEl, isLoading, loadingText, defaultText) {
             if (!btnEl) return;
@@ -1110,6 +826,7 @@
             }
         }
 
+        // Initialize Supabase Client with x-device-id header
         let supabaseClient = null;
         try {
             if (window.supabase && typeof window.supabase.createClient === 'function') {
@@ -1139,6 +856,7 @@
         }
         renderAnnouncement();
 
+        // ตรวจสอบขนาดและประเภทไฟล์ก่อนบีบอัด (File Validation)
         function compressAndProcessImage(file, maxWidth, maxHeight, quality, callback) {
             if (!file) return;
 
@@ -1147,7 +865,7 @@
                 return;
             }
 
-            const maxSizeBytes = 5 * 1024 * 1024;
+            const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
             if (file.size > maxSizeBytes) {
                 customAlert('ขนาดรูปภาพต้องไม่เกิน 5 MB นะคะ ⚠️');
                 return;
@@ -1224,36 +942,22 @@
             });
         }
 
-        const DEFAULT_BOT_RULES = [
+        const autoReplyRules = [
             { keywords: ['รหัสผ่าน', 'ลืมรหัส', 'password'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากคุณพบปัญหาเรื่องรหัสผ่าน สามารถกดที่ปุ่ม "ลืมรหัสผ่าน" (Forgot Password) ที่หน้าเข้าสู่ระบบเพื่อรีเซ็ตได้ด้วยตนเองผ่านอีเมลค่ะ' },
             { keywords: ['เด้ง', 'ค้าง', 'ดับ'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: สำหรับปัญหาแอปพลิเคชันเด้งหรือค้าง เบื้องต้นแนะนำให้ "เคลียร์แคช (Clear Cache)" ในตั้งค่าโทรศัพท์ หรือตรวจสอบว่าแอปพลิเคชันได้รับการอัปเดตเป็นเวอร์ชันล่าสุดแล้วใน Store ค่ะ' },
             { keywords: ['เข้าไม่ได้', 'login ไม่ได้', 'เข้าระบบไม่ได้'], message: 'คำแนะนำอัตโนมัติจากระบบ 🤖: หากเข้าสู่ระบบไม่ได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ต และยืนยันว่าใช้ Username/Password ที่ถูกต้องค่ะ' }
         ];
 
-        let autoReplyRules = [];
-        try {
-            const savedRules = safeStorage.getItem('helpCenterBotRules');
-            if (savedRules) {
-                autoReplyRules = JSON.parse(savedRules);
-            } else {
-                autoReplyRules = [...DEFAULT_BOT_RULES];
-            }
-        } catch(e) {
-            autoReplyRules = [...DEFAULT_BOT_RULES];
-        }
-
-        function saveBotRulesToStorage() {
-            try {
-                safeStorage.setItem('helpCenterBotRules', JSON.stringify(autoReplyRules));
-            } catch(e) {}
-        }
-
+        // ฟังก์ชันดึงลำดับคิวและจำนวนคิวก่อนหน้าจากฐานข้อมูลส่วนกลาง (Security Definer RPC)
         async function fetchTicketQueue(ticketId) {
             if (!supabaseClient || !ticketId) return null;
             try {
                 const { data, error } = await supabaseClient.rpc('get_ticket_queue', { p_ticket_id: ticketId });
                 if (!error && data && data.found) {
                     return data;
+                }
+                if (error) {
+                    console.warn('Queue RPC error:', error);
                 }
             } catch (err) {
                 console.warn('Queue calculation fetch notice:', err);
@@ -1264,14 +968,14 @@
         async function syncFromSupabase() {
             if (!supabaseClient) return;
             try {
-                // 1. Fetch Shop settings
-                const { data: shopData } = await supabaseClient
+                // 1. Fetch Shop settings (Row 1)
+                const { data: shopData, error: shopErr } = await supabaseClient
                     .from('shop_settings')
                     .select('*')
                     .eq('id', 1)
                     .maybeSingle();
 
-                if (shopData) {
+                if (shopData && !shopErr) {
                     if (shopData.announcement_text) {
                         announcementText = shopData.announcement_text;
                         renderAnnouncement();
@@ -1285,108 +989,57 @@
                 }
 
                 // 2. Fetch Applications
-                const { data: appsData } = await supabaseClient
+                const { data: appsData, error: appsErr } = await supabaseClient
                     .from('applications')
                     .select('app_name')
                     .order('id', { ascending: true });
 
-                if (appsData && appsData.length > 0) {
+                if (!appsErr && appsData) {
                     applications = appsData.map(a => a.app_name);
                     renderAppDropdowns();
                 }
 
                 // 3. Fetch FAQs
-                const { data: faqsData } = await supabaseClient
+                const { data: faqsData, error: faqsErr } = await supabaseClient
                     .from('faqs')
                     .select('id, question, answer, image_url, sort_order')
                     .order('sort_order', { ascending: true });
 
-                if (faqsData && faqsData.length > 0) {
+                if (!faqsErr && faqsData) {
                     faqs = faqsData;
                     renderAgentFAQs();
                     if (currentRole === 'admin') renderAdminFAQList();
                 }
 
                 // 4. Fetch Tickets
-                let query = supabaseClient.from('tickets').select('*');
+                // OPTIMIZATION: ไม่ดึงคอลัมน์ image_url ที่เป็น Base64 ขนาดใหญ่มาด้วยเพื่อลดเวลาและแบนด์วิดธ์
+                let query = supabaseClient.from('tickets').select('id, device_id, agent_name, app_name, purchase_date, expiry_date, claim_type, subject, description, status, created_at, updated_at');
                 if (currentRole !== 'admin') {
                     query = query.eq('device_id', deviceId);
                 }
                 const { data: ticketsData, error: tckErr } = await query.order('created_at', { ascending: false });
 
                 if (!tckErr && ticketsData) {
-                    const oldTickets = [...tickets];
-                    tickets = ticketsData.map(t => {
-                        const oldTicket = oldTickets.find(ot => ot.id === t.id);
-                        return {
-                            id: t.id,
-                            deviceId: t.device_id,
-                            agentName: t.agent_name,
-                            appName: t.app_name,
-                            purchaseDate: t.purchase_date,
-                            expiryDate: t.expiry_date,
-                            claimType: t.claim_type,
-                            subject: t.subject,
-                            description: t.description,
-                            status: t.status,
-                            image: t.image_url,
-                            createdAt: t.created_at,
-                            updatedAt: t.updated_at,
-                            queueNumber: oldTicket ? oldTicket.queueNumber : null,
-                            aheadCount: oldTicket ? oldTicket.aheadCount : null,
-                            messages: oldTicket ? oldTicket.messages : []
-                        };
-                    });
+                    tickets = ticketsData.map(t => ({
+                        id: t.id,
+                        deviceId: t.device_id,
+                        agentName: t.agent_name,
+                        appName: t.app_name,
+                        purchaseDate: t.purchase_date,
+                        expiryDate: t.expiry_date,
+                        claimType: t.claim_type,
+                        subject: t.subject,
+                        description: t.description,
+                        status: t.status,
+                        image: t.image_url,
+                        createdAt: t.created_at,
+                        updatedAt: t.updated_at,
+                        queueNumber: null,
+                        aheadCount: null,
+                        messages: []
+                    }));
 
-                    const ticketIds = tickets.map(t => t.id);
-                    if (ticketIds.length > 0) {
-                        try {
-                            const { data: allMsgs } = await supabaseClient
-                                .from('messages')
-                                .select('*')
-                                .in('ticket_id', ticketIds)
-                                .order('created_at', { ascending: true });
-                            if (allMsgs && allMsgs.length > 0) {
-                                tickets.forEach(t => {
-                                    // ไม่เขียนทับข้อความของแชทที่กำลังเปิดอยู่ เพื่อป้องกันการกระตุก (ปล่อยให้ loadTicketMessages จัดการ)
-                                    if (t.id !== viewingTicketId) {
-                                        const related = allMsgs.filter(m => m.ticket_id === t.id);
-                                    if (related.length > 0) {
-                                        let mappedMsgs = related.map(m => ({
-                                            id: m.id,
-                                            sender: m.sender_role,
-                                            senderName: m.sender_name,
-                                            text: m.text,
-                                            image: m.image_url,
-                                            is_read: m.is_read === true,
-                                            timestamp: m.created_at
-                                        }));
-
-                                        // Implicit Read Status Logic: หากอีกฝ่ายมีการตอบกลับ ถือว่าอ่านข้อความก่อนหน้าแล้วแน่นอน
-                                        let lastAg = 0, lastAd = 0;
-                                        mappedMsgs.forEach(m => {
-                                            const time = new Date(m.timestamp).getTime();
-                                            if (m.sender === 'agent') lastAg = Math.max(lastAg, time);
-                                            if (m.sender === 'admin') lastAd = Math.max(lastAd, time);
-                                        });
-                                        mappedMsgs.forEach(m => {
-                                            const time = new Date(m.timestamp).getTime();
-                                            if (!m.is_read) {
-                                                if (m.sender === 'admin' && time <= lastAg) m.is_read = true;
-                                                if (m.sender === 'agent' && time <= lastAd) m.is_read = true;
-                                            }
-                                        });
-
-                                        t.messages = mappedMsgs;
-                                    }
-                                    }
-                                });
-                            }
-                        } catch (batchErr) {
-                            console.warn('Batch message load notice:', batchErr);
-                        }
-                    }
-
+                    // ดึงลำดับคิวและจำนวนคิวก่อนหน้าจริงของเคสทั้งหมดในระบบสำหรับเคสที่ยังรอดำเนินการ
                     if (currentRole !== 'admin') {
                         const openTickets = tickets.filter(t => t.status === 'Open');
                         if (openTickets.length > 0) {
@@ -1412,92 +1065,33 @@
             }
         }
 
-        function getLocalMessagesKey(ticketId) {
-            return `local_msgs_${ticketId}`;
-        }
-
-        function getLocalMessages(ticketId) {
+        async function loadTicketMessages(ticketId) {
+            if (!supabaseClient || !ticketId) return;
             try {
-                const stored = safeStorage.getItem(getLocalMessagesKey(ticketId));
-                return stored ? JSON.parse(stored) : [];
-            } catch(e) {
-                return [];
-            }
-        }
+                const { data: msgsData, error } = await supabaseClient
+                    .from('messages')
+                    .select('*')
+                    .eq('ticket_id', ticketId)
+                    .order('created_at', { ascending: true });
 
-        function saveLocalMessage(ticketId, messageObj) {
-            try {
-                const list = getLocalMessages(ticketId);
-                list.push(messageObj);
-                safeStorage.setItem(getLocalMessagesKey(ticketId), JSON.stringify(list));
-            } catch(e) {}
-        }
-
-        async function loadTicketMessages(ticketId, isInitialLoad = false) {
-            if (!ticketId) return;
-            const ticket = tickets.find(t => t.id === ticketId);
-            if (!ticket) return;
-
-            if (currentRole !== 'admin' && ticket.deviceId !== deviceId) {
-                return;
-            }
-
-            let loadedMessages = [];
-
-            if (supabaseClient) {
-                try {
-                    const { data: msgsData, error } = await supabaseClient
-                        .from('messages')
-                        .select('*')
-                        .eq('ticket_id', ticketId)
-                        .order('created_at', { ascending: true });
-
-                    if (!error && msgsData) {
-                        loadedMessages = msgsData.map(m => ({
+                if (!error && msgsData) {
+                    const ticket = tickets.find(t => t.id === ticketId);
+                    if (ticket) {
+                        ticket.messages = msgsData.map(m => ({
                             id: m.id,
                             sender: m.sender_role,
                             senderName: m.sender_name,
                             text: m.text,
                             image: m.image_url,
-                            is_read: m.is_read === true,
                             timestamp: m.created_at
                         }));
                     }
-                } catch (msgErr) {
-                    console.warn('Load messages notice:', msgErr);
+                    if (viewingTicketId === ticketId) {
+                        renderChatMessages();
+                    }
                 }
-            }
-
-            const localMsgs = getLocalMessages(ticketId);
-            localMsgs.forEach(lm => {
-                const exists = loadedMessages.some(m => m.text === lm.text && Math.abs(new Date(m.timestamp) - new Date(lm.timestamp)) < 5000);
-                if (!exists) {
-                    loadedMessages.push(lm);
-                }
-            });
-
-            loadedMessages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-            // Implicit Read Status Logic สำหรับข้อความที่ดึงมาใหม่
-            let lastAgentTime = 0;
-            let lastAdminTime = 0;
-            loadedMessages.forEach(m => {
-                const t = new Date(m.timestamp).getTime();
-                if (m.sender === 'agent') lastAgentTime = Math.max(lastAgentTime, t);
-                if (m.sender === 'admin') lastAdminTime = Math.max(lastAdminTime, t);
-            });
-            loadedMessages.forEach(m => {
-                const t = new Date(m.timestamp).getTime();
-                if (!m.is_read) {
-                    if (m.sender === 'admin' && t <= lastAgentTime) m.is_read = true;
-                    if (m.sender === 'agent' && t <= lastAdminTime) m.is_read = true;
-                }
-            });
-
-            ticket.messages = loadedMessages;
-
-            if (viewingTicketId === ticketId) {
-                renderChatMessages();
+            } catch (msgErr) {
+                console.error('Failed loading messages:', msgErr);
             }
         }
 
@@ -1506,10 +1100,7 @@
             if (pollingTimer) return;
             pollingTimer = setInterval(() => {
                 syncFromSupabase();
-                if (viewingTicketId) {
-                    loadTicketMessages(viewingTicketId);
-                }
-            }, 4000);
+            }, 5000);
         }
 
         function initRealtime() {
@@ -1531,30 +1122,11 @@
             }
 
             try {
-                realtimeChannel = supabaseClient.channel('monali-realtime')
+                supabaseClient.channel('monali-realtime')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, () => syncFromSupabase())
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
-                        if (viewingTicketId && payload.new && payload.new.ticket_id === viewingTicketId) {
-                            loadTicketMessages(viewingTicketId);
-                            markMessagesAsRead(viewingTicketId);
-                        }
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+                        if (viewingTicketId) loadTicketMessages(viewingTicketId);
                         syncFromSupabase();
-                    })
-                    .on('broadcast', { event: 'mark_messages_read' }, (payload) => {
-                        if (payload.payload && payload.payload.ticketId === viewingTicketId) {
-                            const readByRole = payload.payload.readByRole;
-                            const ticket = tickets.find(t => t.id === viewingTicketId);
-                            if (ticket && ticket.messages && currentRole !== readByRole) {
-                                let changed = false;
-                                ticket.messages.forEach(m => {
-                                    if (m.sender === currentRole && !m.is_read) {
-                                        m.is_read = true;
-                                        changed = true;
-                                    }
-                                });
-                                if (changed) renderChatMessages();
-                            }
-                        }
                     })
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_settings' }, () => syncFromSupabase())
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'faqs' }, () => syncFromSupabase())
@@ -1580,6 +1152,11 @@
 
             createSelect.innerHTML = '<option value="" disabled selected>เลือกรายการที่ต้องการแก้ไข...</option>';
             editSelect.innerHTML = '';
+
+            if (applications.length === 0) {
+                createSelect.innerHTML = '<option value="" disabled selected>⏳ กำลังโหลดรายการ...</option>';
+                return;
+            }
 
             applications.forEach(app => {
                 const opt1 = document.createElement('option');
@@ -1970,13 +1547,23 @@
 
             try {
                 let newRecord = { question: q, answer: a, sort_order: faqs.length + 1 };
+                // หากมีการเลือกรูปภาพ ค่อยแนบฟิลด์ image_url เพื่อให้กรณีไม่มีรูปยังคงบันทึกได้ปกติ
                 if (imgData) {
                     newRecord.image_url = imgData;
                 }
 
                 if (supabaseClient) {
                     const { data, error } = await supabaseClient.from('faqs').insert(newRecord).select().single();
-                    if (error) throw error;
+                    if (error) {
+                        // แยกแยะข้อผิดพลาดที่เกิดขึ้นจริงเพื่อแจ้งเตือนได้อย่างถูกต้อง
+                        if (error.message?.includes('image_url') || error.code === 'PGRST204' || error.message?.includes('column')) {
+                            throw new Error('ตาราง faqs ใน Supabase ยังไม่มีคอลัมน์ image_url ค่ะ กรุณารันคำสั่ง SQL เพิ่มคอลัมน์ก่อนนะคะ 🖼️');
+                        }
+                        if (error.message?.includes('row-level security') || error.code === '42501') {
+                            throw new Error('บัญชีของคุณยังไม่มีสิทธิ์ในตาราง admins บน Supabase ค่ะ 🔒');
+                        }
+                        throw error;
+                    }
                     if (data) newRecord = data;
                 }
                 faqs.push(newRecord);
@@ -1988,7 +1575,7 @@
                 customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
             } catch (err) {
                 console.error('Add FAQ error:', err);
-                customAlert('ไม่สามารถเพิ่ม FAQ ได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
+                customAlert(err.message || 'ไม่สามารถเพิ่ม FAQ ได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ');
             }
@@ -2052,6 +1639,7 @@
                 document.getElementById('admin-login-password').value = '';
                 document.getElementById('admin-login-modal').classList.remove('hide');
             } else {
+                // หากอยู่ในโหมด Admin แล้วไม่ได้อยู่ที่หน้า Admin Dashboard ให้สลับกลับหน้า Dashboard ทันที
                 const adminDashboardView = document.getElementById('view-admin-dashboard');
                 const isNotOnAdminDashboard = adminDashboardView && adminDashboardView.classList.contains('hide');
 
@@ -2061,6 +1649,7 @@
                     return;
                 }
 
+                // หากอยู่ที่หน้า Admin Dashboard อยู่แล้ว ให้ถามยืนยันก่อนออกจากระบบ ป้องกันการเผลอกดหลุด
                 customConfirm('คุณต้องการออกจากระบบแอดมินใช่หรือไม่คะ? 🌸', async function() {
                     if (supabaseClient) {
                         try { await supabaseClient.auth.signOut(); } catch(e){}
@@ -2106,7 +1695,10 @@
                     throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้องค่ะ ❌');
                 }
 
-                const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+                const { data: isAdmin, error: rpcError } = await supabaseClient.rpc('is_admin');
+                if (rpcError) {
+                    console.warn('is_admin RPC notice:', rpcError);
+                }
 
                 if (!isAdmin) {
                     await supabaseClient.auth.signOut();
@@ -2154,6 +1746,7 @@
                         toggleIcon.className = 'fas fa-user-shield mr-2 group-hover:scale-110 transition-transform';
                         toggleText.textContent = 'Admin';
 
+                        // เปิดหน้า Admin Dashboard อัตโนมัติเมื่อตรวจพบสิทธิ์แอดมิน
                         if (!viewingTicketId) {
                             switchView('view-admin-dashboard');
                             renderAdminDashboard();
@@ -2210,97 +1803,52 @@
 
                 for (const ticket of agentTickets) {
                     const safeId = escapeHtml(ticket.id);
-                    const adminReplyInfo = getTicketAdminReplyInfo(ticket);
-
-                    let adminReplyBadgeHtml = '';
-                    let adminReplySnippetHtml = '';
-                    if (adminReplyInfo.hasAdminReply) {
-                        if (adminReplyInfo.isUnread) {
-                            adminReplyBadgeHtml = `
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-300 shadow-xs">
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                    </span>
-                                    <i class="fas fa-comment-dots text-emerald-600"></i> แอดมินตอบแล้ว (ยังไม่อ่าน)
-                                </span>
-                            `;
-                        } else {
-                            adminReplyBadgeHtml = `
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-200">
-                                    <i class="fas fa-check-double text-emerald-500 text-[10px]"></i> อ่านแล้ว
-                                </span>
-                            `;
-                        }
-
-                        if (adminReplyInfo.lastMessage) {
-                            adminReplySnippetHtml = `
-                                <div class="p-2.5 rounded-2xl ${adminReplyInfo.isUnread ? 'bg-emerald-50/90 border-emerald-200' : 'bg-gray-50 border-gray-200'} border text-xs text-gray-700 flex items-start gap-2 shadow-xs">
-                                    <i class="fas fa-comment-dots ${adminReplyInfo.isUnread ? 'text-emerald-600' : 'text-gray-400'} mt-0.5 shrink-0 text-sm"></i>
-                                    <div class="min-w-0 flex-grow">
-                                        <div class="flex items-center justify-between gap-2">
-                                            <span class="font-bold ${adminReplyInfo.isUnread ? 'text-emerald-800' : 'text-gray-700'}">ข้อความจากแอดมิน:</span>
-                                            <span class="text-[10px] adminReplyInfo.isUnread?'text-emerald-600':'text-gray-400'font-medium">{formatThaiTime(adminReplyInfo.lastMessageTime)}</span>
-                                        </div>
-                                        <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(adminReplyInfo.lastMessage)}</p>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }
-
                     let queueInfoHtml = '';
                     if (ticket.status === 'Open') {
-                        const qNumberText = (ticket.queueNumber !== null && ticket.queueNumber !== undefined) ? ticket.queueNumber : '1';
-                        const aheadCountText = (ticket.aheadCount !== null && ticket.aheadCount !== undefined) ? ticket.aheadCount : '0';
+                        const qNumberText = (ticket.queueNumber !== null && ticket.queueNumber !== undefined) ? ticket.queueNumber : '...';
+                        const aheadCountText = (ticket.aheadCount !== null && ticket.aheadCount !== undefined) ? ticket.aheadCount : '...';
 
                         queueInfoHtml = `
                             <div class="bg-pink-50 border border-pink-100 rounded-2xl p-3 flex items-center justify-between text-xs font-medium text-gray-700">
                                 <div class="flex items-center gap-2">
-                                    <span id="queue-num-safeId"class="w-7h-7rounded-fullbg-primarytext-whiteflexitems-centerjustify-centerfont-boldtext-xsshadow-sm">{qNumberText}</span>
+                                    <span id="queue-num-${safeId}" class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">${qNumberText}</span>
                                     <span>คิวของคุณในระบบ</span>
                                 </div>
-                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-safeId"class="text-gray-900font-bold">{aheadCountText}</span> คิว</span>
+                                <span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-${safeId}" class="text-gray-900 font-bold">${aheadCountText}</span> คิว</span>
                             </div>
                         `;
                     }
 
                     const card = document.createElement('div');
-                    card.className = `bg-white border ${adminReplyInfo.hasAdminReply && adminReplyInfo.isUnread ? 'border-emerald-300 ring-2 ring-emerald-100 shadow-sm' : 'border-pink-100 hover:border-primary'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800`;
+                    card.className = "bg-white border border-pink-100 hover:border-primary rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800";
                     
-                    const buttonText = adminReplyInfo.hasAdminReply ? (adminReplyInfo.isUnread ? 'อ่านข้อความใหม่จากแอดมิน' : 'เปิดดูบทสนทนา') : 'แตะเพื่อคุยกับแอดมิน';
-                    const buttonClass = (adminReplyInfo.hasAdminReply && adminReplyInfo.isUnread)
-                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white' 
-                        : 'bg-primary hover:bg-primary-hover text-white';
-
                     card.innerHTML = `
                         <div class="flex items-start gap-3">
-                            <div class="w-10 h-10 rounded-2xl ${adminReplyInfo.hasAdminReply ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-pink-50 text-primary border border-pink-100'} flex items-center justify-center font-bold text-base shrink-0">
-                                <i class="fas ${adminReplyInfo.hasAdminReply ? 'fa-envelope-open-text' : 'fa-ticket-alt'}"></i>
+                            <div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100">
+                                <i class="fas fa-ticket-alt"></i>
                             </div>
                             <div class="min-w-0 flex-grow">
-                                <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+                                <div class="flex items-center gap-2 mb-0.5">
                                     <span class="font-bold text-primary text-sm">${safeId}</span>
                                     <span class="text-xs text-gray-300">•</span>
                                     <span class="text-xs text-pink-600 font-medium truncate">${escapeHtml(ticket.appName)}</span>
-                                    ${adminReplyBadgeHtml}
                                 </div>
                                 <h4 class="font-bold text-gray-900 text-sm mb-1 truncate">${escapeHtml(ticket.subject)}</h4>
                                 <p class="text-[11px] text-gray-400 flex items-center gap-1"><i class="far fa-clock"></i> อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</p>
                             </div>
                         </div>
-                        ${adminReplySnippetHtml}
                         ${queueInfoHtml}
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2">
                             <div>${getStatusBadge(ticket.status)}</div>
-                            <button class="btn-open-ticket buttonClasspx-4py-2rounded-fulltext-xsfont-semiboldshadow-smtransition-alltransformhover:scale-105whitespace-nowrapflexitems-centergap-1.5"data-ticket-id="{safeId}">
-                                <i class="fas ${adminReplyInfo.hasAdminReply ? 'fa-comment-dots' : 'fa-comments'}"></i> ${buttonText}
+                            <button class="btn-open-ticket bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
+                                <i class="fas fa-comments"></i> แตะเพื่อต่อแอดมิน
                             </button>
                         </div>
                     `;
                     card.querySelector('.btn-open-ticket').onclick = () => openTicketDetail(ticket.id);
                     containerEl.appendChild(card);
 
+                    // อัปเดตคิวแบบเรียลไทม์เฉพาะกรณีที่ยังไม่มีค่าคิวบันทึกไว้
                     if (ticket.status === 'Open' && (ticket.queueNumber === null || ticket.queueNumber === undefined)) {
                         fetchTicketQueue(ticket.id).then(qData => {
                             if (qData && qData.found && qData.queue_number !== null) {
@@ -2375,20 +1923,12 @@
                 image: imageData,
                 createdAt: now,
                 updatedAt: now,
-                messages: [
-                    {
-                        id: 'msg-init-' + Date.now(),
-                        sender: 'agent',
-                        senderName: currentAgentName,
-                        text: formattedDesc,
-                        image: imageData,
-                        timestamp: now
-                    }
-                ]
+                messages: []
             };
 
             try {
                 if (supabaseClient) {
+                    // 1. Insert ticket
                     const { error: ticketError } = await supabaseClient.from('tickets').insert({
                         id: newId,
                         device_id: deviceId,
@@ -2406,6 +1946,7 @@
                     });
                     if (ticketError) throw ticketError;
 
+                    // 2. Insert initial message
                     await supabaseClient.from('messages').insert({
                         ticket_id: newId,
                         sender_role: 'agent',
@@ -2415,6 +1956,7 @@
                         created_at: now
                     });
 
+                    // 3. Auto-reply rule check (ได้รับการอนุญาตจาก RLS ผ่าน sender_role = 'system' แล้ว)
                     const autoReplyMsg = checkAutoReply(subject + ' ' + description);
                     if (autoReplyMsg) {
                         await supabaseClient.from('messages').insert({
@@ -2423,14 +1965,6 @@
                             sender_name: 'System Bot',
                             text: autoReplyMsg,
                             created_at: new Date(Date.now() + 1000).toISOString()
-                        });
-                        newTicket.messages.push({
-                            id: 'msg-auto-' + Date.now(),
-                            sender: 'system',
-                            senderName: 'System Bot',
-                            text: autoReplyMsg,
-                            image: null,
-                            timestamp: new Date(Date.now() + 1000).toISOString()
                         });
                     }
                 }
@@ -2441,19 +1975,14 @@
                 document.getElementById('create-ticket-form').reset();
                 removeImage();
 
-                customAlert('ส่งแจ้งปัญหาเรียบร้อยค่ะ แอดมินจะรีบตรวจสอบให้นะคะ 💖');
+                customAlert('ส่งแจ้งปัญหาเรียบร้อยค่ะ แอดมินจะรีบตรวจสอบให้นะคะ');
                 await syncFromSupabase();
                 renderAgentDashboard();
                 switchView('view-agent-dashboard');
 
             } catch (err) {
                 console.error('Create ticket error:', err);
-                tickets.unshift(newTicket);
-                document.getElementById('create-ticket-form').reset();
-                removeImage();
-                renderAgentDashboard();
-                switchView('view-agent-dashboard');
-                customAlert('ส่งแจ้งปัญหาเรียบร้อยแล้วค่ะ (บันทึกข้อมูลในโหมด Local) 🌸');
+                customAlert('เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาตรวจสอบข้อมูลและลองใหม่อีกครั้งค่ะ ⚠️');
             } finally {
                 setButtonLoading(btn, textEl, false, '', 'ส่งข้อมูล');
             }
@@ -2463,7 +1992,7 @@
             const lowerText = text.toLowerCase();
             for (let rule of autoReplyRules) {
                 for (let keyword of rule.keywords) {
-                    if (lowerText.includes(keyword.toLowerCase().trim())) {
+                    if (lowerText.includes(keyword)) {
                         return rule.message;
                     }
                 }
@@ -2479,18 +2008,18 @@
                 'Resolved': document.getElementById('filter-resolved')
             };
 
-            const baseInactiveClass = "flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-all whitespace-nowrap flex items-center justify-center";
+            const baseInactiveClass = "px-4 py-2 rounded-full text-sm font-semibold bg-transparent text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center";
 
             Object.values(btns).forEach(btn => {
                 if (btn) btn.className = baseInactiveClass;
             });
 
             if (status === 'All' && btns['All']) {
-                btns['All'].className = "flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-primary text-white transition-all shadow-sm whitespace-nowrap flex items-center justify-center";
+                btns['All'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white transition-colors shadow-sm whitespace-nowrap";
             } else if (status === 'Open' && btns['Open']) {
-                btns['Open'].className = "flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-warning text-gray-900 transition-all shadow-sm whitespace-nowrap flex items-center justify-center";
+                btns['Open'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-warning text-gray-900 transition-colors shadow-sm whitespace-nowrap flex items-center";
             } else if (status === 'Resolved' && btns['Resolved']) {
-                btns['Resolved'].className = "flex-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-success text-white transition-all shadow-sm whitespace-nowrap flex items-center justify-center";
+                btns['Resolved'].className = "px-4 py-2 rounded-full text-sm font-semibold bg-success text-white transition-colors shadow-sm whitespace-nowrap flex items-center";
             }
             renderAdminDashboard();
         }
@@ -2517,76 +2046,32 @@
                 emptyEl.classList.add('hide');
                 containerEl.classList.remove('hide');
                 
-                filteredTickets.forEach(ticket => {
-                    const replyInfo = getTicketCustomerReplyInfo(ticket);
-                    const safeId = escapeHtml(ticket.id);
+                // OPTIMIZATION: จำกัดการ Render DOM แค่ 100 รายการแรกลดอาการค้างของเบราว์เซอร์
+                const renderLimit = 100;
+                const ticketsToRender = filteredTickets.slice(0, renderLimit);
 
-                    let replyIndicatorHtml = '';
-                    let replySnippetHtml = '';
-                    if (replyInfo.hasCustomerReply) {
-                        if (replyInfo.isUnread) {
-                            replyIndicatorHtml = `
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-300 shadow-xs">
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
-                                    </span>
-                                    <i class="fas fa-comment-dots text-pink-600"></i> ลูกค้าส่งข้อความ (ยังไม่อ่าน)
-                                </span>
-                            `;
-                        } else {
-                            replyIndicatorHtml = `
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                                    <i class="fas fa-check-double text-emerald-500 text-[10px]"></i> เปิดอ่านแล้ว
-                                </span>
-                            `;
-                        }
-
-                        if (replyInfo.lastMessage) {
-                            replySnippetHtml = `
-                                <div class="mt-2.5 p-2.5 rounded-2xl ${replyInfo.isUnread ? 'bg-pink-50/80 border-pink-200' : 'bg-gray-50 border-gray-200'} border text-xs text-gray-700 flex items-start gap-2 shadow-xs">
-                                    <i class="fas fa-reply ${replyInfo.isUnread ? 'text-pink-500' : 'text-gray-400'} mt-0.5 shrink-0"></i>
-                                    <div class="min-w-0 flex-grow">
-                                        <div class="flex items-center justify-between gap-2">
-                                            <span class="font-bold ${replyInfo.isUnread ? 'text-pink-700' : 'text-gray-700'}">ข้อความล่าสุดจากลูกค้า:</span>
-                                            <span class="text-[10px] replyInfo.isUnread?'text-pink-500':'text-gray-400'font-medium">{formatThaiTime(replyInfo.lastMessageTime)}</span>
-                                        </div>
-                                        <p class="truncate text-gray-800 font-medium mt-0.5">${escapeHtml(replyInfo.lastMessage)}</p>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }
-
+                ticketsToRender.forEach(ticket => {
                     const card = document.createElement('div');
-                    card.className = `bg-white border ${ticket.status==='Open' ? (replyInfo.hasCustomerReply && replyInfo.isUnread ? 'border-pink-300 ring-2 ring-pink-100' : 'border-amber-300 ring-2 ring-amber-100') : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col justify-between gap-3 text-gray-800 hover:shadow-md`;
-
+                    card.className = `bg-white border ${ticket.status==='Open' ? 'border-amber-300 ring-2 ring-amber-100 shadow-sm' : 'border-pink-100'} rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-gray-800`;
+                    
+                    const safeId = escapeHtml(ticket.id);
                     card.innerHTML = `
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="font-bold text-primary text-sm sm:text-base">${safeId}</span>
-                                <span class="text-xs text-gray-300">•</span>
-                                <span class="text-xs text-gray-600 font-medium"><i class="fas fa-user text-primary mr-1"></i>${escapeHtml(ticket.agentName)}</span>
-                                <span class="text-xs text-gray-300">•</span>
-                                <span class="text-xs text-pink-600 font-semibold"><i class="fas fa-box mr-1"></i>${escapeHtml(ticket.appName)}</span>
-                                ${replyIndicatorHtml}
+                        <div class="flex items-start gap-3 sm:gap-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl ${ticket.status==='Open' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'} flex items-center justify-center font-bold text-base sm:text-lg shrink-0 border">
+                                <i class="fas ${ticket.status==='Open' ? 'fa-clock' : 'fa-check-circle'}"></i>
                             </div>
-                            <div class="flex items-center gap-2">
-                                ${getStatusBadge(ticket.status)}
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-bold text-primary text-sm sm:text-base">${safeId}</span>
+                                    <span class="text-xs text-gray-300">•</span>
+                                    <span class="text-xs text-gray-600"><i class="fas fa-user text-primary mr-1"></i>${escapeHtml(ticket.agentName)}</span>
+                                </div>
+                                <h4 class="font-bold text-gray-900 text-sm mb-1 line-clamp-1">${escapeHtml(ticket.subject)}</h4>
+                                <p class="text-[11px] text-gray-400 flex items-center gap-1"><i class="far fa-clock"></i> ล่าสุด: ${formatDate(ticket.updatedAt)}</p>
                             </div>
                         </div>
-
-                        <div class="min-w-0">
-                            <h4 class="font-bold text-gray-900 text-sm sm:text-base mb-1 truncate">${escapeHtml(ticket.subject)}</h4>
-                            <p class="text-xs text-gray-500 flex items-center gap-2 flex-wrap">
-                                <span><i class="far fa-clock mr-1"></i>สร้างเมื่อ: ${formatDate(ticket.createdAt)}</span>
-                                <span>•</span>
-                                <span><i class="fas fa-history mr-1"></i>อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</span>
-                            </p>
-                            ${replySnippetHtml}
-                        </div>
-
-                        <div class="flex items-center justify-end w-full gap-2 sm:gap-3 pt-3 border-t border-gray-100 shrink-0">
+                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                            <div>${getStatusBadge(ticket.status)}</div>
                             <button class="btn-manage-ticket bg-gray-100 hover:bg-primary text-gray-700 hover:text-white border border-gray-200 hover:border-primary px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}">
                                 <i class="fas fa-sliders-h"></i> จัดการปัญหา
                             </button>
@@ -2599,6 +2084,13 @@
                     card.querySelector('.btn-delete-ticket').onclick = (e) => deleteTicket(ticket.id, e);
                     containerEl.appendChild(card);
                 });
+
+                if (filteredTickets.length > renderLimit) {
+                    const moreMsg = document.createElement('div');
+                    moreMsg.className = "text-center py-4 text-xs text-gray-500 font-medium bg-gray-50 rounded-2xl border border-gray-100 mt-2";
+                    moreMsg.innerHTML = `<i class="fas fa-bolt text-warning mr-1"></i> แสดงผล ${renderLimit} รายการล่าสุด จากทั้งหมด ${filteredTickets.length} รายการ (เพื่อความรวดเร็ว)`;
+                    containerEl.appendChild(moreMsg);
+                }
             }
         }
 
@@ -2612,63 +2104,10 @@
             }
         }
 
-        async function markMessagesAsRead(ticketId) {
-            const ticket = tickets.find(t => t.id === ticketId);
-            if (!ticket || !ticket.messages) return;
-
-            let updatedCount = 0;
-            const targetSender = currentRole === 'admin' ? 'agent' : 'admin';
-
-            ticket.messages.forEach(msg => {
-                if (msg.sender === targetSender && !msg.is_read) {
-                    msg.is_read = true;
-                    updatedCount++;
-                }
-            });
-
-            try {
-                safeStorage.setItem(`read_${currentRole}_${ticketId}`, Date.now().toString());
-            } catch (e) {}
-
-            if (updatedCount > 0) {
-                // 1. กระจายสัญญาณ Realtime ไปยังอีกฝั่งทันที (หากออนไลน์อยู่ทั้งคู่)
-                if (realtimeChannel) {
-                    try {
-                        realtimeChannel.send({
-                            type: 'broadcast',
-                            event: 'mark_messages_read',
-                            payload: { ticketId: ticketId, readByRole: currentRole }
-                        }).catch(() => {});
-                    } catch(e) {}
-                }
-
-                // 2. อัปเดตลงฐานข้อมูล
-                if (supabaseClient) {
-                    try {
-                        await supabaseClient
-                            .from('messages')
-                            .update({ is_read: true })
-                            .eq('ticket_id', ticketId)
-                            .eq('sender_role', targetSender);
-                    } catch (readErr) {
-                        console.warn('Mark as read Supabase sync notice:', readErr);
-                    }
-                }
-            }
-        }
-
         async function openTicketDetail(ticketId) {
             viewingTicketId = ticketId;
-            const ticket = tickets.find(t => t.id === viewingTicketId);
+            const ticket = tickets.find(t => t.id === ticketId);
             if (!ticket) return;
-
-            if (currentRole !== 'admin' && ticket.deviceId !== deviceId) {
-                customAlert('คุณไม่มีสิทธิ์เข้าถึงรายการแจ้งปัญหานี้ค่ะ 🔒');
-                switchView('view-agent-dashboard');
-                return;
-            }
-
-            if (typeof removeChatImage === 'function') removeChatImage();
 
             document.getElementById('detail-ticket-id').textContent = ticket.id;
             document.getElementById('detail-ticket-app').textContent = ticket.appName;
@@ -2708,70 +2147,21 @@
             container.innerHTML = '<div class="text-center py-10 text-gray-400 text-xs"><i class="fas fa-spinner fa-spin mr-2"></i> กำลังโหลดข้อความแชท...</div>';
 
             switchView('view-ticket-detail');
-            await markMessagesAsRead(ticketId);
-            renderChatMessages(true);
-            await loadTicketMessages(ticketId, true);
-            await markMessagesAsRead(ticketId);
-            renderChatMessages(true);
+            await loadTicketMessages(ticketId);
         }
 
-        function scrollToBottomChat(smooth = true) {
-            const container = document.getElementById('chat-messages-container');
-            if (!container) return;
-            if (smooth) {
-                container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-            } else {
-                container.scrollTop = container.scrollHeight;
-            }
-            const scrollBtn = document.getElementById('btn-scroll-to-bottom');
-            if (scrollBtn) scrollBtn.classList.add('hide');
-            const badge = document.getElementById('scroll-bottom-badge');
-            if (badge) badge.classList.add('hide');
-        }
-
-        let chatScrollTimer = null;
-        function handleChatScroll() {
-            if (chatScrollTimer) return;
-            // ใช้ requestAnimationFrame เพื่อลดภาระการรันอีเวนต์ตอน Scroll รัวๆ
-            chatScrollTimer = requestAnimationFrame(() => {
-                const container = document.getElementById('chat-messages-container');
-                const scrollBtn = document.getElementById('btn-scroll-to-bottom');
-                if (!container || !scrollBtn) {
-                    chatScrollTimer = null;
-                    return;
-                }
-
-                const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-                if (distanceFromBottom > 160) {
-                    scrollBtn.classList.remove('hide');
-                } else {
-                    scrollBtn.classList.add('hide');
-                    const badge = document.getElementById('scroll-bottom-badge');
-                    if (badge) badge.classList.add('hide');
-                }
-                chatScrollTimer = null;
-            });
-        }
-
-        function renderChatMessages(forceScroll = false) {
+        function renderChatMessages() {
             const ticket = tickets.find(t => t.id === viewingTicketId);
             const container = document.getElementById('chat-messages-container');
-            if (!container || !ticket) return;
-
-            // ตรวจสอบว่าผู้ใช้อยู่ใกล้ล่างสุดหรือไม่ก่อน Render
-            const wasNearBottom = (container.scrollHeight - container.scrollTop - container.clientHeight) < 140;
-            const previousScrollTop = container.scrollTop;
-
             container.innerHTML = '';
-            ticket.messages = ticket.messages || [];
+            if (!ticket) return;
 
-            // ใช้ DocumentFragment เพื่อมัดรวม DOM ก่อนวาดลงหน้าจอทีเดียว ลดอาการหน่วง
-            const fragment = document.createDocumentFragment();
+            ticket.messages = ticket.messages || [];
 
             const dateDivider = document.createElement('div');
             dateDivider.className = "flex justify-center my-5";
             dateDivider.innerHTML = `<span class="bg-[#1e1b1e] border border-pink-500/20 text-gray-400 text-xs px-4 py-1.5 rounded-full shadow-sm">${formatThaiDate(ticket.createdAt)}</span>`;
-            fragment.appendChild(dateDivider);
+            container.appendChild(dateDivider);
 
             ticket.messages.forEach(msg => {
                 const msgWrapper = document.createElement('div');
@@ -2782,22 +2172,6 @@
                 if (currentRole === 'admin' && msg.sender === 'admin') isMe = true;
 
                 const safeImgUrl = sanitizeMediaUrl(msg.image);
-                const isStickerMsg = typeof msg.text === 'string' && msg.text.startsWith('🏷️ [สติ๊กเกอร์]');
-                
-                let stickerContentHtml = '';
-                if (isStickerMsg) {
-                    const cleanStickerText = msg.text.replace('🏷️ [สติ๊กเกอร์]', '').trim();
-                    const firstEmojiMatch = cleanStickerText.match(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u);
-                    const stickerEmoji = firstEmojiMatch ? firstEmojiMatch[0] : '🌸';
-                    const remainingStickerText = cleanStickerText.replace(stickerEmoji, '').trim();
-
-                    stickerContentHtml = `
-                        <div class="flex items-center gap-2.5 py-1">
-                            <span class="text-3xl filter drop-shadow-sm select-none transform transition-transform hover:scale-125 inline-block">${stickerEmoji}</span>
-                            <span class="font-medium tracking-wide leading-relaxed text-sm">${escapeHtml(remainingStickerText)}</span>
-                        </div>
-                    `;
-                }
 
                 if (msg.sender === 'system') {
                     msgWrapper.className += " justify-center";
@@ -2812,271 +2186,105 @@
                     `;
                 } else if (isMe) {
                     msgWrapper.className += " justify-end";
-                    let imageHtml = safeImgUrl ? `<img src="safeImgUrl"onclick="openImageViewer('{safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm hover:opacity-90 transition-opacity">` : '';
-                    
-                    let readReceiptHtml = '';
-                    if (msg.is_read) {
-                        readReceiptHtml = `
-                            <span class="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
-                                <i class="fas fa-check-double text-[10px]"></i> อ่านแล้ว
-                            </span>
-                        `;
-                    } else {
-                        readReceiptHtml = `
-                            <span class="inline-flex items-center gap-1 text-[11px] text-gray-400">
-                                <i class="fas fa-check text-[10px]"></i> ส่งแล้ว
-                            </span>
-                        `;
-                    }
-
-                    const bubbleContent = isStickerMsg 
-                        ? stickerContentHtml 
-                        : (msg.text ? `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>` : '');
-
-                    const bubbleClasses = isStickerMsg
-                        ? "bg-gradient-to-r from-pink-500 to-rose-400 text-white rounded-3xl rounded-tr-none px-4 py-3 shadow-md border border-pink-300/30"
-                        : "bg-primary text-white rounded-2xl rounded-tr-none p-3.5 shadow-sm text-sm";
-
+                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-white shadow-sm">` : '';
                     msgWrapper.innerHTML = `
-                        <div class="max-w-[85%] sm:max-w-[80%] flex flex-col items-end">
+                        <div class="max-w-[80%] flex flex-col items-end">
                             <span class="text-xs text-pink-300 mb-1.5 mr-2 font-medium">คุณ</span>
-                            <div class="${bubbleClasses}">
+                            <div class="bg-primary text-white rounded-2xl rounded-tr-none p-3.5 shadow-sm text-sm">
                                 ${imageHtml}
-                                ${bubbleContent}
+                                <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
                             </div>
-                            <div class="flex items-center gap-2 mt-1.5 mr-2">
-                                ${readReceiptHtml}
-                                <span class="text-[10px] text-gray-500 font-medium">${formatThaiTime(msg.timestamp)}</span>
-                            </div>
+                            <span class="text-[10px] text-gray-500 mt-1.5 mr-2 font-medium">${formatThaiTime(msg.timestamp)}</span>
                         </div>
                     `;
                 } else {
                     msgWrapper.className += " justify-start";
                     let senderName = msg.sender === 'agent' ? ticket.agentName : 'Admin Support 🌸';
                     let currentLogoSrc = sanitizeMediaUrl(document.getElementById('nav-logo-img') ? document.getElementById('nav-logo-img').src : 'https://placehold.co/100x100/ff758c/ffffff?text=Logo');
-                    let imageHtml = safeImgUrl ? `<img src="safeImgUrl"onclick="openImageViewer('{safeImgUrl}')" title="คลิกเพื่อดูรูปภาพขนาดเต็ม" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm hover:opacity-90 transition-opacity">` : '';
-                    
-                    const bubbleContent = isStickerMsg 
-                        ? stickerContentHtml 
-                        : (msg.text ? `<p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>` : '');
-
-                    const bubbleClasses = isStickerMsg
-                        ? "bg-gradient-to-r from-[#261f25] to-[#201820] text-pink-100 border border-pink-500/40 rounded-3xl rounded-tl-none px-4 py-3 shadow-md"
-                        : "bg-[#1e1b1e] text-gray-200 border border-pink-500/20 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-sm";
-
+                    let imageHtml = safeImgUrl ? `<img src="${safeImgUrl}" class="max-w-[220px] rounded-2xl mb-2 cursor-pointer border-2 border-pink-500/20 shadow-sm">` : '';
                     msgWrapper.innerHTML = `
-                        <div class="max-w-[85%] sm:max-w-[80%] flex items-end gap-2.5 sm:gap-3">
-                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1e1b1e] text-primary flex items-center justify-center flex-shrink-0 mb-6 shadow-sm border border-pink-500/20 overflow-hidden">
+                        <div class="max-w-[80%] flex items-end gap-3">
+                            <div class="w-10 h-10 rounded-full bg-[#1e1b1e] text-primary flex items-center justify-center flex-shrink-0 mb-6 shadow-sm border border-pink-500/20 overflow-hidden">
                                 <img src="${currentLogoSrc}" alt="Admin Logo" class="w-full h-full object-cover">
                             </div>
                             <div class="flex flex-col items-start">
                                 <span class="text-xs text-pink-300 mb-1.5 ml-2 font-medium">${escapeHtml(senderName)}</span>
-                                <div class="${bubbleClasses}">
+                                <div class="bg-[#1e1b1e] text-gray-200 border border-pink-500/20 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-sm">
                                     ${imageHtml}
-                                    ${bubbleContent}
+                                    <p class="whitespace-pre-line leading-relaxed">${escapeHtml(msg.text)}</p>
                                 </div>
                                 <span class="text-[10px] text-gray-500 mt-1.5 ml-2 font-medium">${formatThaiTime(msg.timestamp)}</span>
                             </div>
                         </div>
                     `;
                 }
-                fragment.appendChild(msgWrapper);
+                container.appendChild(msgWrapper);
             });
 
-            container.appendChild(fragment);
-
-            // เลื่อนลงล่างเฉพาะเมื่อถูกสั่งบังคับ (เช่น ตอนเปิดเคสหรือกดส่งข้อความ) หรือเมื่อผู้ใช้อยู่ล่างสุดอยู่แล้ว
-            if (forceScroll || wasNearBottom) {
-                setTimeout(() => {
-                    container.scrollTop = container.scrollHeight;
-                }, 40);
-            } else {
-                // รักษาตำแหน่ง scroll เดิมของผู้ใช้ไว้ ไม่ให้กระตุกกลับลงล่าง
-                setTimeout(() => {
-                    container.scrollTop = previousScrollTop;
-                    const scrollBtn = document.getElementById('btn-scroll-to-bottom');
-                    const badge = document.getElementById('scroll-bottom-badge');
-                    if (scrollBtn) scrollBtn.classList.remove('hide');
-                    if (badge) badge.classList.remove('hide');
-                }, 40);
-            }
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 50);
         }
 
-        function toggleEmojiPicker(forceOpen = null) {
-            const drawer = document.getElementById('emoji-picker-drawer');
-            if (!drawer) return;
-            const isHidden = drawer.classList.contains('hide');
-            const shouldOpen = forceOpen !== null ? forceOpen : isHidden;
-
-            if (shouldOpen) {
-                drawer.classList.remove('hide');
-                renderEmojiPickerContent();
-            } else {
-                drawer.classList.add('hide');
-            }
-        }
-
-        function renderEmojiPickerContent() {
-            const emojisContainer = document.getElementById('emojis-list-container');
-            if (emojisContainer && emojisContainer.children.length === 0) {
-                emojisContainer.innerHTML = '';
-                CUTE_EMOJIS.forEach(emoji => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'w-9 h-9 rounded-xl hover:bg-pink-500/20 active:scale-90 transition-transform flex items-center justify-center text-xl cursor-pointer select-none';
-                    btn.textContent = emoji;
-                    btn.onclick = () => insertEmojiToChat(emoji);
-                    emojisContainer.appendChild(btn);
-                });
-            }
-        }
-
-        function insertEmojiToChat(emoji) {
-            const input = document.getElementById('chat-input');
-            if (!input) return;
-
-            const startPos = input.selectionStart || input.value.length;
-            const endPos = input.selectionEnd || input.value.length;
-            const prevVal = input.value;
-
-            input.value = prevVal.substring(0, startPos) + emoji + prevVal.substring(endPos);
-            input.focus();
-            const newPos = startPos + emoji.length;
-            input.setSelectionRange(newPos, newPos);
-        }
-
-        function handleChatImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            compressAndProcessImage(file, 1000, 1000, 0.75, function(compressedBase64) {
-                currentChatImage = compressedBase64;
-                const previewImg = document.getElementById('chat-image-preview');
-                const previewContainer = document.getElementById('chat-image-preview-container');
-                if (previewImg && previewContainer) {
-                    previewImg.src = compressedBase64;
-                    previewContainer.classList.remove('hide');
-                }
-            });
-        }
-
-        function removeChatImage() {
-            currentChatImage = null;
-            const fileInput = document.getElementById('chat-image-input');
-            if (fileInput) fileInput.value = '';
-            const previewContainer = document.getElementById('chat-image-preview-container');
-            const previewImg = document.getElementById('chat-image-preview');
-            if (previewContainer) previewContainer.classList.add('hide');
-            if (previewImg) previewImg.src = '';
-        }
-
-        async function dispatchMessage(text, image) {
-            if (!text && !image) return;
-
-            const ticket = tickets.find(t => t.id === viewingTicketId);
-            if (!ticket) return;
-
-            const btn = document.getElementById('btn-send-chat');
-            if (btn) {
-                btn.disabled = true;
-                btn.classList.add('opacity-60', 'cursor-not-allowed');
-            }
-
-            const now = new Date().toISOString();
-            const senderRole = currentRole;
-            const senderName = currentRole === 'admin' ? 'Admin Support' : currentAgentName;
-            const displayText = text || (image ? '📷 ส่งรูปภาพ' : '');
-            
-            // === เริ่มการทำงานแบบ Optimistic UI Update ===
-            // นำข้อความขึ้นแสดงบนหน้าจอทันทีโดยไม่ต้องรอฐานข้อมูล เพื่อให้รู้สึกว่าส่งแชทเร็วปรู๊ดปร๊าด
-            const newMsg = {
-                id: 'msg-' + Date.now(),
-                sender: senderRole,
-                senderName: senderName,
-                text: displayText,
-                image: image,
-                is_read: false,
-                timestamp: now
-            };
-
-            ticket.messages = ticket.messages || [];
-            ticket.messages.push(newMsg);
-            ticket.updatedAt = now;
-
-            saveLocalMessage(viewingTicketId, newMsg);
-            renderChatMessages(true);
-
-            if (currentRole === 'agent') {
-                // ยิง Telegram แบบ Background Task
-                sendTelegramNewMessage(ticket, text, image).catch(e => console.warn(e));
-            }
-            // ===========================================
-
-            let dbSaved = false;
-
-            try {
-                if (supabaseClient) {
-                    try {
-                        const { data: rpcData, error: rpcErr } = await supabaseClient.rpc('send_ticket_message', {
-                            p_ticket_id: viewingTicketId,
-                            p_sender_role: senderRole,
-                            p_sender_name: senderName,
-                            p_text: displayText
-                        });
-                        if (!rpcErr && rpcData?.success) {
-                            dbSaved = true;
-                        }
-                    } catch (rpcErr) {}
-
-                    if (!dbSaved) {
-                        const baseMsgPayload = {
-                            ticket_id: viewingTicketId,
-                            sender_role: senderRole,
-                            sender_name: senderName,
-                            text: displayText,
-                            image_url: image,
-                            created_at: now
-                        };
-
-                        let { error: msgErr } = await supabaseClient.from('messages').insert({
-                            ...baseMsgPayload,
-                            is_read: false
-                        });
-
-                        if (msgErr && (msgErr.message?.includes('is_read') || msgErr.code === 'PGRST204' || msgErr.code === '42703')) {
-                            const retryRes = await supabaseClient.from('messages').insert(baseMsgPayload);
-                            msgErr = retryRes.error;
-                        }
-
-                        if (!msgErr) {
-                            dbSaved = true;
-                            try {
-                                await supabaseClient.from('tickets').update({ updated_at: now }).eq('id', viewingTicketId);
-                            } catch (tckErr) {}
-                        }
-                    }
-                }
-            } catch (err) {
-                console.error('Send message process notice:', err);
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-60', 'cursor-not-allowed');
-                }
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(e);
             }
         }
 
         async function handleSendMessage(event) {
             if (event && event.preventDefault) event.preventDefault();
             const input = document.getElementById('chat-input');
-            const text = input ? input.value.trim() : '';
-            if (!text && !currentChatImage) return;
+            const btn = document.getElementById('btn-send-chat');
+            const text = input.value.trim();
+            if (!text) return;
 
-            const imgToSend = currentChatImage;
-            if (input) input.value = '';
-            removeChatImage();
-            toggleEmojiPicker(false);
-            await dispatchMessage(text, imgToSend);
+            const ticket = tickets.find(t => t.id === viewingTicketId);
+            if (!ticket) return;
+
+            btn.disabled = true;
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+            const now = new Date().toISOString();
+            const senderRole = currentRole;
+            const senderName = currentRole === 'admin' ? 'Admin Support' : currentAgentName;
+
+            try {
+                if (supabaseClient) {
+                    const { error: msgErr } = await supabaseClient.from('messages').insert({
+                        ticket_id: viewingTicketId,
+                        sender_role: senderRole,
+                        sender_name: senderName,
+                        text: text,
+                        created_at: now
+                    });
+                    if (msgErr) throw msgErr;
+                    // ไม่ต้องส่ง ticket update จากฝั่งหน้าเว็บ เนื่องจากมี Trigger ทาง SQL คอยจัดการอัปเดต updated_at ให้เสมอ
+                }
+
+                ticket.messages = ticket.messages || [];
+                ticket.messages.push({
+                    sender: senderRole,
+                    senderName: senderName,
+                    text: text,
+                    timestamp: now
+                });
+                ticket.updatedAt = now;
+
+                input.value = '';
+                renderChatMessages();
+
+                if (currentRole === 'agent') {
+                    sendTelegramNewMessage(ticket, text);
+                }
+            } catch (err) {
+                console.error('Send message error:', err);
+                customAlert('ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้งค่ะ ⚠️');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
         }
 
         function markTicketResolved() {
@@ -3123,10 +2331,7 @@
                     openTicketDetail(viewingTicketId);
                 } catch (err) {
                     console.error('Mark resolved error:', err);
-                    ticket.status = 'Resolved';
-                    ticket.updatedAt = now;
-                    openTicketDetail(viewingTicketId);
-                    customAlert('ปิดงานแจ้งปัญหาในระบบเสร็จสมบูรณ์ 💖');
+                    customAlert('เกิดข้อผิดพลาดในการปิดงาน กรุณาตรวจสอบสิทธิ์แอดมินค่ะ ⚠️');
                 } finally {
                     if (btn) btn.disabled = false;
                 }
@@ -3337,133 +2542,16 @@
             const chatTemplate = document.getElementById('telegram-chat-template').value.trim();
             
             try {
-                safeStorage.setItem('helpCenterTelegramToken', token);
-                safeStorage.setItem('helpCenterTelegramChatId', chatId);
-                safeStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate);
-                safeStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate);
+                localStorage.setItem('helpCenterTelegramToken', token);
+                localStorage.setItem('helpCenterTelegramChatId', chatId);
+                localStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate);
+                localStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate);
             } catch(e) {
                 console.warn('Storage save notice:', e);
             }
             
             closeTelegramModal();
             customAlert('บันทึกการตั้งค่าและข้อความแจ้งเตือน Telegram เรียบร้อยแล้วค่ะ ✈️✨');
-        }
-
-        // --- Bot Rules Management ---
-        function openManageBotModal() {
-            if (currentRole !== 'admin') {
-                customAlert('ต้องเป็นแอดมินเท่านั้นค่ะ 🔒');
-                return;
-            }
-            renderBotRulesList();
-            document.getElementById('manage-bot-modal').classList.remove('hide');
-        }
-
-        function closeManageBotModal() {
-            document.getElementById('manage-bot-modal').classList.add('hide');
-        }
-
-        function renderBotRulesList() {
-            const list = document.getElementById('admin-bot-rules-list');
-            list.innerHTML = '';
-            
-            if(autoReplyRules.length === 0) {
-                 list.innerHTML = '<p class="text-center text-sm text-gray-400 py-4 bg-[#141214] rounded-2xl border border-emerald-500/20">ยังไม่มีกฎบอทตอบกลับค่ะ 🤖</p>';
-                 return;
-            }
-
-            autoReplyRules.forEach((rule, index) => {
-                const item = document.createElement('div');
-                item.className = "bg-[#141214] border border-emerald-500/20 rounded-2xl p-4 shadow-sm relative pr-24 transition-all hover:border-emerald-400";
-                
-                const kws = rule.keywords.map(k => `<span class="bg-[#1e1b1e] border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded text-[10px] mr-1 mb-1 inline-block font-medium">${escapeHtml(k)}</span>`).join('');
-                
-                item.innerHTML = `
-                    <div class="mb-2">${kws}</div>
-                    <p class="text-xs text-gray-300 whitespace-pre-line leading-relaxed border-l-2 border-emerald-500/50 pl-2 py-0.5">${escapeHtml(rule.message)}</p>
-                    <div class="absolute top-4 right-4 flex items-center gap-1.5">
-                        <button type="button" onclick="openEditBotModal(${index})" class="text-emerald-500 hover:text-white hover:bg-emerald-500 w-8 h-8 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-emerald-500/30">
-                            <i class="fas fa-edit text-xs"></i>
-                        </button>
-                        <button type="button" onclick="deleteBotRule(${index})" class="text-danger hover:text-white hover:bg-danger w-8 h-8 rounded-full transition-colors flex justify-center items-center bg-[#1e1b1e] border border-pink-500/20">
-                            <i class="fas fa-trash-alt text-xs"></i>
-                        </button>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function addBotRule(event) {
-            event.preventDefault();
-            const kwInput = document.getElementById('new-bot-keywords').value;
-            const msgInput = document.getElementById('new-bot-message').value;
-            
-            const keywordsArray = kwInput.split(',').map(k => k.trim()).filter(k => k);
-            if (keywordsArray.length === 0 || !msgInput.trim()) {
-                customAlert('กรุณากรอกคีย์เวิร์ดและข้อความให้ครบถ้วนค่ะ ⚠️');
-                return;
-            }
-
-            autoReplyRules.push({
-                keywords: keywordsArray,
-                message: msgInput.trim()
-            });
-
-            saveBotRulesToStorage();
-            document.getElementById('new-bot-keywords').value = '';
-            document.getElementById('new-bot-message').value = '';
-            renderBotRulesList();
-            customAlert('เพิ่มกฎบอทตอบกลับเรียบร้อยแล้วค่ะ 🤖');
-        }
-
-        function deleteBotRule(index) {
-            customConfirm('ต้องการลบกฎบอทข้อนี้ใช่หรือไม่คะ? 🗑️', function() {
-                autoReplyRules.splice(index, 1);
-                saveBotRulesToStorage();
-                renderBotRulesList();
-            });
-        }
-
-        let editingBotIndex = null;
-        function openEditBotModal(index) {
-            const rule = autoReplyRules[index];
-            if(!rule) return;
-            editingBotIndex = index;
-            
-            document.getElementById('edit-bot-index').value = index;
-            document.getElementById('edit-bot-keywords').value = rule.keywords.join(', ');
-            document.getElementById('edit-bot-message').value = rule.message;
-            document.getElementById('edit-bot-modal').classList.remove('hide');
-        }
-
-        function closeEditBotModal() {
-            document.getElementById('edit-bot-modal').classList.add('hide');
-            editingBotIndex = null;
-        }
-
-        function handleEditBotRule(event) {
-            event.preventDefault();
-            if(editingBotIndex === null) return;
-            
-            const kwInput = document.getElementById('edit-bot-keywords').value;
-            const msgInput = document.getElementById('edit-bot-message').value;
-            
-            const keywordsArray = kwInput.split(',').map(k => k.trim()).filter(k => k);
-            if (keywordsArray.length === 0 || !msgInput.trim()) {
-                customAlert('กรุณากรอกคีย์เวิร์ดและข้อความให้ครบถ้วนค่ะ ⚠️');
-                return;
-            }
-
-            autoReplyRules[editingBotIndex] = {
-                keywords: keywordsArray,
-                message: msgInput.trim()
-            };
-
-            saveBotRulesToStorage();
-            closeEditBotModal();
-            renderBotRulesList();
-            customAlert('แก้ไขกฎบอทเรียบร้อยแล้วค่ะ 🤖');
         }
 
         async function testTelegramNotification() {
@@ -3569,21 +2657,20 @@
             await sendRawTelegramMessage(token, chatId, message, ticket.image);
         }
 
-        async function sendTelegramNewMessage(ticket, text, image = null) {
+        async function sendTelegramNewMessage(ticket, text) {
             const token = getTelegramToken();
             const chatId = getTelegramChatId();
             if (!token || !chatId) return;
 
             let template = getTelegramChatTemplate();
-            const messageContent = text || (image ? '📷 [แนบรูปภาพ]' : '');
             const message = template
                 .replace(/{id}/g, escapeHtml(ticket.id))
                 .replace(/{appName}/g, escapeHtml(ticket.appName))
                 .replace(/{agentName}/g, escapeHtml(ticket.agentName))
-                .replace(/{message}/g, escapeHtml(messageContent))
+                .replace(/{message}/g, escapeHtml(text))
                 .replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
 
-            await sendRawTelegramMessage(token, chatId, message, image);
+            await sendRawTelegramMessage(token, chatId, message);
         }
 
         let confirmCallback = null;
@@ -3617,6 +2704,7 @@
             closeCustomConfirm();
         }
 
+        // ตรวจสอบและดึงข้อมูลใหม่ทันทีเมื่อสลับแท็บกลับมา หรือเปิดจอมือถือกลับมา
         document.addEventListener('visibilitychange', async () => {
             if (document.visibilityState === 'visible') {
                 if (supabaseClient) {
@@ -3637,27 +2725,11 @@
         });
 
         window.addEventListener('DOMContentLoaded', async () => {
-            renderAppDropdowns();
-            renderAgentDashboard();
             await checkInitialAdminSession();
             await syncFromSupabase();
             initRealtime();
 
-            const chatMessagesContainer = document.getElementById('chat-messages-container');
-            if (chatMessagesContainer) {
-                chatMessagesContainer.addEventListener('scroll', handleChatScroll);
-            }
-
-            document.addEventListener('click', (e) => {
-                const drawer = document.getElementById('emoji-picker-drawer');
-                const btnToggle = document.getElementById('btn-toggle-emojis');
-                if (drawer && !drawer.classList.contains('hide')) {
-                    if (!drawer.contains(e.target) && !btnToggle.contains(e.target)) {
-                        drawer.classList.add('hide');
-                    }
-                }
-            });
-
+            // ตรวจจับการเปลี่ยนแปลงของ Auth Session อัตโนมัติ
             if (supabaseClient && supabaseClient.auth) {
                 supabaseClient.auth.onAuthStateChange(async (event, session) => {
                     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
@@ -3677,4 +2749,3 @@
     </script>
 </body>
 </html>
-
