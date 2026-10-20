@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Supabase JS Client v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -35,6 +36,7 @@
             }
         }
     </script>
+    
     <style>
         body { font-family: 'Prompt', sans-serif; background-color: #141214; color: #f3e8eb; }
         .hide { display: none !important; }
@@ -106,6 +108,7 @@
         }
     </style>
 </head>
+
 <body class="h-screen flex flex-col selection:bg-pink-500 selection:text-white">
 
     <!-- Toast Notification Container -->
@@ -835,7 +838,7 @@
         let applications = [];
         let faqs = [];
         let tickets = [];
-        let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖    ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
+        let announcementText = '🌸 ยินดีต้อนรับสู่ MONALI Help Center ศูนย์บริการช่วยเหลือตัวแทนจำหน่ายแอปพรีเมี่ยมตลอด 24 ชั่วโมง 💖   ✨ หากมีปัญหาเร่งด่วนสามารถแจ้งรายละเอียดพร้อมหลักฐานทางระบบได้เลยนะคะ ทีมงานจะรีบตรวจสอบและทยอยตอบตามคิวค่ะ 🌟';
 
         function setButtonLoading(btnEl, textEl, isLoading, loadingText, defaultText) {
             if (!btnEl) return;
