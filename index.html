@@ -299,40 +299,40 @@
                 <div id="admin-sidebar-overlay" onclick="toggleAdminSidebar()" class="hide fixed inset-0 bg-black/40 backdrop-blur-sm z-[40]"></div>
 
                 <!-- Header & Quick Actions -->
-                <div class="flex justify-between items-center mb-6 gap-4">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 flex items-center"><i class="fas fa-laptop-code text-primary mr-2 sm:mr-3"></i> Dashboard</h2>
-                    <button onclick="toggleAdminSidebar()" class="bg-white border border-gray-200 text-gray-700 hover:text-primary hover:border-primary hover:bg-pink-50 px-4 sm:px-5 py-2.5 rounded-full text-sm font-medium transition-all flex items-center shadow-sm shrink-0">
-                        <i class="fas fa-cog mr-0 sm:mr-2 text-base"></i> <span class="hidden sm:inline">เครื่องมือตั้งค่า</span>
+                <div class="flex justify-between items-center mb-5 gap-3">
+                    <h2 class="text-lg sm:text-2xl font-bold text-gray-800 flex items-center"><i class="fas fa-laptop-code text-primary mr-2"></i> Dashboard</h2>
+                    <button onclick="toggleAdminSidebar()" class="bg-white border border-gray-200 text-gray-700 hover:text-primary hover:border-primary hover:bg-pink-50 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center shadow-sm shrink-0">
+                        <i class="fas fa-cog mr-1.5 text-sm"></i> <span>เครื่องมือตั้งค่า</span>
                     </button>
                 </div>
 
-                <!-- Stats (Combined as Filters) -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-                    <div id="stat-card-all" onclick="filterAdminTickets('All')" class="cursor-pointer bg-white border border-pink-100 p-6 rounded-3xl flex items-center shadow-sm hover:shadow-md transition-all ring-2 ring-offset-2 ring-primary">
-                        <div class="w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center text-primary text-2xl mr-4 border border-pink-100">
+                <!-- Stats (Combined as Filters) - Responsive compact design -->
+                <div class="grid grid-cols-3 gap-2.5 sm:gap-4 mb-6">
+                    <div id="stat-card-all" onclick="filterAdminTickets('All')" class="cursor-pointer bg-white border border-pink-100 p-3 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row items-center text-center sm:text-left shadow-sm hover:shadow-md transition-all ring-2 ring-offset-1 sm:ring-offset-2 ring-primary">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-pink-50 flex items-center justify-center text-primary text-base sm:text-2xl mb-1.5 sm:mb-0 sm:mr-4 border border-pink-100 shrink-0">
                             <i class="fas fa-inbox"></i>
                         </div>
-                        <div>
-                            <span class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1 block">เคสทั้งหมด</span>
-                            <span class="text-3xl font-bold text-gray-800 leading-none" id="stat-total">0</span>
+                        <div class="min-w-0">
+                            <span class="text-gray-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 block truncate">เคสทั้งหมด</span>
+                            <span class="text-xl sm:text-3xl font-bold text-gray-800 leading-none" id="stat-total">0</span>
                         </div>
                     </div>
-                    <div id="stat-card-open" onclick="filterAdminTickets('Open')" class="cursor-pointer bg-white border border-amber-100 p-6 rounded-3xl flex items-center shadow-sm hover:shadow-md transition-all">
-                        <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 text-2xl mr-4 border border-amber-100">
+                    <div id="stat-card-open" onclick="filterAdminTickets('Open')" class="cursor-pointer bg-white border border-amber-100 p-3 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row items-center text-center sm:text-left shadow-sm hover:shadow-md transition-all">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 text-base sm:text-2xl mb-1.5 sm:mb-0 sm:mr-4 border border-amber-100 shrink-0">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <div>
-                            <span class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1 block">รอดำเนินการ</span>
-                            <span class="text-3xl font-bold text-gray-800 leading-none" id="stat-open">0</span>
+                        <div class="min-w-0">
+                            <span class="text-gray-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 block truncate">รอดำเนินการ</span>
+                            <span class="text-xl sm:text-3xl font-bold text-gray-800 leading-none" id="stat-open">0</span>
                         </div>
                     </div>
-                    <div id="stat-card-resolved" onclick="filterAdminTickets('Resolved')" class="cursor-pointer bg-white border border-emerald-100 p-6 rounded-3xl flex items-center shadow-sm hover:shadow-md transition-all">
-                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 text-2xl mr-4 border border-emerald-100">
+                    <div id="stat-card-resolved" onclick="filterAdminTickets('Resolved')" class="cursor-pointer bg-white border border-emerald-100 p-3 sm:p-5 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row items-center text-center sm:text-left shadow-sm hover:shadow-md transition-all">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 text-base sm:text-2xl mb-1.5 sm:mb-0 sm:mr-4 border border-emerald-100 shrink-0">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <div>
-                            <span class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1 block">แก้ไขแล้ว</span>
-                            <span class="text-3xl font-bold text-gray-800 leading-none" id="stat-resolved">0</span>
+                        <div class="min-w-0">
+                            <span class="text-gray-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-0.5 block truncate">แก้ไขแล้ว</span>
+                            <span class="text-xl sm:text-3xl font-bold text-gray-800 leading-none" id="stat-resolved">0</span>
                         </div>
                     </div>
                 </div>
@@ -976,7 +976,7 @@
                 
                 const { data, error } = await supabaseClient.storage
                     .from('monali-storage')
-                    .upload(fileName, blob, { contentType: mime, upsert: false });
+                    .upload(fileName, blob, { contentType: mime, upsert: true });
                     
                 if (error) throw error;
                 
@@ -1484,7 +1484,6 @@
 
             try {
                 let finalImageUrl = await uploadToStorage(rawImageData, 'faqs');
-                // เอา updated_at ออกจาก payload เพราะใน Table FAQs อาจจะไม่มี column นี้
                 const updatePayload = { question: question, answer: answer, image_url: finalImageUrl || null }; 
                 if (supabaseClient) {
                     let query = supabaseClient.from('faqs').update(updatePayload);
@@ -1494,7 +1493,7 @@
                 faq.question = question; faq.answer = answer; faq.image_url = finalImageUrl || null;
                 closeEditFAQModal(); renderAdminFAQList(); renderAgentFAQs(); customAlert('บันทึกการแก้ไข FAQ เรียบร้อยแล้วค่ะ 🌸');
             } catch (err) { 
-                console.error('Edit FAQ Error:', err); // เพิ่ม log ไว้ดูใน console เผื่อมี Error อื่น
+                console.error('Edit FAQ Error:', err);
                 customAlert('เกิดข้อผิดพลาดในการแก้ไข FAQ ค่ะ ⚠️'); 
             } finally { setButtonLoading(btn, textEl, false, '', 'บันทึกการแก้ไข'); }
         }
@@ -1681,12 +1680,12 @@
                 const el = document.getElementById('stat-card-' + tab.toLowerCase());
                 if (el) {
                     if (tab === status) {
-                        el.classList.add('ring-2', 'ring-offset-2');
+                        el.classList.add('ring-2', 'ring-offset-1', 'sm:ring-offset-2');
                         if (tab === 'All') el.classList.add('ring-primary');
                         if (tab === 'Open') el.classList.add('ring-amber-400');
                         if (tab === 'Resolved') el.classList.add('ring-emerald-400');
                     } else {
-                        el.classList.remove('ring-2', 'ring-offset-2', 'ring-primary', 'ring-amber-400', 'ring-emerald-400');
+                        el.classList.remove('ring-2', 'ring-offset-1', 'sm:ring-offset-2', 'ring-primary', 'ring-amber-400', 'ring-emerald-400');
                     }
                 }
             });
@@ -2053,7 +2052,7 @@
 
         async function sendTelegramNewMessage(ticket, text, image = null) {
             const token = getTelegramToken(); const chatId = getTelegramChatId(); if (!token || !chatId) return; let template = getTelegramChatTemplate(); const msgText = text ? text : '(แนบรูปภาพ)';
-            const message = template.replace(/{id}/g, escapeHtml(ticket.id)).replace(/{appName}/g, escapeHtml(ticket.appName)).replace(/{agentName}/g, escapeHtml(ticket.agentName)).replace(/{message}/g, escapeHtml(msgText)).replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
+            const message = template.replace(/{id}/g, escapeHtml(ticket.id)).replace(/{appName}/g, escapeHtml(ticket.appName)).replace(/{agentName}/g, escapeHtml(agentName)).replace(/{message}/g, escapeHtml(msgText)).replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
             await sendRawTelegramMessage(token, chatId, message, image);
         }
 
