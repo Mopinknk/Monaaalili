@@ -391,6 +391,15 @@
                 </div>
 
                 <div class="bg-white border border-pink-200 border-t-0 rounded-b-3xl p-3 md:p-5 shadow-sm flex-shrink-0 flex flex-col gap-3 relative z-10" id="chat-input-area">
+                    <!-- Admin Quick Replies -->
+                    <div id="admin-quick-replies" class="hide flex gap-2 overflow-x-auto whitespace-nowrap pb-1">
+                        <button type="button" onclick="sendQuickReplyAsBot('ดำเนินการแก้ไข / เคลม เรียบร้อยแล้ว แอดมินขออนุญาตปิด TCK แจ้งปัญหารายการนี้นะคะ')" class="text-[11px] sm:text-xs bg-white text-primary border border-pink-200 px-3 py-1.5 rounded-full hover:bg-pink-50 transition-colors shadow-sm shrink-0">
+                            ✅ ดำเนินการแก้ไข / เคลม เรียบร้อย...
+                        </button>
+                        <button type="button" onclick="sendQuickReplyAsBot('คุณส่งข้อมูลไม่ครบถ้วน แอดมินไม่สามารถตรวจสอบข้อมูลให้ได้ค่ะ กรุณาแจ้งปัญหาใหม่และส่งข้อมูลให้ครบด้วยนะคะ')" class="text-[11px] sm:text-xs bg-white text-primary border border-pink-200 px-3 py-1.5 rounded-full hover:bg-pink-50 transition-colors shadow-sm shrink-0">
+                            ⚠️ คุณส่งข้อมูลไม่ครบถ้วน...
+                        </button>
+                    </div>
                     <!-- Image Preview for Chat -->
                     <div id="chat-image-preview-container" class="hide relative inline-block w-fit mb-1">
                         <img id="chat-image-preview" src="" alt="Chat Preview" class="max-h-32 rounded-xl border border-pink-200 shadow-sm p-1 bg-white">
@@ -1797,8 +1806,10 @@
 
             const adminActions = document.getElementById('admin-actions');
             const markResolvedBtn = document.getElementById('btn-mark-resolved');
+            const adminQuickReplies = document.getElementById('admin-quick-replies');
             if (currentRole === 'admin') {
                 adminActions.classList.remove('hide');
+                if (adminQuickReplies) adminQuickReplies.classList.remove('hide');
                 if (markResolvedBtn) {
                     if (ticket.status === 'Open') {
                         markResolvedBtn.classList.remove('hide');
@@ -1808,6 +1819,7 @@
                 }
             } else {
                 adminActions.classList.add('hide');
+                if (adminQuickReplies) adminQuickReplies.classList.add('hide');
             }
 
             const inputArea = document.getElementById('chat-input-area');
@@ -1907,6 +1919,40 @@
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSendMessage(e);
+            }
+        }
+
+        async function sendQuickReplyAsBot(text) {
+            if (!text) return;
+            const ticket = tickets.find(t => t.id === viewingTicketId);
+            if (!ticket) return;
+
+            let now = new Date().toISOString();
+            if (ticket.messages && ticket.messages.length > 0) { 
+                const latestMsg = ticket.messages.reduce((prev, current) => (new Date(prev.timestamp) > new Date(current.timestamp)) ? prev : current ); 
+                if (new Date(now) <= new Date(latestMsg.timestamp)) {
+                    now = new Date(new Date(latestMsg.timestamp).getTime() + 1000).toISOString();
+                }
+            }
+
+            try {
+                if (supabaseClient) { 
+                    await supabaseClient.from('messages').insert({ ticket_id: viewingTicketId, sender_role: 'system', sender_name: 'System Bot', text: text, created_at: now }); 
+                }
+                ticket.messages = ticket.messages || []; 
+                ticket.messages.push({ sender: 'system', senderName: 'System Bot', text: text, image: null, timestamp: now }); 
+                ticket.updatedAt = now;
+                renderChatMessages();
+            } catch (err) { 
+                customAlert('ไม่สามารถส่งข้อความได้ ⚠️'); 
+            }
+        }
+
+        function insertQuickReply(text) {
+            const input = document.getElementById('chat-input');
+            if (input) {
+                input.value = text;
+                input.focus();
             }
         }
 
