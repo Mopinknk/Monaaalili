@@ -2071,7 +2071,7 @@
         let confirmCallback = null;
         function customAlert(message) { document.getElementById('custom-alert-text').textContent = message; document.getElementById('custom-alert-modal').classList.remove('hide'); }
         function closeCustomAlert() { document.getElementById('custom-alert-modal').classList.add('hide'); }
-        function customConfirm(message, callback) { document.getElementById('custom-confirm-text').textContent = message; confirmCallback = callback; document.getElementById('custom-confirm-modal').classList.add('hide'); }
+        function customConfirm(message, callback) { document.getElementById('custom-confirm-text').textContent = message; confirmCallback = callback; document.getElementById('custom-confirm-modal').classList.remove('hide'); }
         function closeCustomConfirm() { document.getElementById('custom-confirm-modal').classList.add('hide'); confirmCallback = null; }
         function executeConfirm() { if (confirmCallback) { const cb = confirmCallback; confirmCallback = null; cb(); } closeCustomConfirm(); }
         function openImageModal(src) { document.getElementById('image-view-full').src = src; document.getElementById('image-view-modal').classList.remove('hide'); }
