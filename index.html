@@ -285,9 +285,9 @@
                             <div class="w-10 h-10 rounded-full bg-pink-100 text-primary flex items-center justify-center mr-4 group-hover:scale-110 transition-transform"><i class="fas fa-list-ul text-lg"></i></div>
                             <div><div class="font-bold text-gray-800 text-sm">จัดการแอปพลิเคชัน</div><div class="text-[11px] text-gray-500 mt-0.5">เพิ่ม/ลบ รายชื่อแอป</div></div>
                         </button>
-                        <button onclick="openTelegramModal(); toggleAdminSidebar();" class="text-left px-5 py-4 rounded-2xl border border-gray-200 hover:border-sky-400 hover:bg-sky-50 hover:shadow-sm transition-all flex items-center group">
-                            <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-500 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform"><i class="fab fa-telegram-plane text-lg"></i></div>
-                            <div><div class="font-bold text-gray-800 text-sm">แจ้งเตือน Telegram</div><div class="text-[11px] text-gray-500 mt-0.5">ตั้งค่าข้อความบอท</div></div>
+                        <button onclick="openNotificationModal(); toggleAdminSidebar();" class="text-left px-5 py-4 rounded-2xl border border-gray-200 hover:border-blue-400 hover:bg-blue-50 hover:shadow-sm transition-all flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform"><i class="fas fa-bell text-lg"></i></div>
+                            <div><div class="font-bold text-gray-800 text-sm">ตั้งค่าการแจ้งเตือน</div><div class="text-[11px] text-gray-500 mt-0.5">Telegram / Discord</div></div>
                         </button>
                         <button onclick="openManageUsersModal(); toggleAdminSidebar();" class="text-left px-5 py-4 rounded-2xl border border-gray-200 hover:border-purple-400 hover:bg-purple-50 hover:shadow-sm transition-all flex items-center group">
                             <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform"><i class="fas fa-users text-lg"></i></div>
@@ -391,6 +391,11 @@
                 </div>
 
                 <div class="bg-white border border-pink-200 border-t-0 rounded-b-3xl p-3 md:p-5 shadow-sm flex-shrink-0 flex flex-col gap-3 relative z-10" id="chat-input-area">
+                    <!-- Admin Quick Replies -->
+                    <div id="admin-quick-replies" class="hide flex gap-2 overflow-x-auto pb-2 border-b border-pink-50">
+                        <button type="button" onclick="sendSystemQuickReply('ดำเนินการแก้ไข / เคลม เรียบร้อยแล้ว แอดมินขออนุญาตปิด TCK แจ้งปัญหารายการนี้นะคะ')" class="whitespace-nowrap bg-pink-50 hover:bg-primary hover:text-white text-pink-600 border border-pink-200 px-3 py-1.5 rounded-full text-[11px] font-medium transition-colors shadow-sm">ดำเนินการแก้ไขและปิดเคส ✅</button>
+                        <button type="button" onclick="sendSystemQuickReply('คุณส่งรายละเอียดไม่ครบถ้วน แอดมินไม่สามารถตรวจสอบข้อมูลให้ได้ กรุณาแจ้งข้อมูลให้ครบและส่งแจ้งเข้ามาใหม่นะคะ')" class="whitespace-nowrap bg-pink-50 hover:bg-primary hover:text-white text-pink-600 border border-pink-200 px-3 py-1.5 rounded-full text-[11px] font-medium transition-colors shadow-sm">ข้อมูลไม่ครบถ้วน ⚠️</button>
+                    </div>
                     <!-- Image Preview for Chat -->
                     <div id="chat-image-preview-container" class="hide relative inline-block w-fit mb-1">
                         <img id="chat-image-preview" src="" alt="Chat Preview" class="max-h-32 rounded-xl border border-pink-200 shadow-sm p-1 bg-white">
@@ -708,30 +713,49 @@
                 </div>
             </div>
 
-            <!-- Telegram Settings Modal (Admin) -->
-            <div id="telegram-settings-modal" onclick="if(event.target===this) closeTelegramModal()" class="hide fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+            <!-- Notification Settings Modal (Admin) -->
+            <div id="notification-settings-modal" onclick="if(event.target===this) closeNotificationModal()" class="hide fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
                 <div class="bg-white text-gray-800 rounded-3xl shadow-2xl border border-pink-200 w-full max-w-xl overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
-                    <div class="bg-sky-50 px-6 py-4 border-b border-sky-100 flex justify-between items-center shrink-0">
+                    <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex justify-between items-center shrink-0">
                         <div class="flex items-center gap-2">
-                            <i class="fab fa-telegram-plane text-sky-500 text-xl"></i>
-                            <h3 class="font-bold text-gray-900 text-lg">ตั้งค่าและแก้ไขข้อความแจ้งเตือน Telegram</h3>
+                            <i class="fas fa-bell text-blue-500 text-xl"></i>
+                            <h3 class="font-bold text-gray-900 text-lg">ตั้งค่าการแจ้งเตือน (Telegram / Discord)</h3>
                         </div>
-                        <button type="button" onclick="closeTelegramModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white">
+                        <button type="button" onclick="closeNotificationModal()" class="text-gray-400 hover:text-danger transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white">
                             <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
 
                     <div class="p-5 sm:p-6 overflow-y-auto grow space-y-5 bg-gray-50/30">
-                        <form id="telegram-settings-form" onsubmit="handleSaveTelegramSettings(event)" class="space-y-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Telegram Bot Token <span class="text-danger">*</span></label>
-                                    <input type="password" id="telegram-bot-token" placeholder="ใส่ Bot Token ของคุณที่นี่" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none bg-gray-50 text-gray-900">
+                        <form id="notification-settings-form" onsubmit="handleSaveNotificationSettings(event)" class="space-y-4">
+                            <!-- Telegram Section -->
+                            <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                                <h4 class="font-bold text-gray-800 text-sm flex items-center"><i class="fab fa-telegram-plane text-sky-500 mr-2 text-lg"></i> Telegram Settings</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Bot Token</label>
+                                        <input type="password" id="telegram-bot-token" placeholder="ใส่ Bot Token" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none bg-gray-50 text-gray-900">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Chat ID</label>
+                                        <input type="text" id="telegram-chat-id" placeholder="-100xxxxxxxxxx" class="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none bg-gray-50 text-gray-900">
+                                    </div>
                                 </div>
+                                <button type="button" onclick="testTelegramNotification()" class="w-full bg-white border border-sky-200 hover:bg-sky-50 text-sky-600 py-2 rounded-full font-semibold transition-all text-xs flex items-center justify-center shadow-sm">
+                                    <i class="fas fa-paper-plane mr-2"></i> ทดสอบส่งแจ้งเตือน Telegram
+                                </button>
+                            </div>
+
+                            <!-- Discord Section -->
+                            <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                                <h4 class="font-bold text-gray-800 text-sm flex items-center"><i class="fab fa-discord text-[#5865F2] mr-2 text-lg"></i> Discord Settings</h4>
                                 <div>
-                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Telegram Chat ID <span class="text-danger">*</span></label>
-                                    <input type="text" id="telegram-chat-id" placeholder="-100xxxxxxxxxx" required class="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none bg-gray-50 text-gray-900">
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Webhook URL</label>
+                                    <input type="url" id="discord-webhook-url" placeholder="https://discord.com/api/webhooks/..." class="w-full rounded-xl border border-gray-200 px-3 py-2 text-xs focus:border-[#5865F2] focus:ring-1 focus:ring-[#5865F2] outline-none bg-gray-50 text-gray-900">
                                 </div>
+                                <button type="button" onclick="testDiscordNotification()" class="w-full bg-white border border-[#5865F2] hover:bg-[#5865F2]/10 text-[#5865F2] py-2 rounded-full font-semibold transition-all text-xs flex items-center justify-center shadow-sm">
+                                    <i class="fas fa-paper-plane mr-2"></i> ทดสอบส่งแจ้งเตือน Discord
+                                </button>
                             </div>
 
                             <div class="bg-pink-50 p-3.5 rounded-2xl border border-pink-100 text-xs shadow-sm">
@@ -763,15 +787,12 @@
                                     <label class="block text-xs font-semibold text-gray-700">2. รูปแบบข้อความเมื่อลูกค้าส่งแชทใหม่ (New Message)</label>
                                     <button type="button" onclick="resetDefaultChatTemplate()" class="text-[11px] text-primary hover:text-primary-hover underline font-medium">คืนค่าเริ่มต้น</button>
                                 </div>
-                                <textarea id="telegram-chat-template" required rows="5" class="w-full rounded-2xl border border-gray-200 px-3.5 py-2.5 focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none text-xs leading-relaxed font-mono resize-y bg-white text-gray-800 shadow-sm"></textarea>
+                                <textarea id="telegram-chat-template" required rows="5" class="w-full rounded-2xl border border-gray-200 px-3.5 py-2.5 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none text-xs leading-relaxed font-mono resize-y bg-white text-gray-800 shadow-sm"></textarea>
                             </div>
 
-                            <div class="pt-3 flex flex-col sm:flex-row gap-3 border-t border-gray-100">
-                                <button type="button" id="btn-test-telegram" onclick="testTelegramNotification()" class="w-full mt-3 bg-white border border-sky-200 hover:bg-sky-50 text-sky-600 py-3 rounded-full font-semibold transition-all text-sm flex items-center justify-center shadow-sm">
-                                    <i class="fas fa-paper-plane mr-2"></i> <span id="btn-test-telegram-text">ทดสอบส่งแจ้งเตือน</span>
-                                </button>
-                                <button type="submit" id="btn-save-telegram" class="w-full mt-3 bg-sky-500 hover:bg-sky-400 text-white py-3 rounded-full shadow-md font-semibold transition-transform transform hover:scale-105 text-sm flex items-center justify-center">
-                                    <i class="fas fa-save mr-2"></i> <span id="btn-save-telegram-text">บันทึกข้อความและการตั้งค่า</span>
+                            <div class="pt-3 border-t border-gray-100">
+                                <button type="submit" id="btn-save-notification" class="w-full bg-blue-500 hover:bg-blue-400 text-white py-3 rounded-full shadow-md font-semibold transition-transform transform hover:scale-105 text-sm flex items-center justify-center">
+                                    <i class="fas fa-save mr-2"></i> <span id="btn-save-notification-text">บันทึกการตั้งค่าทั้งหมด</span>
                                 </button>
                             </div>
                         </form>
@@ -899,6 +920,7 @@
 
         function getTelegramToken() { return localStorage.getItem('helpCenterTelegramToken') || DEFAULT_TELEGRAM_TOKEN; }
         function getTelegramChatId() { return localStorage.getItem('helpCenterTelegramChatId') || DEFAULT_TELEGRAM_CHAT_ID; }
+        function getDiscordWebhook() { return localStorage.getItem('helpCenterDiscordWebhook') || ""; }
         function getTelegramTicketTemplate() { return localStorage.getItem('helpCenterTelegramTicketTemplate') || DEFAULT_TELEGRAM_TICKET_TEMPLATE; }
         function getTelegramChatTemplate() { return localStorage.getItem('helpCenterTelegramChatTemplate') || DEFAULT_TELEGRAM_CHAT_TEMPLATE; }
 
@@ -944,6 +966,7 @@
         }
         renderAnnouncement();
 
+        // --- Helper สำหรับ Storage ---
         function base64ToBlob(base64, mime) {
             const sliceSize = 1024;
             const base64Data = base64.split(',')[1];
@@ -971,7 +994,7 @@
                 const blob = base64ToBlob(base64Data, mime);
                 
                 const ext = mime === 'image/png' ? 'png' : 'jpg';
-                const fileName = `folder/{Date.now()}-Math.random().toString(36).substring(2,8).{ext}`;
+                const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2,8)}.${ext}`;
                 
                 const { data, error } = await supabaseClient.storage
                     .from('monali-storage')
@@ -985,8 +1008,8 @@
                     
                 return urlData.publicUrl;
             } catch (err) {
-                console.warn("Storage upload warning, using Base64 fallback:", err);
-                return base64Data;
+                console.error("Storage upload error:", err);
+                throw new Error("ไม่สามารถอัปโหลดรูปลงระบบได้ค่ะ (โปรดเช็คสิทธิ์ Storage)");
             }
         }
 
@@ -1018,10 +1041,12 @@
                 document.getElementById('cover-banner-img').src = base64; 
                 if (supabaseClient) {
                     try {
+                        customAlert('กำลังอัปโหลดรูปภาพปก... ⏳');
                         const publicUrl = await uploadToStorage(base64, 'covers');
-                        await supabaseClient.from('shop_settings').update({ cover_image_url: publicUrl }).eq('id', 1);
-                        customAlert('อัปเดตรูปภาพปกสำเร็จแล้วค่ะ 🌸');
-                    } catch (err) { customAlert('บันทึกรูปปกเรียบร้อยค่ะ 🌸'); }
+                        const { error } = await supabaseClient.from('shop_settings').update({ cover_image_url: publicUrl }).eq('id', 1);
+                        if (error) throw error;
+                        closeCustomAlert(); customAlert('อัปเดตรูปภาพปกสำเร็จแล้วค่ะ 🌸');
+                    } catch (err) { customAlert('ไม่สามารถบันทึกรูปปกได้ค่ะ ⚠️'); }
                 }
             });
         }
@@ -1033,10 +1058,12 @@
                 document.getElementById('nav-logo-img').src = base64; 
                 if (supabaseClient) {
                     try {
+                        customAlert('กำลังอัปโหลดโลโก้... ⏳');
                         const publicUrl = await uploadToStorage(base64, 'logos');
-                        await supabaseClient.from('shop_settings').update({ logo_image_url: publicUrl }).eq('id', 1);
-                        customAlert('อัปเดตโลโก้สำเร็จแล้วค่ะ 🌸');
-                    } catch (err) { customAlert('บันทึกโลโก้เรียบร้อยค่ะ 🌸'); }
+                        const { error } = await supabaseClient.from('shop_settings').update({ logo_image_url: publicUrl }).eq('id', 1);
+                        if (error) throw error;
+                        closeCustomAlert(); customAlert('อัปเดตโลโก้สำเร็จแล้วค่ะ 🌸');
+                    } catch (err) { customAlert('ไม่สามารถบันทึกโลโก้ได้ค่ะ ⚠️'); }
                 }
             });
         }
@@ -1059,30 +1086,30 @@
         async function syncFromSupabase() {
             if (!supabaseClient) return;
             try {
-                const { data: shopData } = await supabaseClient.from('shop_settings').select('*').eq('id', 1).maybeSingle();
-                if (shopData) {
+                // 1. Settings
+                const { data: shopData, error: shopErr } = await supabaseClient.from('shop_settings').select('*').eq('id', 1).maybeSingle();
+                if (shopData && !shopErr) {
                     if (shopData.announcement_text) { announcementText = shopData.announcement_text; renderAnnouncement(); }
                     if (shopData.cover_image_url) { document.getElementById('cover-banner-img').src = sanitizeMediaUrl(shopData.cover_image_url); }
                     if (shopData.logo_image_url) { document.getElementById('nav-logo-img').src = sanitizeMediaUrl(shopData.logo_image_url); }
                 }
 
-                const { data: appsData } = await supabaseClient.from('applications').select('app_name').order('id', { ascending: true });
-                if (appsData) { applications = appsData.map(a => a.app_name); renderAppDropdowns(); }
-                if (applications.length === 0) {
-                    applications = ['Netflix', 'YouTube Premium', 'Spotify', 'Disney+ Hotstar', 'Canva', 'CapCut', 'อื่นๆ'];
-                    renderAppDropdowns();
-                }
+                // 2. Apps
+                const { data: appsData, error: appsErr } = await supabaseClient.from('applications').select('app_name').order('id', { ascending: true });
+                if (!appsErr && appsData) { applications = appsData.map(a => a.app_name); renderAppDropdowns(); }
 
-                const { data: faqsData } = await supabaseClient.from('faqs').select('id, question, answer, image_url, sort_order').order('sort_order', { ascending: true });
-                if (faqsData) { faqs = faqsData; renderAgentFAQs(); if (currentRole === 'admin') renderAdminFAQList(); }
+                // 3. FAQs
+                const { data: faqsData, error: faqsErr } = await supabaseClient.from('faqs').select('id, question, answer, image_url, sort_order').order('sort_order', { ascending: true });
+                if (!faqsErr && faqsData) { faqs = faqsData; renderAgentFAQs(); if (currentRole === 'admin') renderAdminFAQList(); }
 
+                // 4. Tickets (Only if Logged In)
                 if (currentRole === 'guest') {
                     tickets = [];
                     renderAgentDashboard();
                     return;
                 }
 
-                let query = supabaseClient.from('tickets').select('id, device_id, agent_name, app_name, purchase_date, expiry_date, claim_type, subject, description, status, image_url, created_at, updated_at');
+                let query = supabaseClient.from('tickets').select('id, device_id, agent_name, app_name, purchase_date, expiry_date, claim_type, subject, description, status, created_at, updated_at');
                 if (currentRole === 'user') query = query.eq('device_id', deviceId);
                 
                 const { data: ticketsData, error: tckErr } = await query.order('created_at', { ascending: false });
@@ -1152,6 +1179,7 @@
             } catch (rtErr) { startFallbackPolling(); }
         }
 
+        // --- AUTH & UI UPDATES ---
         function updateRoleUI(name, iconClass, btnClasses) {
             const toggleBtn = document.getElementById('btn-role-toggle'); 
             const toggleIcon = document.getElementById('role-toggle-icon'); 
@@ -1163,13 +1191,8 @@
 
         async function updateAuthState(session) {
             if (session && session.user) {
-                let isAdmin = false;
-                try {
-                    const { data } = await supabaseClient.rpc('is_admin');
-                    isAdmin = data;
-                } catch(e) {}
-                
-                if (isAdmin || session.user.email === 'admin@monali.com') {
+                const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+                if (isAdmin) {
                     currentRole = 'admin'; deviceId = session.user.id; currentAgentName = 'Admin';
                     document.body.classList.add('is-admin');
                     updateRoleUI('Admin', 'fas fa-user-shield', 'bg-amber-50 text-amber-600 border-amber-200');
@@ -1202,6 +1225,7 @@
             } catch (sessErr) {}
         }
 
+        // --- AUTH MODAL TABS ---
         function openAuthModal(tab = 'login') {
             document.getElementById('auth-modal').classList.remove('hide');
             switchAuthTab(tab);
@@ -1219,6 +1243,7 @@
             document.getElementById(`tab-${tab}`).className = `flex-1 py-3 text-sm transition-all border-b-2 auth-tab-active`;
         }
 
+        // --- AUTH HANDLERS ---
         async function handleUserRegister(event) {
             event.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -1231,7 +1256,7 @@
 
             setButtonLoading(btn, textEl, true, 'กำลังสมัคร...', 'สมัครสมาชิกและเข้าสู่ระบบ');
             try {
-                const { error } = await supabaseClient.auth.signUp({
+                const { data, error } = await supabaseClient.auth.signUp({
                     email, password, options: { data: { full_name: name } }
                 });
                 if (error) throw error;
@@ -1251,7 +1276,7 @@
             setButtonLoading(btn, textEl, true, 'กำลังเข้าสู่ระบบ...', 'เข้าสู่ระบบ');
 
             try {
-                const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 closeAuthModal(); customAlert('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับค่ะ 🌸');
             } catch (err) {
@@ -1270,14 +1295,14 @@
             }
         }
 
+
+        // --- UI RENDERINGS ---
         function renderAppDropdowns() {
             const createSelect = document.getElementById('app-select'); const editSelect = document.getElementById('edit-app-select');
             if(!createSelect || !editSelect) return;
             const currentCreateVal = createSelect.value; const currentEditVal = editSelect.value;
             createSelect.innerHTML = '<option value="" disabled selected>เลือกรายการที่ต้องการแก้ไข...</option>'; editSelect.innerHTML = '';
-            if (applications.length === 0) {
-                applications = ['Netflix', 'YouTube Premium', 'Spotify', 'Disney+ Hotstar', 'Canva', 'CapCut', 'อื่นๆ'];
-            }
+            if (applications.length === 0) { createSelect.innerHTML = '<option value="" disabled selected>⏳ กำลังโหลดรายการ...</option>'; return; }
             applications.forEach(app => {
                 const opt1 = document.createElement('option'); opt1.value = app; opt1.textContent = app; createSelect.appendChild(opt1);
                 const opt2 = document.createElement('option'); opt2.value = app; opt2.textContent = app; editSelect.appendChild(opt2);
@@ -1332,14 +1357,15 @@
                 });
                 document.getElementById('users-total-count').textContent = `ทั้งหมด ${data.length} บัญชี`;
             } catch (err) {
-                listEl.innerHTML = `<div class="text-center py-6 bg-white rounded-2xl border border-pink-100"><p class="text-xs text-gray-500">แสดงรายชื่อผู้ใช้งานระบบเรียบร้อย 🌸</p></div>`;
+                listEl.innerHTML = `<div class="text-center py-6 bg-white rounded-2xl border border-red-100"><div class="text-danger text-sm font-medium mb-1">ไม่สามารถดึงข้อมูลผู้ใช้ได้ค่ะ ⚠️</div><div class="text-[10px] text-gray-400">โปรดรันคำสั่ง SQL สร้างฟังก์ชัน get_all_users() ใน Supabase ก่อนนะคะ</div></div>`;
             }
         }
 
         function renderManageAppsList() {
             const list = document.getElementById('manage-apps-list'); list.innerHTML = '';
             if (applications.length === 0) {
-                applications = ['Netflix', 'YouTube Premium', 'Spotify', 'Disney+ Hotstar', 'Canva', 'CapCut', 'อื่นๆ'];
+                const emptyP = document.createElement('p'); emptyP.className = "text-center text-xs text-gray-400 py-3"; emptyP.textContent = "ยังไม่มีรายการแอปพลิเคชันค่ะ ✨";
+                list.appendChild(emptyP); return;
             }
             applications.forEach((app, index) => {
                 const item = document.createElement('div'); item.className = "flex justify-between items-center bg-white px-4 py-2.5 rounded-2xl border border-gray-200 shadow-sm";
@@ -1357,10 +1383,11 @@
             if (applications.includes(newApp)) { customAlert('มีแอปพลิเคชันนี้ในระบบแล้วค่ะ 🎀'); return; }
             setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'เพิ่ม');
             try {
-                if (supabaseClient) { await supabaseClient.from('applications').insert({ app_name: newApp }); }
+                if (supabaseClient) { const { error } = await supabaseClient.from('applications').insert({ app_name: newApp }); if (error) throw error; }
                 applications.push(newApp); input.value = ''; renderManageAppsList(); renderAppDropdowns();
             } catch (err) { 
-                applications.push(newApp); input.value = ''; renderManageAppsList(); renderAppDropdowns();
+                console.error('Add App Error:', err);
+                customAlert('ไม่สามารถเพิ่มแอปพลิเคชันได้ค่ะ ⚠️\n' + (err.message || '')); 
             } finally { setButtonLoading(btn, textEl, false, '', 'เพิ่ม'); }
         }
 
@@ -1369,20 +1396,18 @@
             customConfirm('คุณต้องการลบแอปพลิเคชันนี้ออกจากตัวเลือกใช่หรือไม่? 🗑️', async function() {
                 const appToDelete = applications[index];
                 try {
-                    if (supabaseClient) { await supabaseClient.from('applications').delete().eq('app_name', appToDelete); }
-                } catch (err) {}
-                applications.splice(index, 1); renderManageAppsList(); renderAppDropdowns();
+                    if (supabaseClient) { const { error } = await supabaseClient.from('applications').delete().eq('app_name', appToDelete); if (error) throw error; }
+                    applications.splice(index, 1); renderManageAppsList(); renderAppDropdowns();
+                } catch (err) { 
+                    console.error('Delete App Error:', err);
+                    customAlert('ไม่สามารถลบแอปพลิเคชันได้ค่ะ ⚠️\n' + (err.message || '')); 
+                }
             });
         }
 
         function renderAgentFAQs() {
             const list = document.getElementById('agent-faq-list'); if(!list) return; list.innerHTML = '';
-            if (faqs.length === 0) {
-                faqs = [
-                    { question: 'วิธีเข้าสู่ระบบตัวแทนจำหน่าย', answer: 'สามารถกดปุ่มเข้าสู่ระบบที่มุมขวาบน และใช้อีเมลกับรหัสผ่านที่สมัครไว้ได้เลยค่ะ', image_url: '' },
-                    { question: 'ระยะเวลาในการตอบกลับของแอดมิน', answer: 'แอดมินจะทยอยตอบตามคิวตลอด 24 ชั่วโมงค่ะ โดยสามารถดูเลขคิวปัจจุบันได้ที่หน้าแดชบอร์ด', image_url: '' }
-                ];
-            }
+            if (faqs.length === 0) { list.innerHTML = '<p class="text-sm text-gray-500 col-span-2 text-center py-4 bg-white rounded-2xl border border-pink-100 shadow-sm">ยังไม่มีข้อมูลช่วยเหลือเบื้องต้นในขณะนี้ค่ะ ✨</p>'; return; }
             faqs.forEach((faq, index) => {
                 const div = document.createElement('div'); div.onclick = function() { openViewFAQ(index); };
                 div.className = "bg-white border border-pink-100 hover:border-primary rounded-2xl p-3 cursor-pointer shadow-sm hover:shadow transition-all flex items-center justify-between group transform hover:-translate-y-0.5";
@@ -1485,13 +1510,13 @@
                 if (supabaseClient) {
                     let query = supabaseClient.from('faqs').update(updatePayload);
                     if (faq.id) query = query.eq('id', faq.id); else query = query.eq('question', faq.question);
-                    await query;
+                    const { error } = await query; if (error) throw error;
                 }
                 faq.question = question; faq.answer = answer; faq.image_url = finalImageUrl || null;
                 closeEditFAQModal(); renderAdminFAQList(); renderAgentFAQs(); customAlert('บันทึกการแก้ไข FAQ เรียบร้อยแล้วค่ะ 🌸');
             } catch (err) { 
-                faq.question = question; faq.answer = answer;
-                closeEditFAQModal(); renderAdminFAQList(); renderAgentFAQs(); customAlert('บันทึกการแก้ไข FAQ เรียบร้อยแล้วค่ะ 🌸');
+                console.error('Edit FAQ Error:', err);
+                customAlert('เกิดข้อผิดพลาดในการแก้ไข FAQ ค่ะ ⚠️'); 
             } finally { setButtonLoading(btn, textEl, false, '', 'บันทึกการแก้ไข'); }
         }
 
@@ -1508,16 +1533,12 @@
                 let newRecord = { question: q, answer: a, sort_order: faqs.length + 1 };
                 if (finalImageUrl) newRecord.image_url = finalImageUrl;
                 if (supabaseClient) {
-                    const { data } = await supabaseClient.from('faqs').insert(newRecord).select().single();
-                    if (data) newRecord = data;
+                    const { data, error } = await supabaseClient.from('faqs').insert(newRecord).select().single();
+                    if (error) throw error; if (data) newRecord = data;
                 }
                 faqs.push(newRecord); questionInput.value = ''; answerInput.value = ''; removeFaqImage();
                 renderAdminFAQList(); renderAgentFAQs(); customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
-            } catch (err) { 
-                faqs.push({ question: q, answer: a, sort_order: faqs.length + 1 });
-                questionInput.value = ''; answerInput.value = ''; removeFaqImage();
-                renderAdminFAQList(); renderAgentFAQs(); customAlert('เพิ่มข้อมูล FAQ สำเร็จแล้วค่ะ 🌸');
-            } finally { setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ'); }
+            } catch (err) { customAlert('ไม่สามารถเพิ่ม FAQ ได้ค่ะ ⚠️'); } finally { setButtonLoading(btn, textEl, false, '', 'เพิ่มข้อมูล FAQ'); }
         }
 
         function deleteFAQ(index) {
@@ -1525,11 +1546,13 @@
             customConfirm('ต้องการลบข้อมูล FAQ ข้อนี้ใช่หรือไม่คะ? 🗑️', async function() {
                 const item = faqs[index];
                 try {
-                    if (supabaseClient && item.id) {
-                        await supabaseClient.from('faqs').delete().eq('id', item.id);
+                    if (supabaseClient) {
+                        let query = supabaseClient.from('faqs').delete();
+                        if (item.id) query = query.eq('id', item.id); else query = query.eq('question', item.question);
+                        const { error } = await query; if (error) throw error;
                     }
-                } catch (err) {}
-                faqs.splice(index, 1); renderAdminFAQList(); renderAgentFAQs();
+                    faqs.splice(index, 1); renderAdminFAQList(); renderAgentFAQs();
+                } catch (err) { customAlert('ไม่สามารถลบ FAQ ได้ค่ะ ⚠️'); }
             });
         }
 
@@ -1572,6 +1595,7 @@
             const guestEl = document.getElementById('agent-guest-state');
             const createBtn = document.getElementById('btn-create-ticket-top');
 
+            // Handle Guest State
             if (currentRole === 'guest') {
                 guestEl.classList.remove('hide');
                 emptyEl.classList.add('hide');
@@ -1580,6 +1604,7 @@
                 return;
             }
 
+            // User State
             guestEl.classList.add('hide');
             createBtn.classList.remove('hide');
 
@@ -1591,12 +1616,12 @@
                 for (const ticket of agentTickets) {
                     const safeId = escapeHtml(ticket.id); let queueInfoHtml = '';
                     if (ticket.status === 'Open') {
-                        const qNumberText = (ticket.queueNumber !== null && ticket.queueNumber !== undefined) ? ticket.queueNumber : '1';
-                        const aheadCountText = (ticket.aheadCount !== null && ticket.aheadCount !== undefined) ? ticket.aheadCount : '0';
-                        queueInfoHtml = `<div class="bg-pink-50/70 border border-pink-100 rounded-2xl p-3 flex items-center justify-between text-xs font-medium text-gray-700 shadow-sm"><div class="flex items-center gap-2"><span id="queue-num-safeId"class="w-7h-7rounded-fullbg-primarytext-whiteflexitems-centerjustify-centerfont-boldtext-xsshadow-sm">{qNumberText}</span><span>คิวของคุณในระบบ</span></div><span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-safeId"class="text-gray-900font-bold">{aheadCountText}</span> คิว</span></div>`;
+                        const qNumberText = (ticket.queueNumber !== null && ticket.queueNumber !== undefined) ? ticket.queueNumber : '...';
+                        const aheadCountText = (ticket.aheadCount !== null && ticket.aheadCount !== undefined) ? ticket.aheadCount : '...';
+                        queueInfoHtml = `<div class="bg-pink-50/70 border border-pink-100 rounded-2xl p-3 flex items-center justify-between text-xs font-medium text-gray-700 shadow-sm"><div class="flex items-center gap-2"><span id="queue-num-${safeId}" class="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">${qNumberText}</span><span>คิวของคุณในระบบ</span></div><span class="text-pink-600 font-semibold"><i class="fas fa-users mr-1"></i> มีคิวก่อนหน้า: <span id="queue-ahead-${safeId}" class="text-gray-900 font-bold">${aheadCountText}</span> คิว</span></div>`;
                     }
                     const card = document.createElement('div'); card.className = "bg-white border border-pink-100 hover:border-primary rounded-3xl p-4 sm:p-5 shadow-sm transition-all flex flex-col gap-3 group text-gray-800";
-                    card.innerHTML = `<div class="flex items-start gap-3"><div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100"><i class="fas fa-ticket-alt"></i></div><div class="min-w-0 flex-grow"><div class="flex items-center gap-2 mb-0.5"><span class="font-bold text-primary text-sm">safeId</span><spanclass="text-xstext-gray-300">•</span><spanclass="text-xstext-pink-600font-mediumtruncate">{escapeHtml(ticket.appName)}</span></div><h4 class="font-bold text-gray-800 text-sm mb-1 truncate">${escapeHtml(ticket.subject)}</h4><p class="text-[11px] text-gray-400 flex items-center gap-1"><i class="far fa-clock"></i> อัปเดตล่าสุด: formatDate(ticket.updatedAt)</p></div></div>{queueInfoHtml}<div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2"><div>getStatusBadge(ticket.status)</div><buttonclass="btn-open-ticketbg-primaryhover:bg-primary-hovertext-whitepx-4py-2rounded-fulltext-xsfont-semiboldshadow-smtransition-alltransformhover:scale-105whitespace-nowrapflexitems-centergap-1.5"data-ticket-id="{safeId}"><i class="fas fa-comments"></i> แตะเพื่อต่อแอดมิน</button></div>`;
+                    card.innerHTML = `<div class="flex items-start gap-3"><div class="w-10 h-10 rounded-2xl bg-pink-50 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-pink-100"><i class="fas fa-ticket-alt"></i></div><div class="min-w-0 flex-grow"><div class="flex items-center gap-2 mb-0.5"><span class="font-bold text-primary text-sm">${safeId}</span><span class="text-xs text-gray-300">•</span><span class="text-xs text-pink-600 font-medium truncate">${escapeHtml(ticket.appName)}</span></div><h4 class="font-bold text-gray-800 text-sm mb-1 truncate">${escapeHtml(ticket.subject)}</h4><p class="text-[11px] text-gray-400 flex items-center gap-1"><i class="far fa-clock"></i> อัปเดตล่าสุด: ${formatDate(ticket.updatedAt)}</p></div></div>${queueInfoHtml}<div class="flex items-center justify-between pt-2 border-t border-gray-100 gap-2"><div>${getStatusBadge(ticket.status)}</div><button class="btn-open-ticket bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all transform hover:scale-105 whitespace-nowrap flex items-center gap-1.5" data-ticket-id="${safeId}"><i class="fas fa-comments"></i> แตะเพื่อต่อแอดมิน</button></div>`;
                     card.querySelector('.btn-open-ticket').onclick = () => openTicketDetail(ticket.id); containerEl.appendChild(card);
                 }
             }
@@ -1624,27 +1649,26 @@
             const expiryDate = document.getElementById('expiry-date').value || null; const claimType = document.getElementById('claim-type').value || 'ไม่ระบุ';
             const description = document.getElementById('ticket-desc').value.trim(); const rawImageData = document.getElementById('compressed-image-data').value;
             if (!rawImageData) { customAlert('กรุณาแนบรูปหลักฐานการซื้อและรูปปัญหาด้วยค่ะ 📸'); return; }
-            setButtonLoading(btn, textEl, true, 'กำลังส่งข้อมูล...', 'ส่งข้อมูล');
+            setButtonLoading(btn, textEl, true, 'กำลังอัปโหลด...', 'ส่งข้อมูล');
             const subject = `แจ้งปัญหา ${appName}`; const randomCode = Math.floor(1000 + Math.random() * 9000); const newId = 'TCK-' + randomCode; const now = new Date().toISOString(); const formattedDesc = `**รายละเอียดปัญหา:**\n${description}`;
 
             try {
                 let publicImageUrl = await uploadToStorage(rawImageData, 'tickets');
                 const newTicket = { id: newId, deviceId: deviceId, agentName: currentAgentName, appName: appName, purchaseDate: purchaseDate, expiryDate: expiryDate, claimType: claimType, subject: subject, description: description, status: 'Open', image: publicImageUrl, createdAt: now, updatedAt: now, messages: [] };
-                
                 if (supabaseClient) {
-                    await supabaseClient.from('tickets').insert({ id: newId, device_id: deviceId, agent_name: currentAgentName, app_name: appName, purchase_date: purchaseDate, expiry_date: expiryDate, claim_type: claimType, subject: subject, description: description, status: 'Open', image_url: publicImageUrl, created_at: now, updated_at: now });
+                    const { error: ticketError } = await supabaseClient.from('tickets').insert({ id: newId, device_id: deviceId, agent_name: currentAgentName, app_name: appName, purchase_date: purchase_date, expiry_date: expiryDate, claim_type: claimType, subject: subject, description: description, status: 'Open', image_url: publicImageUrl, created_at: now, updated_at: now });
+                    if (ticketError) throw ticketError;
                     await supabaseClient.from('messages').insert({ ticket_id: newId, sender_role: 'agent', sender_name: currentAgentName, text: formattedDesc, image_url: publicImageUrl, created_at: now });
                     const autoReplyMsg = checkAutoReply(subject + ' ' + description);
                     if (autoReplyMsg) await supabaseClient.from('messages').insert({ ticket_id: newId, sender_role: 'system', sender_name: 'System Bot', text: autoReplyMsg, created_at: new Date(Date.now() + 1000).toISOString() });
                 }
-                tickets.unshift(newTicket); sendTelegramNewTicket(newTicket);
+                tickets.unshift(newTicket); 
+                sendTelegramNewTicket(newTicket);
+                sendDiscordNewTicket(newTicket);
                 document.getElementById('create-ticket-form').reset(); removeImage();
-                customAlert('ส่งแจ้งปัญหาเรียบร้อยค่ะ แอดมินจะรีบตรวจสอบให้นะคะ 💖');
+                customAlert('ส่งแจ้งปัญหาเรียบร้อยค่ะ แอดมินจะรีบตรวจสอบให้นะคะ');
                 await syncFromSupabase(); switchView('view-agent-dashboard');
-            } catch (err) {
-                console.error("Create ticket error:", err);
-                customAlert('เกิดข้อผิดพลาดในการบันทึกข้อมูล ⚠️');
-            } finally { setButtonLoading(btn, textEl, false, '', 'ส่งข้อมูล'); }
+            } catch (err) { customAlert('เกิดข้อผิดพลาดในการส่งข้อมูลค่ะ ⚠️'); } finally { setButtonLoading(btn, textEl, false, '', 'ส่งข้อมูล'); }
         }
 
         function checkAutoReply(text) {
@@ -1806,12 +1830,16 @@
 
             const inputArea = document.getElementById('chat-input-area');
             const closedAlert = document.getElementById('chat-closed-alert');
+            const quickReplies = document.getElementById('admin-quick-replies');
+            
             if (ticket.status === 'Resolved') {
                 inputArea.classList.add('hide');
                 closedAlert.classList.remove('hide');
             } else {
                 inputArea.classList.remove('hide');
                 closedAlert.classList.add('hide');
+                if (currentRole === 'admin' && quickReplies) quickReplies.classList.remove('hide');
+                else if (quickReplies) quickReplies.classList.add('hide');
             }
 
             const container = document.getElementById('chat-messages-container');
@@ -1923,6 +1951,45 @@
             document.getElementById('chat-image-preview-container').classList.add('hide');
         }
 
+        function sendQuickReply(text) {
+            const input = document.getElementById('chat-input');
+            if (input) {
+                input.value = text;
+                handleSendMessage(new Event('submit'));
+            }
+        }
+
+        async function sendSystemQuickReply(text) {
+            const ticket = tickets.find(t => t.id === viewingTicketId); 
+            if (!ticket) return;
+
+            let now = new Date().toISOString();
+            if (ticket.messages && ticket.messages.length > 0) { 
+                const latestMsg = ticket.messages.reduce((prev, current) => (new Date(prev.timestamp) > new Date(current.timestamp)) ? prev : current ); 
+                if (new Date(now) <= new Date(latestMsg.timestamp)) now = new Date(new Date(latestMsg.timestamp).getTime() + 1000).toISOString(); 
+            }
+
+            try {
+                if (supabaseClient) { 
+                    const { error: msgErr } = await supabaseClient.from('messages').insert({ 
+                        ticket_id: viewingTicketId, 
+                        sender_role: 'system', 
+                        sender_name: 'System Bot', 
+                        text: text, 
+                        image_url: null, 
+                        created_at: now 
+                    }); 
+                    if (msgErr) throw msgErr; 
+                }
+                ticket.messages = ticket.messages || []; 
+                ticket.messages.push({ sender: 'system', senderName: 'System Bot', text: text, image: null, timestamp: now }); 
+                ticket.updatedAt = now;
+                renderChatMessages();
+            } catch (err) { 
+                customAlert('ไม่สามารถส่งข้อความระบบได้ ⚠️'); 
+            }
+        }
+
         async function handleSendMessage(event) {
             if (event && event.preventDefault) event.preventDefault();
             const input = document.getElementById('chat-input'); const btn = document.getElementById('btn-send-chat'); const imgInput = document.getElementById('chat-compressed-image');
@@ -1937,17 +2004,14 @@
 
             try {
                 let publicImageUrl = await uploadToStorage(rawImageData, 'chats');
-                if (supabaseClient) { 
-                    await supabaseClient.from('messages').insert({ ticket_id: viewingTicketId, sender_role: senderRole, sender_name: senderName, text: text, image_url: publicImageUrl || null, created_at: now }); 
-                }
+                if (supabaseClient) { const { error: msgErr } = await supabaseClient.from('messages').insert({ ticket_id: viewingTicketId, sender_role: senderRole, sender_name: senderName, text: text, image_url: publicImageUrl || null, created_at: now }); if (msgErr) throw msgErr; }
                 ticket.messages = ticket.messages || []; ticket.messages.push({ sender: senderRole, senderName: senderName, text: text, image: publicImageUrl || null, timestamp: now }); ticket.updatedAt = now;
                 input.value = ''; removeChatImage(); renderChatMessages();
-                if (currentRole === 'user') sendTelegramNewMessage(ticket, text, publicImageUrl);
-            } catch (err) { 
-                customAlert('ไม่สามารถส่งข้อความได้ ⚠️'); 
-            } finally { 
-                btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); 
-            }
+                if (currentRole === 'user') {
+                    sendTelegramNewMessage(ticket, text, publicImageUrl);
+                    sendDiscordNewMessage(ticket, text, publicImageUrl);
+                }
+            } catch (err) { customAlert('ไม่สามารถส่งข้อความได้ ⚠️'); } finally { btn.disabled = false; btn.classList.remove('opacity-60', 'cursor-not-allowed'); }
         }
 
         function markTicketResolved() {
@@ -1957,10 +2021,10 @@
                 const btn = document.getElementById('btn-mark-resolved'); if (btn) btn.disabled = true; const now = new Date().toISOString();
                 try {
                     if (supabaseClient) {
-                        await supabaseClient.from('tickets').update({ status: 'Resolved', updated_at: now }).eq('id', viewingTicketId);
-                        await supabaseClient.from('messages').insert({ ticket_id: viewingTicketId, sender_role: 'system', sender_name: 'System', text: 'แอดมินได้ทำการปิดรายการแจ้งปัญหานี้แล้วค่ะ ขอบคุณนะคะ 💖', created_at: now });
+                        const { error: updErr } = await supabaseClient.from('tickets').update({ status: 'Resolved', updated_at: now }).eq('id', viewingTicketId); if (updErr) throw updErr;
+                        await supabaseClient.from('messages').insert({ ticket_id: viewingTicketId, sender_role: 'system', sender_name: 'System', text: 'ดำเนินการแก้ไข / เคลม เรียบร้อยแล้ว แอดมินขออนุญาตปิด TCK แจ้งปัญหารายการนี้นะคะ 💖', created_at: now });
                     }
-                    ticket.status = 'Resolved'; ticket.updatedAt = now; ticket.messages = ticket.messages || []; ticket.messages.push({ sender: 'system', text: 'แอดมินได้ทำการปิดรายการแจ้งปัญหานี้แล้วค่ะ ขอบคุณนะคะ 💖', timestamp: now }); customAlert('ปิดงานแจ้งปัญหาเรียบร้อยแล้วค่ะ 💖'); await syncFromSupabase(); openTicketDetail(viewingTicketId);
+                    ticket.status = 'Resolved'; ticket.updatedAt = now; ticket.messages = ticket.messages || []; ticket.messages.push({ sender: 'system', text: 'ดำเนินการแก้ไข / เคลม เรียบร้อยแล้ว แอดมินขออนุญาตปิด TCK แจ้งปัญหารายการนี้นะคะ 💖', timestamp: now }); customAlert('ปิดงานแจ้งปัญหาเรียบร้อยแล้วค่ะ 💖'); await syncFromSupabase(); openTicketDetail(viewingTicketId);
                 } catch (err) { customAlert('เกิดข้อผิดพลาดในการปิดงานค่ะ ⚠️'); } finally { if (btn) btn.disabled = false; }
             });
         }
@@ -1969,7 +2033,7 @@
             if (event) event.stopPropagation(); if (currentRole !== 'admin') return; if (!ticketId) return;
             customConfirm(`คุณต้องการลบรายการแจ้งปัญหา ${ticketId} นี้ใช่หรือไม่คะ?\n(ข้อมูลข้อความแชทและประวัติทั้งหมดจะถูกลบถาวร) 🗑️`, async function() {
                 try {
-                    if (supabaseClient) { await supabaseClient.from('tickets').delete().eq('id', ticketId); }
+                    if (supabaseClient) { const { error } = await supabaseClient.from('tickets').delete().eq('id', ticketId); if (error) throw error; }
                     const index = tickets.findIndex(t => t.id === ticketId); if (index !== -1) tickets.splice(index, 1);
                     if (viewingTicketId === ticketId) { viewingTicketId = null; renderAdminDashboard(); switchView('view-admin-dashboard'); } else { renderAdminDashboard(); }
                     customAlert(`ลบรายการเรียบร้อยแล้วค่ะ 🌸`);
@@ -1991,7 +2055,7 @@
             const newApp = document.getElementById('edit-app-select').value; const newPurchaseDate = document.getElementById('edit-purchase-date').value || null; const newExpiryDate = document.getElementById('edit-expiry-date').value || null; const newClaimType = document.getElementById('edit-claim-type').value || 'ไม่ระบุ'; const newDesc = document.getElementById('edit-ticket-desc').value.trim();
             setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'บันทึกการแก้ไข'); const now = new Date().toISOString();
             try {
-                if (supabaseClient) { await supabaseClient.from('tickets').update({ app_name: newApp, subject: `แจ้งปัญหา ${newApp}`, purchase_date: newPurchaseDate, expiry_date: newExpiryDate, claim_type: newClaimType, description: newDesc, updated_at: now }).eq('id', viewingTicketId); }
+                if (supabaseClient) { const { error } = await supabaseClient.from('tickets').update({ app_name: newApp, subject: `แจ้งปัญหา ${newApp}`, purchase_date: newPurchaseDate, expiry_date: newExpiryDate, claim_type: newClaimType, description: newDesc, updated_at: now }).eq('id', viewingTicketId); if (error) throw error; }
                 ticket.appName = newApp; ticket.subject = `แจ้งปัญหา ${newApp}`; ticket.purchaseDate = newPurchaseDate; ticket.expiryDate = newExpiryDate; ticket.claimType = newClaimType; ticket.description = newDesc; ticket.updatedAt = now;
                 closeEditModal(); openTicketDetail(viewingTicketId); customAlert('บันทึกการแก้ไขข้อมูลเรียบร้อยแล้วค่ะ 🌸'); await syncFromSupabase();
             } catch (err) { customAlert('เกิดข้อผิดพลาดในการแก้ไขข้อมูลค่ะ ⚠️'); } finally { setButtonLoading(btn, textEl, false, '', 'บันทึกการแก้ไข'); }
@@ -2005,31 +2069,84 @@
         async function handleSaveAnnouncement(event) {
             event.preventDefault(); if (currentRole !== 'admin') return; const btn = document.getElementById('btn-save-announcement'); const textEl = document.getElementById('btn-save-announcement-text');
             const text = document.getElementById('announcement-input').value.trim(); if (!text) return; setButtonLoading(btn, textEl, true, 'กำลังบันทึก...', 'บันทึกข้อความประกาศ');
-            try { if (supabaseClient) { await supabaseClient.from('shop_settings').update({ announcement_text: text }).eq('id', 1); } announcementText = text; renderAnnouncement(); closeEditAnnouncementModal(); customAlert('อัปเดตข้อความประกาศเรียบร้อยแล้วค่ะ 🌸'); } catch (err) { customAlert('เกิดข้อผิดพลาดในการบันทึกประกาศค่ะ ⚠️'); } finally { setButtonLoading(btn, textEl, false, '', 'บันทึกข้อความประกาศ'); }
+            try { if (supabaseClient) { const { error } = await supabaseClient.from('shop_settings').update({ announcement_text: text }).eq('id', 1); if (error) throw error; } announcementText = text; renderAnnouncement(); closeEditAnnouncementModal(); customAlert('อัปเดตข้อความประกาศเรียบร้อยแล้วค่ะ 🌸'); } catch (err) { customAlert('เกิดข้อผิดพลาดในการบันทึกประกาศค่ะ ⚠️'); } finally { setButtonLoading(btn, textEl, false, '', 'บันทึกข้อความประกาศ'); }
         }
 
-        function openTelegramModal() {
-            if (currentRole !== 'admin') return; document.getElementById('telegram-bot-token').value = getTelegramToken(); document.getElementById('telegram-chat-id').value = getTelegramChatId(); document.getElementById('telegram-ticket-template').value = getTelegramTicketTemplate(); document.getElementById('telegram-chat-template').value = getTelegramChatTemplate(); document.getElementById('telegram-settings-modal').classList.remove('hide');
+        function openNotificationModal() {
+            if (currentRole !== 'admin') return; 
+            document.getElementById('telegram-bot-token').value = getTelegramToken(); 
+            document.getElementById('telegram-chat-id').value = getTelegramChatId(); 
+            document.getElementById('discord-webhook-url').value = getDiscordWebhook();
+            document.getElementById('telegram-ticket-template').value = getTelegramTicketTemplate(); 
+            document.getElementById('telegram-chat-template').value = getTelegramChatTemplate(); 
+            document.getElementById('notification-settings-modal').classList.remove('hide');
         }
-        function closeTelegramModal() { document.getElementById('telegram-settings-modal').classList.add('hide'); }
+        function closeNotificationModal() { document.getElementById('notification-settings-modal').classList.add('hide'); }
         function resetDefaultTicketTemplate() { document.getElementById('telegram-ticket-template').value = DEFAULT_TELEGRAM_TICKET_TEMPLATE; }
         function resetDefaultChatTemplate() { document.getElementById('telegram-chat-template').value = DEFAULT_TELEGRAM_CHAT_TEMPLATE; }
 
-        function handleSaveTelegramSettings(event) {
+        function handleSaveNotificationSettings(event) {
             event.preventDefault(); if (currentRole !== 'admin') return;
-            const token = document.getElementById('telegram-bot-token').value.trim(); const chatId = document.getElementById('telegram-chat-id').value.trim(); const ticketTemplate = document.getElementById('telegram-ticket-template').value.trim(); const chatTemplate = document.getElementById('telegram-chat-template').value.trim();
-            try { localStorage.setItem('helpCenterTelegramToken', token); localStorage.setItem('helpCenterTelegramChatId', chatId); localStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate); localStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate); } catch(e) {} closeTelegramModal(); customAlert('บันทึกการตั้งค่า Telegram เรียบร้อยแล้วค่ะ ✈️');
+            const token = document.getElementById('telegram-bot-token').value.trim(); 
+            const chatId = document.getElementById('telegram-chat-id').value.trim(); 
+            const discordWebhook = document.getElementById('discord-webhook-url').value.trim();
+            const ticketTemplate = document.getElementById('telegram-ticket-template').value.trim(); 
+            const chatTemplate = document.getElementById('telegram-chat-template').value.trim();
+            try { 
+                localStorage.setItem('helpCenterTelegramToken', token); 
+                localStorage.setItem('helpCenterTelegramChatId', chatId); 
+                localStorage.setItem('helpCenterDiscordWebhook', discordWebhook);
+                localStorage.setItem('helpCenterTelegramTicketTemplate', ticketTemplate); 
+                localStorage.setItem('helpCenterTelegramChatTemplate', chatTemplate); 
+            } catch(e) {} 
+            closeNotificationModal(); 
+            customAlert('บันทึกการตั้งค่าการแจ้งเตือนเรียบร้อยแล้วค่ะ ✈️');
         }
 
         async function testTelegramNotification() {
-            const btn = document.getElementById('btn-test-telegram'); const textEl = document.getElementById('btn-test-telegram-text');
-            const token = document.getElementById('telegram-bot-token').value.trim() || getTelegramToken(); const chatId = document.getElementById('telegram-chat-id').value.trim() || getTelegramChatId();
+            const token = document.getElementById('telegram-bot-token').value.trim() || getTelegramToken(); 
+            const chatId = document.getElementById('telegram-chat-id').value.trim() || getTelegramChatId();
             if (!token || !chatId) { customAlert('กรุณากรอก Token และ Chat ID ก่อนทดสอบค่ะ ⚠️'); return; }
-            setButtonLoading(btn, textEl, true, 'กำลังส่งทดสอบ...', 'ทดสอบส่งแจ้งเตือน');
-            const testMsg = `🔔 <b>[MONALI] ทดสอบการเชื่อมต่อสำเร็จ!</b>\nเวลา: ${new Date().toLocaleTimeString('th-TH')}`;
+            customAlert('กำลังส่งข้อความทดสอบ Telegram... ⏳');
+            const testMsg = `🔔 <b>[MONALI] ทดสอบการเชื่อมต่อ Telegram สำเร็จ!</b>\nเวลา: ${new Date().toLocaleTimeString('th-TH')}`;
             const success = await sendRawTelegramMessage(token, chatId, testMsg);
-            setButtonLoading(btn, textEl, false, '', 'ทดสอบส่งแจ้งเตือน');
-            if (success) customAlert('ส่งข้อความทดสอบสำเร็จ! 💌'); else customAlert('ไม่สามารถส่งข้อความได้ ❌');
+            closeCustomAlert();
+            if (success) customAlert('ส่งข้อความทดสอบเข้า Telegram สำเร็จ! 💌'); else customAlert('ไม่สามารถส่งข้อความ Telegram ได้ ❌');
+        }
+
+        async function testDiscordNotification() {
+            const webhookUrl = document.getElementById('discord-webhook-url').value.trim() || getDiscordWebhook();
+            if (!webhookUrl) { customAlert('กรุณากรอก Discord Webhook URL ก่อนทดสอบค่ะ ⚠️'); return; }
+            customAlert('กำลังส่งข้อความทดสอบ Discord... ⏳');
+            const testMsg = `🔔 **[MONALI] ทดสอบการเชื่อมต่อ Discord สำเร็จ!**\nเวลา: ${new Date().toLocaleTimeString('th-TH')}`;
+            const success = await sendDiscordMessage(webhookUrl, testMsg);
+            closeCustomAlert();
+            if (success) customAlert('ส่งข้อความทดสอบเข้า Discord สำเร็จ! 💌'); else customAlert('ไม่สามารถส่งข้อความ Discord ได้ (URL อาจไม่ถูกต้อง) ❌');
+        }
+
+        async function sendDiscordMessage(webhookUrl, text, imageUrl = null) {
+            if (!webhookUrl) return false;
+            try {
+                // Format basic HTML tags to Discord Markdown
+                let formattedText = text
+                    .replace(/<b>/g, '**').replace(/<\/b>/g, '**')
+                    .replace(/<i>/g, '*').replace(/<\/i>/g, '*')
+                    .replace(/<code>/g, '`').replace(/<\/code>/g, '`');
+
+                const payload = { content: formattedText };
+                if (imageUrl) {
+                    payload.embeds = [{ image: { url: imageUrl } }];
+                }
+
+                const res = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                return res.ok || res.status === 204;
+            } catch (e) {
+                return false;
+            }
         }
 
         async function sendRawTelegramMessage(token, chatId, text, imageUrlOrBase64 = null) {
@@ -2056,10 +2173,22 @@
             await sendRawTelegramMessage(token, chatId, message, ticket.image);
         }
 
+        async function sendDiscordNewTicket(ticket) {
+            const webhook = getDiscordWebhook(); if (!webhook) return; let template = getTelegramTicketTemplate();
+            const message = template.replace(/{id}/g, escapeHtml(ticket.id)).replace(/{agentName}/g, escapeHtml(ticket.agentName)).replace(/{appName}/g, escapeHtml(ticket.appName)).replace(/{claimType}/g, escapeHtml(ticket.claimType)).replace(/{purchaseDate}/g, escapeHtml(ticket.purchaseDate || '-')).replace(/{expiryDate}/g, escapeHtml(ticket.expiryDate || '-')).replace(/{description}/g, escapeHtml(ticket.description || '-')).replace(/{time}/g, escapeHtml(formatDate(ticket.createdAt)));
+            await sendDiscordMessage(webhook, message, ticket.image);
+        }
+
         async function sendTelegramNewMessage(ticket, text, image = null) {
             const token = getTelegramToken(); const chatId = getTelegramChatId(); if (!token || !chatId) return; let template = getTelegramChatTemplate(); const msgText = text ? text : '(แนบรูปภาพ)';
             const message = template.replace(/{id}/g, escapeHtml(ticket.id)).replace(/{appName}/g, escapeHtml(ticket.appName)).replace(/{agentName}/g, escapeHtml(currentAgentName)).replace(/{message}/g, escapeHtml(msgText)).replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
             await sendRawTelegramMessage(token, chatId, message, image);
+        }
+
+        async function sendDiscordNewMessage(ticket, text, image = null) {
+            const webhook = getDiscordWebhook(); if (!webhook) return; let template = getTelegramChatTemplate(); const msgText = text ? text : '(แนบรูปภาพ)';
+            const message = template.replace(/{id}/g, escapeHtml(ticket.id)).replace(/{appName}/g, escapeHtml(ticket.appName)).replace(/{agentName}/g, escapeHtml(currentAgentName)).replace(/{message}/g, escapeHtml(msgText)).replace(/{time}/g, escapeHtml(formatDate(new Date().toISOString())));
+            await sendDiscordMessage(webhook, message, image);
         }
 
         let confirmCallback = null;
@@ -2086,4 +2215,3 @@
     </script>
 </body>
 </html>
-
